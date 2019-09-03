@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 
-namespace DFC.App.CareerPath.UnitTests.ControllerTests.HealthControllerTests
+namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.HealthControllerTests
 {
     public abstract class BaseHealthController
     {

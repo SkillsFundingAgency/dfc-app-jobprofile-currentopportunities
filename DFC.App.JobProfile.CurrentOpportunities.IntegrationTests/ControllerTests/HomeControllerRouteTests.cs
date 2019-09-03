@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace DFC.App.CareerPath.IntegrationTests.ControllerTests
+namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTests
 {
     [Trait("Integration Tests", "Home Controller Tests")]
     public class HomeControllerRouteTests : IClassFixture<CustomWebApplicationFactory<Startup>>

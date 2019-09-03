@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Mime;
 using Xunit;
 
-namespace DFC.App.CareerPath.UnitTests.ControllerTests.HealthControllerTests
+namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.HealthControllerTests
 {
     [Trait("Health Controller", "ping Tests")]
     public class HealthControllerPingTests : BaseHealthController

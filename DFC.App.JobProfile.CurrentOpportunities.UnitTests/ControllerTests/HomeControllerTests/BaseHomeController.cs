@@ -7,7 +7,7 @@ using Microsoft.Net.Http.Headers;
 using System.Collections.Generic;
 using System.Net.Mime;
 
-namespace DFC.App.CareerPath.UnitTests.ControllerTests.HomeControllerTests
+namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.HomeControllerTests
 {
     public abstract class BaseHomeController
     {

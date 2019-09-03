@@ -4,17 +4,17 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DFC.App.CareerPath.SegmentService
+namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
 {
     public class CurrentOpportunitiesSegmentService : ICurrentOpportunitiesSegmentService
     {
         private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
-        private readonly IDraftCurrentOpportunitiesSegmentService draftCareerPathSegmentService;
+        private readonly IDraftCurrentOpportunitiesSegmentService draftCurrentOpportunitiesSegmentService;
 
-        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, IDraftCurrentOpportunitiesSegmentService draftCareerPathSegmentService)
+        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, IDraftCurrentOpportunitiesSegmentService draftCurrentOpportunitiesSegmentService)
         {
             this.repository = repository;
-            this.draftCareerPathSegmentService = draftCareerPathSegmentService;
+            this.draftCurrentOpportunitiesSegmentService = draftCurrentOpportunitiesSegmentService;
         }
 
         public async Task<IEnumerable<CurrentOpportunitiesSegmentModel>> GetAllAsync()
@@ -35,7 +35,7 @@ namespace DFC.App.CareerPath.SegmentService
             }
 
             return isDraft
-                ? await draftCareerPathSegmentService.GetSitefinityData(canonicalName.ToLowerInvariant()).ConfigureAwait(false)
+                ? await draftCurrentOpportunitiesSegmentService.GetSitefinityData(canonicalName.ToLowerInvariant()).ConfigureAwait(false)
                 : await repository.GetAsync(d => d.CanonicalName == canonicalName.ToLowerInvariant()).ConfigureAwait(false);
         }
     }

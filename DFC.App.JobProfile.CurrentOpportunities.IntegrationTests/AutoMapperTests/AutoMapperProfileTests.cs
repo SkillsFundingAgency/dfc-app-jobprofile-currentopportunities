@@ -3,7 +3,7 @@ using DFC.App.CareerPath.AutoMapperProfiles;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace DFC.App.CareerPath.IntegrationTests.ControllerTests
+namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTests
 {
     [Trait("Integration Tests", "AutoMapper Tests")]
     public class AutoMapperProfileTests : IClassFixture<CustomWebApplicationFactory<Startup>>
@@ -23,7 +23,7 @@ namespace DFC.App.CareerPath.IntegrationTests.ControllerTests
             var mapper = factory.Server.Host.Services.GetRequiredService<IMapper>();
 
             // Act
-            mapper.ConfigurationProvider.AssertConfigurationIsValid<CareerPathSegmentModelProfile>();
+            mapper.ConfigurationProvider.AssertConfigurationIsValid<CurrentOpportunitiesSegmentModelProfile>();
 
             // Assert
             Assert.True(true);

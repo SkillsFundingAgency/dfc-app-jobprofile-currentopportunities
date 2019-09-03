@@ -2,7 +2,7 @@
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using System.Threading.Tasks;
 
-namespace DFC.App.CareerPath.DraftSegmentService
+namespace DFC.App.JobProfile.CurrentOpportunities.DraftSegmentService
 {
     public class DraftCurrentOpportunitiesSegmentService : IDraftCurrentOpportunitiesSegmentService
     {

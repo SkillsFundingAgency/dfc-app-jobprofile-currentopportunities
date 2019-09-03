@@ -30,8 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DFC.App.CareerPath.DraftSegmentService\DFC.App.CareerPath.DraftSegmentService.csproj" />
-    <ProjectReference Include="..\DFC.App.CareerPath.SegmentService\DFC.App.CareerPath.SegmentService.csproj" />
+    <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.DraftSegmentService\DFC.App.JobProfile.CurrentOpportunities.DraftSegmentService.csproj" />
+    <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.SegmentService\DFC.App.JobProfile.CurrentOpportunities.SegmentService.csproj" />
   </ItemGroup>
 
 </Project>

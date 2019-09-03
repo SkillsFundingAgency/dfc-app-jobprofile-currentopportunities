@@ -1,11 +1,11 @@
-using DFC.App.CareerPath.Data.Models;
-using DFC.App.CareerPath.ViewModels;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
 using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Xunit;
 
-namespace DFC.App.CareerPath.UnitTests.ControllerTests.SegmentControllerTests
+namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.SegmentControllerTests
 {
     [Trait("Segment Controller", "Document Tests")]
     public class SegmentControllerDocumentTests : BaseSegmentController
@@ -16,18 +16,18 @@ namespace DFC.App.CareerPath.UnitTests.ControllerTests.SegmentControllerTests
         {
             // Arrange
             const string article = "an-article-name";
-            var expectedResult = A.Fake<CareerPathSegmentModel>();
+            var expectedResult = A.Fake<CurrentOpportunitiesSegmentModel>();
             var controller = BuildSegmentController(mediaTypeName);
 
             A.CallTo(() => FakeCareerPathSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).Returns(expectedResult);
-            A.CallTo(() => FakeMapper.Map<DocumentViewModel>(A<CareerPathSegmentModel>.Ignored)).Returns(A.Fake<DocumentViewModel>());
+            A.CallTo(() => FakeMapper.Map<DocumentViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(A.Fake<DocumentViewModel>());
 
             // Act
             var result = await controller.Document(article).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => FakeCareerPathSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => FakeMapper.Map<DocumentViewModel>(A<CareerPathSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeMapper.Map<DocumentViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsAssignableFrom<DocumentViewModel>(viewResult.ViewData.Model);
@@ -41,7 +41,7 @@ namespace DFC.App.CareerPath.UnitTests.ControllerTests.SegmentControllerTests
         {
             // Arrange
             const string article = "an-article-name";
-            CareerPathSegmentModel expectedResult = null;
+            CurrentOpportunitiesSegmentModel expectedResult = null;
             var controller = BuildSegmentController(mediaTypeName);
 
             A.CallTo(() => FakeCareerPathSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).Returns(expectedResult);

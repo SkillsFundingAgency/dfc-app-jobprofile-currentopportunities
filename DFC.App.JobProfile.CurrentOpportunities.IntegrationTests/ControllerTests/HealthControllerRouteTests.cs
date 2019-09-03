@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace DFC.App.CareerPath.IntegrationTests.ControllerTests
+namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTests
 {
     [Trait("Integration Tests", "Health Controller Tests")]
     public class HealthControllerRouteTests : IClassFixture<CustomWebApplicationFactory<Startup>>

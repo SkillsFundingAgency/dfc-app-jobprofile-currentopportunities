@@ -1,9 +1,9 @@
-using DFC.App.CareerPath.ViewModels;
+using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
 using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
-namespace DFC.App.CareerPath.UnitTests.ControllerTests.HomeControllerTests
+namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.HomeControllerTests
 {
     [Trait("Home Controller", "Error Tests")]
     public class HomeControllerErrorTests : BaseHomeController

@@ -1,5 +1,5 @@
 ﻿using DFC.App.CareerPath.Controllers;
-using DFC.App.CareerPath.Data.Contracts;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,14 +8,14 @@ using Microsoft.Net.Http.Headers;
 using System.Collections.Generic;
 using System.Net.Mime;
 
-namespace DFC.App.CareerPath.UnitTests.ControllerTests.SegmentControllerTests
+namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.SegmentControllerTests
 {
     public abstract class BaseSegmentController
     {
         public BaseSegmentController()
         {
             FakeLogger = A.Fake<ILogger<SegmentController>>();
-            FakeCareerPathSegmentService = A.Fake<ICareerPathSegmentService>();
+            FakeCareerPathSegmentService = A.Fake<ICurrentOpportunitiesSegmentService>();
             FakeMapper = A.Fake<AutoMapper.IMapper>();
         }
 
@@ -27,7 +27,7 @@ namespace DFC.App.CareerPath.UnitTests.ControllerTests.SegmentControllerTests
 
         protected ILogger<SegmentController> FakeLogger { get; }
 
-        protected ICareerPathSegmentService FakeCareerPathSegmentService { get; }
+        protected ICurrentOpportunitiesSegmentService FakeCareerPathSegmentService { get; }
 
         protected AutoMapper.IMapper FakeMapper { get; }
 
