@@ -1,11 +1,15 @@
-# Digital First Careers - Current opportunities app
+# Digital First Careers - Current Oppotunities app
 
-This project provides the current opportunities app for use in the Job Profiles app, which is a part of the Composite UI (Shell application) to dynamically output markup from current opportunities data sources for a given job profile.
+This project provides a Current Oppotunities app for use in the Job Profiles app, which is a part of the Composite UI (Shell application) to dynamically output markup from CarCurrent Oppotunities data sources.
 
 Details of the Job Profiles application may be found here https://github.com/SkillsFundingAgency/dfc-app-jobprofiles
 
 Details of the Composite UI application may be found here https://github.com/SkillsFundingAgency/dfc-composite-shell
 
+This Current Oppotunities app runs in two flavours:
+
+* Current Oppotunities segments
+* Draft Current Oppotunities segments
 
 ## Getting Started
 
@@ -21,8 +25,6 @@ Clone the project and open the solution in Visual Studio 2019.
 |-------|-------|
 |Sitefinity |Content management system |
 |Azure Cosmos DB | Document storage |
-|Course Search | Current courses for a job profile |
-|Apprenticeships Feed | Current apprenticeships for a job profile |
 
 ## Local Config Files
 
@@ -30,8 +32,8 @@ Once you have cloned the public repo you need to rename the appsettings files by
 
 | Location | Repo Filename | Rename to |
 |-------|-------|-------|
-| DFC.App.CurrentOpportunities.IntegrationTests | appsettings-template.json | appsettings.json |
-| DFC.App.CurrentOpportunities | appsettings-template.json | appsettings.json |
+| DFC.App.CurrentOppotunities.IntegrationTests | appsettings-template.json | appsettings.json |
+| DFC.App.CurrentOppotunities | appsettings-template.json | appsettings.json |
 
 ## Configuring to run locally
 
@@ -54,13 +56,13 @@ By default, the appsettings include a local Azure Cosmos Emulator configuration 
 
 To run this product locally, you will need to configure the list of dependencies. Once configured and the configuration files updated, it should be F5 to run and debug locally. The application can be run using IIS Express or full IIS.
 
-To run the project, start the web application. Once running, browse to the main entrypoint which is the "https://localhost:44322/segments". This will list all of the Career Path and Progression segments available and from here, you can navigate to the individual Career Path and Progression segments.
+To run the project, start the web application. Once running, browse to the main entrypoint which is the "https://localhost:44322/segments". This will list all of the Current Oppotunities segments available and from here, you can navigate to the individual Current Oppotunities segments.
 
-The Current Opportunities app is designed to be run from within the Job Profiles app, which in turn is run from within the Composite UI, therefore running the Current Opportunities app outside of the other apps will only show simple views of the data.
+The Current Oppotunities app is designed to be run from within the Job Profiles app, which in turn is run from within the Composite UI, therefore running the Current Oppotunities app outside of the other apps will only show simple views of the data.
 
 ## Deployments
 
-This Current Opportunities app will be deployed as an individual deployment for consumption by the Composite UI.
+This Current Oppotunities app will be deployed as an individual deployment for consumption by the Composite UI.
 
 ## Assets
 
