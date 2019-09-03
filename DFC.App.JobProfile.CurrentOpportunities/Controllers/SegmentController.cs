@@ -1,7 +1,6 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
-using DFC.App.CareerPath.Extensions;
-using DFC.App.CareerPath.ViewModels;
+using DFC.App.JobProfile.CurrentOpportunities.Extensions;
+using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Linq;
@@ -12,13 +11,13 @@ namespace DFC.App.CareerPath.Controllers
     public class SegmentController : Controller
     {
         private readonly ILogger<SegmentController> logger;
-        private readonly ICareerPathSegmentService careerPathSegmentService;
+        private readonly ICurrentOpportunitiesSegmentService careerPathSegmentService;
         private readonly AutoMapper.IMapper mapper;
 
-        public SegmentController(ILogger<SegmentController> logger, ICareerPathSegmentService careerPathSegmentService, AutoMapper.IMapper mapper)
+        public SegmentController(ILogger<SegmentController> logger, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService, AutoMapper.IMapper mapper)
         {
             this.logger = logger;
-            this.careerPathSegmentService = careerPathSegmentService;
+            this.careerPathSegmentService = currentOpportunitiesSegmentService;
             this.mapper = mapper;
         }
 
