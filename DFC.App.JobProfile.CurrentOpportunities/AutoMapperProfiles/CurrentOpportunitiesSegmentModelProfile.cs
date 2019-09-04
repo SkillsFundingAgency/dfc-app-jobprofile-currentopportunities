@@ -3,7 +3,7 @@ using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
 using Microsoft.AspNetCore.Html;
 
-namespace DFC.App.CareerPath.AutoMapperProfiles
+namespace DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles
 {
     public class CurrentOpportunitiesSegmentModelProfile : Profile
     {

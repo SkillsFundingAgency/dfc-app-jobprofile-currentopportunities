@@ -1,5 +1,5 @@
 using AutoMapper;
-using DFC.App.CareerPath.AutoMapperProfiles;
+using DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
