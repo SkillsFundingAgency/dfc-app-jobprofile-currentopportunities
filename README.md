@@ -76,3 +76,5 @@ CSS, JS, images and fonts used in this site can found in the following repositor
 ## References
 
 Please refer to https://github.com/SkillsFundingAgency/dfc-digital for additional instructions on configuring individual components like Sitefinity and Cosmos.
+
+and
