@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
-namespace DFC.App.CareerPath.Controllers
+namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
 {
     public class HomeController : Controller
     {

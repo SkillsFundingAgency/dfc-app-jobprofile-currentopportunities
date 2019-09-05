@@ -6,18 +6,18 @@ using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DFC.App.CareerPath.Controllers
+namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
 {
     public class SegmentController : Controller
     {
         private readonly ILogger<SegmentController> logger;
-        private readonly ICurrentOpportunitiesSegmentService careerPathSegmentService;
+        private readonly ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentModelegmentService;
         private readonly AutoMapper.IMapper mapper;
 
         public SegmentController(ILogger<SegmentController> logger, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService, AutoMapper.IMapper mapper)
         {
             this.logger = logger;
-            this.careerPathSegmentService = currentOpportunitiesSegmentService;
+            this.currentOpportunitiesSegmentModelegmentService = currentOpportunitiesSegmentService;
             this.mapper = mapper;
         }
 
@@ -28,11 +28,11 @@ namespace DFC.App.CareerPath.Controllers
             logger.LogInformation($"{nameof(Index)} has been called");
 
             var viewModel = new IndexViewModel();
-            var careerPathSegmentModels = await careerPathSegmentService.GetAllAsync().ConfigureAwait(false);
+            var currentOpportunitiesSegmentModelSegmentModels = await currentOpportunitiesSegmentModelegmentService.GetAllAsync().ConfigureAwait(false);
 
-            if (careerPathSegmentModels != null)
+            if (currentOpportunitiesSegmentModelSegmentModels != null)
             {
-                viewModel.Documents = (from a in careerPathSegmentModels.OrderBy(o => o.CanonicalName)
+                viewModel.Documents = (from a in currentOpportunitiesSegmentModelSegmentModels.OrderBy(o => o.CanonicalName)
                                        select mapper.Map<IndexDocumentViewModel>(a)).ToList();
 
                 logger.LogInformation($"{nameof(Index)} has succeeded");
@@ -51,11 +51,11 @@ namespace DFC.App.CareerPath.Controllers
         {
             logger.LogInformation($"{nameof(Document)} has been called with: {article}");
 
-            var careerPathSegmentModel = await careerPathSegmentService.GetByNameAsync(article, Request.IsDraftRequest()).ConfigureAwait(false);
+            var currentOpportunitiesSegmentModelSegmentModel = await currentOpportunitiesSegmentModelegmentService.GetByNameAsync(article, Request.IsDraftRequest()).ConfigureAwait(false);
 
-            if (careerPathSegmentModel != null)
+            if (currentOpportunitiesSegmentModelSegmentModel != null)
             {
-                var viewModel = mapper.Map<DocumentViewModel>(careerPathSegmentModel);
+                var viewModel = mapper.Map<DocumentViewModel>(currentOpportunitiesSegmentModelSegmentModel);
 
                 logger.LogInformation($"{nameof(Document)} has succeeded for: {article}");
 

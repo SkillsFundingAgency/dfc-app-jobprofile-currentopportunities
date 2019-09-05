@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DFC.App.CareerPath.Repository.CosmosDb
+﻿namespace DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb
 {
     /// <summary>
     /// Used to supply Cosmos DB connection values from app settings.

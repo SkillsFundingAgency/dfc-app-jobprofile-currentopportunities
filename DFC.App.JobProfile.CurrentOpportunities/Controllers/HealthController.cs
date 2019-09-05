@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace DFC.App.CareerPath.Controllers
+namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
 {
     public class HealthController : Controller
     {

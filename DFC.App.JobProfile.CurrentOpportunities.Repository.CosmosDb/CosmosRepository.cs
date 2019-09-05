@@ -9,7 +9,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace DFC.App.CareerPath.Repository.CosmosDb
+namespace DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb
 {
     public class CosmosRepository<T> : ICosmosRepository<T>
         where T : IDataModel

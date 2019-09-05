@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DFC.App.CareerPath.Repository.SitefinityApi
+namespace DFC.App.JobProfile.CurrentOpportunities.Repository.SitefinityApi
 {
     public class SitefinityAPIConnectionSettings
     {

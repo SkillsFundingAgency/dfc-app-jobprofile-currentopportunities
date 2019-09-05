@@ -1,4 +1,4 @@
-﻿using DFC.App.CareerPath.Controllers;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Controllers;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
