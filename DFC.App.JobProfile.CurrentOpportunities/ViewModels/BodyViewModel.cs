@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
 {
-    public class DocumentViewModel
+    public class BodyViewModel
     {
         [Display(Name = "Document Id")]
         public Guid? DocumentId { get; set; }
@@ -15,8 +15,5 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
         public HtmlString Markup { get; set; }
 
         public BodyDataViewModel Data { get; set; }
-
-        [Display(Name = "Last Reviewed")]
-        public DateTime LastReviewed { get; set; }
     }
 }

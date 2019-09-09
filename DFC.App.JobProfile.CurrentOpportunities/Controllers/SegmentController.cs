@@ -28,11 +28,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             logger.LogInformation($"{nameof(Index)} has been called");
 
             var viewModel = new IndexViewModel();
-            var currentOpportunitiesSegmentModelSegmentModels = await currentOpportunitiesSegmentModelegmentService.GetAllAsync().ConfigureAwait(false);
+            var currentOpportunitiesSegmentModels = await currentOpportunitiesSegmentModelegmentService.GetAllAsync().ConfigureAwait(false);
 
-            if (currentOpportunitiesSegmentModelSegmentModels != null)
+            if (currentOpportunitiesSegmentModels != null)
             {
-                viewModel.Documents = (from a in currentOpportunitiesSegmentModelSegmentModels.OrderBy(o => o.CanonicalName)
+                viewModel.Documents = (from a in currentOpportunitiesSegmentModels.OrderBy(o => o.CanonicalName)
                                        select mapper.Map<IndexDocumentViewModel>(a)).ToList();
 
                 logger.LogInformation($"{nameof(Index)} has succeeded");
@@ -51,11 +51,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         {
             logger.LogInformation($"{nameof(Document)} has been called with: {article}");
 
-            var currentOpportunitiesSegmentModelSegmentModel = await currentOpportunitiesSegmentModelegmentService.GetByNameAsync(article, Request.IsDraftRequest()).ConfigureAwait(false);
+            var currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentModelegmentService.GetByNameAsync(article, Request.IsDraftRequest()).ConfigureAwait(false);
 
-            if (currentOpportunitiesSegmentModelSegmentModel != null)
+            if (currentOpportunitiesSegmentModel != null)
             {
-                var viewModel = mapper.Map<DocumentViewModel>(currentOpportunitiesSegmentModelSegmentModel);
+                var viewModel = mapper.Map<DocumentViewModel>(currentOpportunitiesSegmentModel);
 
                 logger.LogInformation($"{nameof(Document)} has succeeded for: {article}");
 
@@ -63,6 +63,27 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             }
 
             logger.LogWarning($"{nameof(Document)} has returned no content for: {article}");
+
+            return NoContent();
+        }
+
+        [HttpGet]
+
+        [Route("segment/{article}/contents")]
+
+        public async Task<IActionResult> Body(string article)
+        {
+            logger.LogInformation($"{nameof(Body)} has been called with: {article}");
+            var currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentModelegmentService.GetByNameAsync(article, Request.IsDraftRequest()).ConfigureAwait(false);
+
+            if (currentOpportunitiesSegmentModel != null)
+            {
+                var viewModel = mapper.Map<BodyViewModel>(currentOpportunitiesSegmentModel);
+                logger.LogInformation($"{nameof(Body)} has succeeded for: {article}");
+                return this.NegotiateContentResult(viewModel);
+            }
+
+            logger.LogWarning($"{nameof(Body)} has returned no content for: {article}");
 
             return NoContent();
         }
