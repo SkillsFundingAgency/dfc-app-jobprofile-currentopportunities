@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.DraftSegmentService;
@@ -19,6 +20,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
     public class Startup
     {
         public const string CosmosDbConfigAppSettings = "Configuration:CosmosDbConnections:JobProfileSegment";
+        public const string CousrseSearchConfigAppSettings = "Configuration:CourseSearch";
 
         private readonly IConfiguration configuration;
 
@@ -39,7 +41,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities
 
             var cosmosDbConnection = configuration.GetSection(CosmosDbConfigAppSettings).Get<CosmosDbConnection>();
 
-            var documentClient = new DocumentClient(new Uri(cosmosDbConnection.EndpointUrl), cosmosDbConnection.AccessKey);
+            var documentClient = new DocumentClient(cosmosDbConnection.EndpointUrl, cosmosDbConnection.AccessKey);
+
+            var courseSearchConfig = configuration.GetSection(CousrseSearchConfigAppSettings).Get<CourseSearchConfig>();
+
+            services.AddSingleton(courseSearchConfig ?? new CourseSearchConfig());
 
             services.AddSingleton(cosmosDbConnection);
 
@@ -54,7 +60,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             services.AddAutoMapper(typeof(Startup).Assembly);
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -67,6 +72,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }

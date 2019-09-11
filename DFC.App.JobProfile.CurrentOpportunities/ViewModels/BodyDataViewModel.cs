@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
@@ -10,5 +11,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
 
         [Display(Name = "Courses")]
         public IEnumerable<CourseViewModel> Courses { get; set; }
+
+        public Uri CourseSearchUrl { get; set; }
     }
 }

@@ -16,7 +16,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles
             CreateMap<SegmentData, DocumentDataViewModel>();
 
             CreateMap<CurrentOpportunitiesSegmentModel, BodyViewModel>()
-            .ForMember(d => d.Data, s => s.MapFrom(a => a.SegmentData))
+            .ForMember(d => d.BodyData, s => s.MapFrom(a => a.SegmentData))
             ;
 
             CreateMap<SegmentData, BodyDataViewModel>();

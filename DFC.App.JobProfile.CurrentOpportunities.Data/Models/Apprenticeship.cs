@@ -8,7 +8,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
     {
         public string Title { get; set; }
 
-        public Uri Uri { get; set; }
+        public string ApprenticeshipId { get; set; }
 
         public string WageUnit { get; set; }
 

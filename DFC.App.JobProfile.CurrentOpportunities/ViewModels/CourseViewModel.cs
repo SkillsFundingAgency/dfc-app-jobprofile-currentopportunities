@@ -10,13 +10,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
     {
         public string Title { get; set; }
 
-        public Uri Uri { get; set; }
+        public string CourseId { get; set; }
 
         [Display(Name = "Provider")]
         public string Provider { get; set; }
 
         [Display(Name = "Start Date")]
-        public DateTime Start { get; set; }
+        public DateTime StartDate { get; set; }
 
         [Display(Name = "Location")]
         public string Location { get; set; }

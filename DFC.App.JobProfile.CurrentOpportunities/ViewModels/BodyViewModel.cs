@@ -14,6 +14,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
 
         public string JobTitle { get; set; }
 
-        public DocumentDataViewModel Data { get; set; }
+        public BodyDataViewModel BodyData { get; set; }
     }
 }

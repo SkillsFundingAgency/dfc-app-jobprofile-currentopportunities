@@ -1,4 +1,5 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Controllers;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
@@ -17,6 +18,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             FakeLogger = A.Fake<ILogger<SegmentController>>();
             FakeCareerPathSegmentService = A.Fake<ICurrentOpportunitiesSegmentService>();
             FakeMapper = A.Fake<AutoMapper.IMapper>();
+            FakeCourseSearchConfig = new CourseSearchConfig() { CourseSearchUrl = new System.Uri("http://test") };
         }
 
         public static IEnumerable<object[]> HtmlMediaTypes => new List<object[]>
@@ -31,13 +33,15 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         protected AutoMapper.IMapper FakeMapper { get; }
 
+        protected CourseSearchConfig FakeCourseSearchConfig { get; }
+
         protected SegmentController BuildSegmentController(string mediaTypeName)
         {
             var httpContext = new DefaultHttpContext();
 
             httpContext.Request.Headers[HeaderNames.Accept] = mediaTypeName;
 
-            var controller = new SegmentController(FakeLogger, FakeCareerPathSegmentService, FakeMapper)
+            var controller = new SegmentController(FakeLogger, FakeCareerPathSegmentService, FakeMapper, FakeCourseSearchConfig)
             {
                 ControllerContext = new ControllerContext()
                 {

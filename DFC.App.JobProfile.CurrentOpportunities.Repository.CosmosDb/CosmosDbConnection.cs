@@ -1,4 +1,6 @@
-﻿namespace DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb
+﻿using System;
+
+namespace DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb
 {
     /// <summary>
     /// Used to supply Cosmos DB connection values from app settings.
@@ -13,7 +15,7 @@
         /// <summary>
         /// Gets or sets  - Cosmos DB - Endpoint Url.
         /// </summary>
-        public string EndpointUrl { get; set; }
+        public Uri EndpointUrl { get; set; }
 
         /// <summary>
         /// Gets or sets  - Cosmos DB - Database Id.

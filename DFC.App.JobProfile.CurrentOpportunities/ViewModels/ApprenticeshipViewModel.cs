@@ -10,7 +10,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
     {
         public string Title { get; set; }
 
-        public Uri Uri { get; set; }
+        public string ApprenticeshipId { get; set; }
 
         public string WageUnit { get; set; }
 

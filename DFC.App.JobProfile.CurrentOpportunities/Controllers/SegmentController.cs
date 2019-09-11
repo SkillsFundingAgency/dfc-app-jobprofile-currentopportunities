@@ -1,7 +1,9 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Extensions;
 using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,12 +15,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         private readonly ILogger<SegmentController> logger;
         private readonly ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentModelegmentService;
         private readonly AutoMapper.IMapper mapper;
+        private readonly CourseSearchConfig courseSearchConfig;
 
-        public SegmentController(ILogger<SegmentController> logger, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService, AutoMapper.IMapper mapper)
+        public SegmentController(ILogger<SegmentController> logger, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService, AutoMapper.IMapper mapper, CourseSearchConfig courseSearchConfig)
         {
             this.logger = logger;
             this.currentOpportunitiesSegmentModelegmentService = currentOpportunitiesSegmentService;
             this.mapper = mapper;
+            this.courseSearchConfig = courseSearchConfig;
         }
 
         [HttpGet]
@@ -79,6 +83,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             if (currentOpportunitiesSegmentModel != null)
             {
                 var viewModel = mapper.Map<BodyViewModel>(currentOpportunitiesSegmentModel);
+                viewModel.BodyData.CourseSearchUrl = courseSearchConfig.CourseSearchUrl;
                 logger.LogInformation($"{nameof(Body)} has succeeded for: {article}");
                 return this.NegotiateContentResult(viewModel);
             }
