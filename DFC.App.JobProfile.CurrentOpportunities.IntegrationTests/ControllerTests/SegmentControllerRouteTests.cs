@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,9 +23,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
 
         public static IEnumerable<object[]> SegmentContentRouteData => new List<object[]>
         {
-            new object[] { "/Segment" },
-            new object[] { $"/Segment/{DefaultArticleName}" },
-            new object[] { $"/Segment/{DefaultArticleName}/content" },
+            new object[] { "/Segment", "text/html" },
+            new object[] { $"/Segment/{DefaultArticleName}" , "text/html"},
+            new object[] { $"/Segment/{DefaultArticleName}/contents", "text/html" },
+            new object[] { $"/Segment/{DefaultArticleName}/contents", "application/json" },
         };
 
         public static IEnumerable<object[]> MissingSegmentContentRouteData => new List<object[]>
@@ -34,19 +36,21 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
 
         [Theory]
         [MemberData(nameof(SegmentContentRouteData))]
-        public async Task GetSegmentHtmlContentEndpointsReturnSuccessAndCorrectContentType(string url)
+        public async Task GetSegmentHtmlContentEndpointsReturnSuccessAndCorrectContentType(string url, string acceptType)
         {
             // Arrange
             var uri = new Uri(url, UriKind.Relative);
             var client = factory.CreateClient();
-            client.DefaultRequestHeaders.Accept.Clear();
 
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(acceptType));
+       
             // Act
             var response = await client.GetAsync(uri).ConfigureAwait(false);
 
             // Assert
             response.EnsureSuccessStatusCode();
-            Assert.Equal($"{MediaTypeNames.Text.Html}; charset={Encoding.UTF8.WebName}", response.Content.Headers.ContentType.ToString());
+            Assert.Equal($"{acceptType}; charset={Encoding.UTF8.WebName}", response.Content.Headers.ContentType.ToString());
         }
 
         [Theory]
