@@ -24,6 +24,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
         {
             new object[] { "/Segment" },
             new object[] { $"/Segment/{DefaultArticleName}" },
+            new object[] { $"/Segment/{DefaultArticleName}/content" },
         };
 
         public static IEnumerable<object[]> MissingSegmentContentRouteData => new List<object[]>
