@@ -44,7 +44,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
 
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(acceptType));
-       
+   
             // Act
             var response = await client.GetAsync(uri).ConfigureAwait(false);
 
