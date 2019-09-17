@@ -1,5 +1,4 @@
-﻿@model BodyViewModel
-<h2 class="heading-large">Current opportunities</h2>
+﻿<h2 class="heading-large">Current opportunities</h2>
 <div class="grid-row" id="appGeneric">
     <div class="column-full">
         <h3 class="heading-medium">
@@ -7,9 +6,9 @@
             <span class="heading-secondary">In England</span>
         </h3>
     </div>
-    @if (Model.BodyData.Apprenticeships.Count() > 0)
+    @if (Model.Data.Apprenticeships.Count() > 0)
     {
-        foreach (var apprenticeVacancy in Model.BodyData.Apprenticeships)
+        foreach (var apprenticeVacancy in Model.Data.Apprenticeships)
         {
             <div class="column-half">
                 <div class="panel panel-border-narrow opportunity-item">
@@ -30,7 +29,7 @@
     else
     {
         <div class="dfc-code-jp-novacancyText">
-            <p>We can't find any apprenticeship vacancies in England for @Model.JobTitle right now.</p>
+            <p>We can't find any apprenticeship vacancies in England for @Model.Data.JobTitle right now.</p>
             <p>The <a href="https://www.gov.uk/apply-apprenticeship">Find an apprenticeship service</a> can help you with your search, send alerts when new apprenticeships become available and has advice on how to apply.</p>
         </div>
     }
@@ -42,14 +41,14 @@
             <span class="heading-secondary">In England</span>
         </h3>
     </div>
-    @if (Model.BodyData.Courses.Count() > 0)
+    @if (Model.Data.Courses.Count() > 0)
     {
-        foreach (var course in Model.BodyData.Courses)
+        foreach (var course in Model.Data.Courses)
         {
             <div class="column-half">
                 <div class="panel panel-border-narrow opportunity-item">
                     <h3 class="heading-small">
-                        <a href="@Model.BodyData.CourseSearchUrl/find-a-course/course-details?courseid=55122438">@course.Title</a>
+                        <a href="@Model.Data.CourseSearchUrl/find-a-course/course-details?courseid=55122438">@course.Title</a>
                     </h3>
                     <ul class="list">
                         <li><span class="bold-small">Provider:</span> @course.Provider</li>
@@ -60,15 +59,15 @@
             </div>
         }
         <div class="dfc-code-jp-vacancyText">
-            <a href="@Model.BodyData.CourseSearchUrl/find-a-course">Find courses near you</a>
+            <a href="@Model.Data.CourseSearchUrl/find-a-course">Find courses near you</a>
         </div>
     }
     else
     {
         <div class="dfc-code-jp-novacancyText">
-            <p>Are you interested in becoming @Model.JobTitle?</p>
-            <p>Search for <a href="@Model.BodyData.CourseSearchUrl/find-a-course">training courses near you</a>.</p>
-            <p>We can't find any apprenticeship vacancies in England for @Model.JobTitle right now.</p>
+            <p>Are you interested in becoming @Model.Data.JobTitle?</p>
+            <p>Search for <a href="@Model.Data.CourseSearchUrl/find-a-course">training courses near you</a>.</p>
+            <p>We can't find any apprenticeship vacancies in England for @Model.Data.JobTitle right now.</p>
         </div>
     }
 </div>

@@ -6,6 +6,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
 {
     public class BodyDataViewModel
     {
+        public string JobTitle { get; set; }
+
         [Display(Name = "Apprenticeships")]
         public IEnumerable<ApprenticeshipViewModel> Apprenticeships { get; set; }
 

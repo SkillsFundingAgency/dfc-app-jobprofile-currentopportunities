@@ -3,8 +3,10 @@ using System.Collections.Generic;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 {
-    public class SegmentData : IDataModel
+    public class CurrentOpportunitiesSegmentData : IDataModel
     {
+        public string JobTitle { get; set; }
+
         public IEnumerable<string> Standards { get; set; }
 
         public IEnumerable<string> Frameworks { get; set; }

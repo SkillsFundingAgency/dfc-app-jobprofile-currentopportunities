@@ -20,7 +20,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             var controller = BuildSegmentController(mediaTypeName);
 
             var dummyBodyViewModel = A.Dummy<BodyViewModel>();
-            dummyBodyViewModel.BodyData = A.Dummy<BodyDataViewModel>();
+            dummyBodyViewModel.Data = A.Dummy<BodyDataViewModel>();
 
             A.CallTo(() => FakeCareerPathSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).Returns(expectedResult);
             A.CallTo(() => FakeMapper.Map<BodyViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(dummyBodyViewModel);

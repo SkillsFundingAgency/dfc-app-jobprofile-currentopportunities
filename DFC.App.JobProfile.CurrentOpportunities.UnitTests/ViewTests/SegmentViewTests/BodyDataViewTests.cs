@@ -1,4 +1,5 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
+using FakeItEasy;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,7 +17,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ViewTests
             //Arrange
             var model = new BodyViewModel()
             {
-                JobTitle = "Dummy Title",
+                DocumentId = A.Dummy<Guid>(),
+                Data = new BodyDataViewModel()
+                {
+                    JobTitle = A.Dummy<string>(),
+                    Apprenticeships = new List<ApprenticeshipViewModel>(),
+                    Courses = new List<CourseViewModel>(),
+                    CourseSearchUrl = A.Dummy<Uri>(),
+                },
             };
 
             var viewBag = new Dictionary<string, object>();
@@ -24,7 +32,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ViewTests
 
             //Act
             var viewRenderResponse = viewRenderer.Render(@"Body", model, viewBag);
-            Assert.Contains(model.JobTitle, viewRenderResponse, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains(model.Data.JobTitle, viewRenderResponse, StringComparison.OrdinalIgnoreCase);
         }
     }
 }

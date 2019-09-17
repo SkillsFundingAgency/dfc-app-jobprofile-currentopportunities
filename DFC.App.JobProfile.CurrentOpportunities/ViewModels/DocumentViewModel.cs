@@ -12,9 +12,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
         [Display(Name = "Canonical Name")]
         public string CanonicalName { get; set; }
 
-        [Display(Name = "Job Title")]
-        public string JobTitle { get; set; }
-
         public DocumentDataViewModel Data { get; set; }
 
         [Display(Name = "Last Reviewed")]

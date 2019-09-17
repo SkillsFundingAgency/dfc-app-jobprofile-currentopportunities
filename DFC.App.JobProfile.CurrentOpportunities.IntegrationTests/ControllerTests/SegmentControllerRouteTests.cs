@@ -24,7 +24,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
         public static IEnumerable<object[]> SegmentContentRouteData => new List<object[]>
         {
             new object[] { "/Segment", "text/html" },
-            new object[] { $"/Segment/{DefaultArticleName}" , "text/html"},
+            new object[] { $"/Segment/{DefaultArticleName}", "text/html" },
             new object[] { $"/Segment/{DefaultArticleName}/contents", "text/html" },
             new object[] { $"/Segment/{DefaultArticleName}/contents", "application/json" },
         };
@@ -44,7 +44,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
 
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(acceptType));
-   
+
             // Act
             var response = await client.GetAsync(uri).ConfigureAwait(false);
 

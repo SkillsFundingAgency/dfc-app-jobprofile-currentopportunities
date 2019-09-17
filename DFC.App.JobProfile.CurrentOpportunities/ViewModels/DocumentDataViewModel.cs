@@ -5,6 +5,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
 {
     public class DocumentDataViewModel
     {
+        [Display(Name = "Job Title")]
+        public string JobTitle { get; set; }
+
         [Display(Name = "Standards")]
         public IEnumerable<string> Standards { get; set; }
 

@@ -12,8 +12,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
         [Display(Name = "Canonical Name")]
         public string CanonicalName { get; set; }
 
-        public string JobTitle { get; set; }
-
-        public BodyDataViewModel BodyData { get; set; }
+        public BodyDataViewModel Data { get; set; }
     }
 }
