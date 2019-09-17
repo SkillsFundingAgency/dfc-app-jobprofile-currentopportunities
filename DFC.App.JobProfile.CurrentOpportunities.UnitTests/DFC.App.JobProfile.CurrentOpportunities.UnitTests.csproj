@@ -8,6 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TestHelpers\**" />
+    <Compile Remove="ViewTests\**" />
+    <EmbeddedResource Remove="TestHelpers\**" />
+    <EmbeddedResource Remove="ViewTests\**" />
+    <None Remove="TestHelpers\**" />
+    <None Remove="ViewTests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
   </ItemGroup>
 
