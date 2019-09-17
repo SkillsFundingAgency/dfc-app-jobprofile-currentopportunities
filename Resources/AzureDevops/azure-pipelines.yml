@@ -1,0 +1,57 @@
+variables:
+    ArmTemplateRoot: '$(Build.SourcesDirectory)\Resources\ArmTemplates'     
+    SolutionBaseName: 'DFC.App.JobProfile.CurrentOpportunities'
+    BuildPlatform: 'any cpu'
+    BuildConfiguration: 'release'
+
+resources:
+  repositories:
+  - repository: self
+  - repository: dfc-devops
+    type: github
+    name: SkillsFundingAgency/dfc-devops
+    ref: refs/tags/v1.6.1
+    endpoint: 'GitHub (ESFA)'
+
+jobs:
+
+#Build and test resources
+#- template: AzureDevOpsTemplates/Build/dfc-arm-build.yml@dfc-devops
+#  parameters:
+#    ArmTemplateRoot: $(ArmTemplateRoot)
+
+#Build and test application
+- job: BuildDotNetCore
+  displayName: Build-DotNetCore
+  pool:
+    name: Continuous Integration 02 - SSD - 160ACU
+    demands:
+    - msbuild
+    - visualstudio
+
+  steps:
+  # Build DFC.App.JobProfile.CurrentOpportunities
+  - template: AzureDevOpsTemplates/Build/dfc-dotnetcore-build.yml@dfc-devops
+    parameters:
+      SolutionBaseName: $(SolutionBaseName)
+      BuildPlatform: $(BuildPlatform)
+      BuildConfiguration: $(BuildConfiguration)
+      DotNetCoreVersion: 2.2.402
+      PublishWebApp: true
+      TestSuffix: UnitTests
+  # Test DFC.App.JobProfile.CurrentOpportunities.DraftSegmentService (an artifact will be built but isn't consumed in the release) 
+  - template: AzureDevOpsTemplates/Build/dfc-dotnetcore-build.yml@dfc-devops
+    parameters:
+      SolutionBaseName: $(SolutionBaseName).DraftSegmentService
+      BuildPlatform: $(BuildPlatform)
+      BuildConfiguration: $(BuildConfiguration)
+      DotNetCoreVersion: 2.2.402
+      TestSuffix: UnitTests
+  # Test DFC.App.JobProfile.CurrentOpportunities.SegmentService (an artifact will be built but isn't consumed in the release) 
+  - template: AzureDevOpsTemplates/Build/dfc-dotnetcore-build.yml@dfc-devops
+    parameters:
+      SolutionBaseName: $(SolutionBaseName).SegmentService
+      BuildPlatform: $(BuildPlatform)
+      BuildConfiguration: $(BuildConfiguration)
+      DotNetCoreVersion: 2.2.402
+      TestSuffix: UnitTests            
