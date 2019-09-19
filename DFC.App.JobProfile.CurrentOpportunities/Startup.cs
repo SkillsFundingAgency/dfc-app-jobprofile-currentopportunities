@@ -46,19 +46,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             var courseSearchConfig = configuration.GetSection(CousrseSearchConfigAppSettings).Get<CourseSearchConfig>();
 
             services.AddSingleton(courseSearchConfig ?? new CourseSearchConfig());
-
             services.AddSingleton(cosmosDbConnection);
-
             services.AddSingleton<IDocumentClient>(documentClient);
-
             services.AddSingleton<ICosmosRepository<CurrentOpportunitiesSegmentModel>, CosmosRepository<CurrentOpportunitiesSegmentModel>>();
-
             services.AddScoped<ICurrentOpportunitiesSegmentService, CurrentOpportunitiesSegmentService>();
-
             services.AddScoped<IDraftCurrentOpportunitiesSegmentService, DraftCurrentOpportunitiesSegmentService>();
-
             services.AddAutoMapper(typeof(Startup).Assembly);
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -85,8 +78,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Segment}/{action=Index}");
             });
         }
     }
 }
+
