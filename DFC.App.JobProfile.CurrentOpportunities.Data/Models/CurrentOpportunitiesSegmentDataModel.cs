@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 {
-    public class CurrentOpportunitiesSegmentData : IDataModel
+    public class CurrentOpportunitiesSegmentDataModel : IDataModel
     {
         public string JobTitle { get; set; }
 

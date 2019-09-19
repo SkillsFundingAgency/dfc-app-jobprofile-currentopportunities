@@ -13,7 +13,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
         [Required]
         public string CanonicalName { get; set; }
 
-        public CurrentOpportunitiesSegmentData Data { get; set; }
+        public CurrentOpportunitiesSegmentDataModel Data { get; set; }
 
         public DateTime LastReviewed { get; set; }
     }
