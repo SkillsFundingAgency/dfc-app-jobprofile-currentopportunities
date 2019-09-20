@@ -1,0 +1,80 @@
+﻿@model BodyViewModel
+<h2 class="heading-large">Current opportunities</h2>
+<div class="grid-row" id="appGeneric">
+    <div class="column-full">
+        <h3 class="heading-medium">
+            Apprenticeships
+            <span class="heading-secondary">In England</span>
+        </h3>
+    </div>
+    @if (Model.Data.Apprenticeships.Count() > 0)
+    {
+        foreach (var apprenticeVacancy in Model.Data.Apprenticeships)
+        {
+            <div class="column-half">
+                <div class="panel panel-border-narrow opportunity-item">
+                    <h4 class="heading-small">
+                        <a href="https://www.findapprenticeship.service.gov.uk/apprenticeship/reference/@apprenticeVacancy.ApprenticeshipId">@apprenticeVacancy.Title</a>
+                    </h4>
+                    <ul class="list">
+                        <li><span class="bold-small">Wage : </span> @apprenticeVacancy.WageUnit <span class="grey font-xsmall">@apprenticeVacancy.WageText</span></li>
+                        <li><span class="bold-small">Location:</span> @apprenticeVacancy.LocationTown @apprenticeVacancy.LocationPostCode</li>
+                    </ul>
+                </div>
+            </div>
+        }
+        <div class="dfc-code-jp-vacancyText">
+            <a href="https://www.findapprenticeship.service.gov.uk/apprenticeshipsearch">Find apprenticeships near you</a>
+        </div>
+    }
+    else
+    {
+        <div class="dfc-code-jp-novacancyText">
+            <p>We can't find any apprenticeship vacancies in England for @Model.Data.JobTitle right now.</p>
+            <p>The <a href="https://www.gov.uk/apply-apprenticeship">Find an apprenticeship service</a> can help you with your search, send alerts when new apprenticeships become available and has advice on how to apply.</p>
+        </div>
+    }
+</div>
+<div class="grid-row" id="appGeneric">
+    <div class="column-full">
+        <h3 class="heading-medium">
+            Courses
+            <span class="heading-secondary">In England</span>
+        </h3>
+    </div>
+    @if (Model.Data.Courses.Count() > 0)
+    {
+        foreach (var course in Model.Data.Courses)
+        {
+            <div class="column-half">
+                <div class="panel panel-border-narrow opportunity-item">
+                    <h3 class="heading-small">
+                        <a href="@Model.Data.CourseSearchUrl/find-a-course/course-details?courseid=55122438">@course.Title</a>
+                    </h3>
+                    <ul class="list">
+                        <li><span class="bold-small">Provider:</span> @course.Provider</li>
+                        <li><span class="bold-small">Start date:</span> @course.StartDate.ToString("dd MMMM yyyy")</li>
+                        <li><span class="bold-small">Location:</span> @course.Location</li>
+                    </ul>
+                </div>
+            </div>
+        }
+        <div class="dfc-code-jp-vacancyText">
+            <a href="@Model.Data.CourseSearchUrl/find-a-course">Find courses near you</a>
+        </div>
+    }
+    else
+    {
+        <div class="dfc-code-jp-novacancyText">
+            <p>Are you interested in becoming @Model.Data.JobTitle?</p>
+            <p>Search for <a href="@Model.Data.CourseSearchUrl/find-a-course">training courses near you</a>.</p>
+            <p>We can't find any apprenticeship vacancies in England for @Model.Data.JobTitle right now.</p>
+        </div>
+    }
+</div>
+<div>
+    <div class="sf-Long-text">
+        <h3 class="heading-medium">Jobs<span class="heading-secondary">In the United Kingdom</span></h3>
+        <p>The <a href="https://findajob.dwp.gov.uk">Find a job service</a> can help you with your search for jobs and send alerts when new jobs become available.</p>
+    </div>
+</div>
