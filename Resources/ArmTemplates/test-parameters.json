@@ -1,0 +1,30 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourcePrefix": {
+            "value": "dfc-foo-app-carpath"
+        },
+        "appSharedResourceGroup": {
+            "value": "dfc-dev-app-sharedresources-rg"
+        },
+        "appSharedStorageAccountName": {
+            "value": "dfcdevappsharedstr"
+        },
+        "cosmosDBName": {
+            "value": "dfc-dev-app-sharedresources-cdb"
+        },
+        "cosmosDbKey": {
+            "value": "not-a-real-key"
+        },
+        "cosmosDbResourceGroup": {
+            "value": "dfc-dev-app-sharedresources-rg"
+        },
+        "sharedAppServicePlanName": {
+            "value": "dfc-dev-app-shared-asp"
+        },
+        "sharedAppServicePlanResourceGroup": {
+            "value": "dfc-dev-app-sharedresources-rg"
+        }
+    }
+}
