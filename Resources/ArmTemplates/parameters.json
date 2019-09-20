@@ -29,6 +29,9 @@
         "cosmosDbResourceGroup": {
             "value": "__appSharedResourceGroup__"
         },
+        "CourseSearchUrl": {
+            "value": "__CourseSearchUrl__"
+        },
         "sharedAppServicePlanName": {
             "value": "__sharedAppServicePlanName__"
         },

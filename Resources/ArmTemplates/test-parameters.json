@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "resourcePrefix": {
-            "value": "dfc-foo-app-carpath"
+            "value": "dfc-foo-app-jobprofcops"
         },
         "appSharedResourceGroup": {
             "value": "dfc-dev-app-sharedresources-rg"
@@ -19,6 +19,9 @@
         },
         "cosmosDbResourceGroup": {
             "value": "dfc-dev-app-sharedresources-rg"
+        },
+        "CourseSearchUrl": {
+            "value": "http://coursesearch.example.net"
         },
         "sharedAppServicePlanName": {
             "value": "dfc-dev-app-shared-asp"
