@@ -20,14 +20,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             var expectedResults = A.CollectionOfFake<CurrentOpportunitiesSegmentModel>(resultsCount);
             var controller = BuildSegmentController(mediaTypeName);
 
-            A.CallTo(() => FakeCareerPathSegmentService.GetAllAsync()).Returns(expectedResults);
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetAllAsync()).Returns(expectedResults);
             A.CallTo(() => FakeMapper.Map<IndexDocumentViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(A.Fake<IndexDocumentViewModel>());
 
             // Act
             var result = await controller.Index().ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeCareerPathSegmentService.GetAllAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetAllAsync()).MustHaveHappenedOnceExactly();
             A.CallTo(() => FakeMapper.Map<IndexDocumentViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappened(resultsCount, Times.Exactly);
 
             var viewResult = Assert.IsType<ViewResult>(result);
@@ -47,14 +47,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             IEnumerable<CurrentOpportunitiesSegmentModel> expectedResults = null;
             var controller = BuildSegmentController(mediaTypeName);
 
-            A.CallTo(() => FakeCareerPathSegmentService.GetAllAsync()).Returns(expectedResults);
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetAllAsync()).Returns(expectedResults);
             A.CallTo(() => FakeMapper.Map<IndexDocumentViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(A.Fake<IndexDocumentViewModel>());
 
             // Act
             var result = await controller.Index().ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeCareerPathSegmentService.GetAllAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetAllAsync()).MustHaveHappenedOnceExactly();
             A.CallTo(() => FakeMapper.Map<IndexDocumentViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappened(resultsCount, Times.Exactly);
 
             var viewResult = Assert.IsType<ViewResult>(result);

@@ -1,4 +1,5 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Controllers;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +12,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Heal
     {
         public BaseHealthController()
         {
+            FakeCurrentOpportunitiesSegmentService = A.Fake<ICurrentOpportunitiesSegmentService>();
             FakeLogger = A.Fake<ILogger<HealthController>>();
         }
+
+        protected ICurrentOpportunitiesSegmentService FakeCurrentOpportunitiesSegmentService { get; }
 
         protected ILogger<HealthController> FakeLogger { get; }
 
@@ -22,7 +26,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Heal
 
             httpContext.Request.Headers[HeaderNames.Accept] = mediaTypeName;
 
-            var controller = new HealthController(FakeLogger)
+            var controller = new HealthController(FakeLogger, FakeCurrentOpportunitiesSegmentService)
             {
                 ControllerContext = new ControllerContext()
                 {

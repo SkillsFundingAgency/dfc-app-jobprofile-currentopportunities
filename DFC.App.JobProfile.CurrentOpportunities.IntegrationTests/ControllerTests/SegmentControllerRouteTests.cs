@@ -1,6 +1,10 @@
+using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using FluentAssertions;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
@@ -67,6 +71,132 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
 
             // Assert
             Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task PostSegmentEndpointsReturnCreated()
+        {
+            // Arrange
+            const string url = "/segment";
+            var documentId = Guid.NewGuid();
+            var currentOpportunitiesSegmentModel = new CurrentOpportunitiesSegmentModel()
+            {
+                DocumentId = documentId,
+                CanonicalName = documentId.ToString().ToLowerInvariant(),
+                Data = new CurrentOpportunitiesSegmentData
+                {
+                    Updated = DateTime.UtcNow,
+                },
+            };
+            var client = factory.CreateClient();
+
+            client.DefaultRequestHeaders.Accept.Clear();
+
+            // Act
+            var response = await client.PostAsync(url, currentOpportunitiesSegmentModel, new JsonMediaTypeFormatter()).ConfigureAwait(false);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
+        }
+
+        [Fact]
+        public async Task PostSegmentEndpointsForDefaultArticleRefreshAllReturnOk()
+        {
+            // Arrange
+            const string url = "/segment";
+            var currentOpportunitiesSegmentModel = new CurrentOpportunitiesSegmentModel()
+            {
+                DocumentId = DataSeeding.DefaultArticleGuid,
+                CanonicalName = DataSeeding.DefaultArticleName,
+                Created = DataSeeding.DefaultArticleCreated,
+                Data = new CurrentOpportunitiesSegmentData
+                {
+                    Updated = DateTime.UtcNow,
+                },
+            };
+            var client = factory.CreateClient();
+
+            client.DefaultRequestHeaders.Accept.Clear();
+
+            // Act
+            var response = await client.PostAsync(url, currentOpportunitiesSegmentModel, new JsonMediaTypeFormatter()).ConfigureAwait(false);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        [Fact]
+        public async Task PutSegmentEndpointsReturnOk()
+        {
+            // Arrange
+            const string url = "/segment";
+            var documentId = Guid.NewGuid();
+            var currentOpportunitiesSegmentModel = new CurrentOpportunitiesSegmentModel()
+            {
+                DocumentId = documentId,
+                CanonicalName = documentId.ToString().ToLowerInvariant(),
+                Data = new CurrentOpportunitiesSegmentData
+                {
+                    Updated = DateTime.UtcNow,
+                },
+            };
+            var client = factory.CreateClient();
+
+            client.DefaultRequestHeaders.Accept.Clear();
+
+            // Act
+            var response = await client.PutAsync(url, currentOpportunitiesSegmentModel, new JsonMediaTypeFormatter()).ConfigureAwait(false);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        [Fact]
+        public async Task DeleteSegmentEndpointsReturnSuccessWhenFound()
+        {
+            // Arrange
+            var documentId = Guid.NewGuid();
+            const string postUrl = "/segment";
+            var deleteUri = new Uri($"/segment/{documentId}", UriKind.Relative);
+            var currentOpportunitiesSegmentModel = new CurrentOpportunitiesSegmentModel()
+            {
+                DocumentId = documentId,
+                CanonicalName = documentId.ToString().ToLowerInvariant(),
+                Data = new CurrentOpportunitiesSegmentData
+                {
+                    Updated = DateTime.UtcNow,
+                },
+            };
+            var client = factory.CreateClient();
+
+            client.DefaultRequestHeaders.Accept.Clear();
+
+            _ = await client.PostAsync(postUrl, currentOpportunitiesSegmentModel, new JsonMediaTypeFormatter()).ConfigureAwait(false);
+
+            // Act
+            var response = await client.DeleteAsync(deleteUri).ConfigureAwait(false);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        [Fact]
+        public async Task DeleteSegmentEndpointsReturnNotFound()
+        {
+            // Arrange
+            var deleteUri = new Uri($"/segment/{Guid.NewGuid()}", UriKind.Relative);
+            var client = factory.CreateClient();
+
+            client.DefaultRequestHeaders.Accept.Clear();
+
+            // Act
+            var response = await client.DeleteAsync(deleteUri).ConfigureAwait(false);
+
+            // Assert
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
     }
 }

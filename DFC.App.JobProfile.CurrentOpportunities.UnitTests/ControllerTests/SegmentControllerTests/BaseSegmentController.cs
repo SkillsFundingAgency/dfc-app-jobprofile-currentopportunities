@@ -16,7 +16,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
         public BaseSegmentController()
         {
             FakeLogger = A.Fake<ILogger<SegmentController>>();
-            FakeCareerPathSegmentService = A.Fake<ICurrentOpportunitiesSegmentService>();
+            FakeCurrentOpportunitiesSegmentService = A.Fake<ICurrentOpportunitiesSegmentService>();
             FakeMapper = A.Fake<AutoMapper.IMapper>();
             FakeCourseSearchConfig = new CourseSearchConfig() { CourseSearchUrl = new System.Uri("http://test") };
         }
@@ -27,9 +27,19 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             new string[] { MediaTypeNames.Text.Html },
         };
 
+        public static IEnumerable<object[]> InvalidMediaTypes => new List<object[]>
+        {
+            new string[] { MediaTypeNames.Text.Plain },
+        };
+
+        public static IEnumerable<object[]> JsonMediaTypes => new List<object[]>
+        {
+            new string[] { MediaTypeNames.Application.Json },
+        };
+
         protected ILogger<SegmentController> FakeLogger { get; }
 
-        protected ICurrentOpportunitiesSegmentService FakeCareerPathSegmentService { get; }
+        protected ICurrentOpportunitiesSegmentService FakeCurrentOpportunitiesSegmentService { get; }
 
         protected AutoMapper.IMapper FakeMapper { get; }
 
@@ -41,7 +51,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
             httpContext.Request.Headers[HeaderNames.Accept] = mediaTypeName;
 
-            var controller = new SegmentController(FakeLogger, FakeCareerPathSegmentService, FakeMapper, FakeCourseSearchConfig)
+            var controller = new SegmentController(FakeLogger, FakeCurrentOpportunitiesSegmentService, FakeMapper, FakeCourseSearchConfig)
             {
                 ControllerContext = new ControllerContext()
                 {

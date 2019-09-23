@@ -13,6 +13,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
         public HealthControllerRouteTests(CustomWebApplicationFactory<Startup> factory)
         {
             this.factory = factory;
+
+            DataSeeding.SeedDefaultArticle(factory);
         }
 
         public static IEnumerable<object[]> HealthOkRouteData => new List<object[]>
