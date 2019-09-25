@@ -23,6 +23,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
         public SegmentControllerRouteTests(CustomWebApplicationFactory<Startup> factory)
         {
             this.factory = factory;
+            DataSeeding.SeedDefaultArticle(factory);
         }
 
         public static IEnumerable<object[]> SegmentContentRouteData => new List<object[]>
@@ -79,17 +80,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
             // Arrange
             const string url = "/segment";
             var documentId = Guid.NewGuid();
-            var currentOpportunitiesSegmentModel = new CurrentOpportunitiesSegmentModel()
-            {
-                DocumentId = documentId,
-                CanonicalName = documentId.ToString().ToLowerInvariant(),
-                Data = new CurrentOpportunitiesSegmentData
-                {
-                    Updated = DateTime.UtcNow,
-                },
-            };
+            var currentOpportunitiesSegmentModel = DataSeeding.GetDummyCurrentOpportunitiesSegmentModel(documentId, documentId.ToString().ToLowerInvariant(), DateTime.Now, 1);
             var client = factory.CreateClient();
-
             client.DefaultRequestHeaders.Accept.Clear();
 
             // Act
@@ -105,18 +97,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
         {
             // Arrange
             const string url = "/segment";
-            var currentOpportunitiesSegmentModel = new CurrentOpportunitiesSegmentModel()
-            {
-                DocumentId = DataSeeding.DefaultArticleGuid,
-                CanonicalName = DataSeeding.DefaultArticleName,
-                Created = DataSeeding.DefaultArticleCreated,
-                Data = new CurrentOpportunitiesSegmentData
-                {
-                    Updated = DateTime.UtcNow,
-                },
-            };
+            var currentOpportunitiesSegmentModel = DataSeeding.GetDummyCurrentOpportunitiesSegmentModel(DataSeeding.DefaultArticleGuid, DataSeeding.DefaultArticleName, DataSeeding.DefaultArticleCreated, 1);
             var client = factory.CreateClient();
-
             client.DefaultRequestHeaders.Accept.Clear();
 
             // Act
@@ -133,18 +115,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
             // Arrange
             const string url = "/segment";
             var documentId = Guid.NewGuid();
-            var currentOpportunitiesSegmentModel = new CurrentOpportunitiesSegmentModel()
-            {
-                DocumentId = documentId,
-                CanonicalName = documentId.ToString().ToLowerInvariant(),
-                Data = new CurrentOpportunitiesSegmentData
-                {
-                    Updated = DateTime.UtcNow,
-                },
-            };
+            var currentOpportunitiesSegmentModel = DataSeeding.GetDummyCurrentOpportunitiesSegmentModel(documentId, documentId.ToString().ToLowerInvariant(), DateTime.Now, 1);
             var client = factory.CreateClient();
-
             client.DefaultRequestHeaders.Accept.Clear();
+            _ = await client.PostAsync(url, currentOpportunitiesSegmentModel, new JsonMediaTypeFormatter()).ConfigureAwait(false);
 
             // Act
             var response = await client.PutAsync(url, currentOpportunitiesSegmentModel, new JsonMediaTypeFormatter()).ConfigureAwait(false);
@@ -161,15 +135,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
             var documentId = Guid.NewGuid();
             const string postUrl = "/segment";
             var deleteUri = new Uri($"/segment/{documentId}", UriKind.Relative);
-            var currentOpportunitiesSegmentModel = new CurrentOpportunitiesSegmentModel()
-            {
-                DocumentId = documentId,
-                CanonicalName = documentId.ToString().ToLowerInvariant(),
-                Data = new CurrentOpportunitiesSegmentData
-                {
-                    Updated = DateTime.UtcNow,
-                },
-            };
+            var currentOpportunitiesSegmentModel = DataSeeding.GetDummyCurrentOpportunitiesSegmentModel(documentId, documentId.ToString().ToLowerInvariant(), DateTime.Now, 1);
             var client = factory.CreateClient();
 
             client.DefaultRequestHeaders.Accept.Clear();

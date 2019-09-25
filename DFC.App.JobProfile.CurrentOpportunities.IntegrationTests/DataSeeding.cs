@@ -19,27 +19,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests
             const string url = "/segment";
             var models = new List<CurrentOpportunitiesSegmentModel>()
             {
-                new CurrentOpportunitiesSegmentModel()
-                {
-                    DocumentId = DefaultArticleGuid,
-                    CanonicalName = DefaultArticleName,
-                    Created = DefaultArticleCreated,
-                    Data = GetDummyCurrentOpportunitiesSegmentModel(1),
-                },
-                new CurrentOpportunitiesSegmentModel()
-                {
-                    DocumentId = Guid.Parse("C16B389D-91AD-4F3D-2485-9F7EE953AFE4"),
-                    CanonicalName = $"{DefaultArticleName}-2",
-                    Created = new DateTime(2019, 09, 02, 12, 13, 24),
-                    Data = GetDummyCurrentOpportunitiesSegmentModel(2),
-                },
-                new CurrentOpportunitiesSegmentModel()
-                {
-                    DocumentId = Guid.Parse("C0103C26-E7C9-4008-3F66-1B2DB192177E"),
-                    CanonicalName = $"{DefaultArticleName}-3",
-                    Created = new DateTime(2019, 09, 03, 12, 13, 34),
-                    Data = GetDummyCurrentOpportunitiesSegmentModel(3),
-                },
+                 GetDummyCurrentOpportunitiesSegmentModel(DefaultArticleGuid, DefaultArticleName, DefaultArticleCreated, 1),
+
+                 //GetDummyCurrentOpportunitiesSegmentModel(Guid.Parse("C16B389D-91AD-4F3D-2485-9F7EE953AFE4"), $"{DefaultArticleName}-2", new DateTime(2019, 09, 02, 12, 13, 24), 2),
+                 //GetDummyCurrentOpportunitiesSegmentModel(Guid.Parse("C0103C26-E7C9-4008-3F66-1B2DB192177E"), $"{DefaultArticleName}-3", new DateTime(2018, 08, 12, 15, 20, 10), 2),
             };
 
             var client = factory?.CreateClient();
@@ -49,9 +32,20 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests
             models.ForEach(f => client.PostAsync(url, f, new JsonMediaTypeFormatter()).GetAwaiter().GetResult());
         }
 
-        private static CurrentOpportunitiesSegmentData GetDummyCurrentOpportunitiesSegmentModel(int index)
+        public static CurrentOpportunitiesSegmentModel GetDummyCurrentOpportunitiesSegmentModel(Guid documentId, string canonicalName, DateTime created, int dataIndex)
         {
-            return new CurrentOpportunitiesSegmentData()
+            return new CurrentOpportunitiesSegmentModel()
+            {
+                DocumentId = documentId,
+                CanonicalName = canonicalName,
+                Created = created,
+                Data = GetDummyCurrentOpportunitiesSegmentModel(dataIndex),
+            };
+        }
+
+        private static CurrentOpportunitiesSegmentDataModel GetDummyCurrentOpportunitiesSegmentModel(int index)
+        {
+            return new CurrentOpportunitiesSegmentDataModel()
             {
                 Updated = DateTime.UtcNow,
                 JobTitle = $"JobProfile{index}",

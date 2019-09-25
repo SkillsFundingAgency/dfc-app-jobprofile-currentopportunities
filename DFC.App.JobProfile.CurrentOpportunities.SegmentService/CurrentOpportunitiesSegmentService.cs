@@ -27,7 +27,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
 
             if (currentOpportunitiesSegmentModel.Data == null)
             {
-                currentOpportunitiesSegmentModel.Data = new CurrentOpportunitiesSegmentData();
+                currentOpportunitiesSegmentModel.Data = new CurrentOpportunitiesSegmentDataModel();
             }
 
             currentOpportunitiesSegmentModel.Updated = DateTime.UtcNow;
@@ -39,9 +39,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 : null;
         }
 
-        public Task<bool> DeleteAsync(Guid documentId, int partitionKey)
+        public async Task<bool> DeleteAsync(Guid documentId, int partitionKey)
         {
-            throw new NotImplementedException();
+            var result = await repository.DeleteAsync(documentId, partitionKey).ConfigureAwait(false);
+
+            return result == HttpStatusCode.NoContent;
         }
 
         public async Task<IEnumerable<CurrentOpportunitiesSegmentModel>> GetAllAsync()
@@ -80,7 +82,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
 
             if (currentOpportunitiesSegmentModel.Data == null)
             {
-                currentOpportunitiesSegmentModel.Data = new CurrentOpportunitiesSegmentData();
+                currentOpportunitiesSegmentModel.Data = new CurrentOpportunitiesSegmentDataModel();
             }
 
             currentOpportunitiesSegmentModel.Updated = DateTime.UtcNow;

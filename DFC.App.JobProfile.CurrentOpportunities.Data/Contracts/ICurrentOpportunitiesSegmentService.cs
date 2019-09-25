@@ -15,7 +15,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Contracts
 
         Task<CurrentOpportunitiesSegmentModel> GetByNameAsync(string canonicalName, bool isDraft = false);
 
-
         Task<CurrentOpportunitiesSegmentModel> CreateAsync(CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel);
 
         Task<CurrentOpportunitiesSegmentModel> ReplaceAsync(CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel);

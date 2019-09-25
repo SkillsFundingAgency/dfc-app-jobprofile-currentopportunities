@@ -45,12 +45,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             // Arrange
             const string article = "an-article-name";
             var expectedResult = A.Fake<CurrentOpportunitiesSegmentModel>();
-            var controller = BuildSegmentController(mediaTypeName);
+            var dummyBodyViewModel = A.Dummy<BodyViewModel>();
+            dummyBodyViewModel.Data = A.Dummy<BodyDataViewModel>();
 
+            var controller = BuildSegmentController(mediaTypeName);
             expectedResult.CanonicalName = article;
 
             A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).Returns(expectedResult);
-            A.CallTo(() => FakeMapper.Map<BodyViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(A.Fake<BodyViewModel>());
+            A.CallTo(() => FakeMapper.Map<BodyViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(dummyBodyViewModel);
 
             // Act
             var result = await controller.Body(article).ConfigureAwait(false);
@@ -72,12 +74,15 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             // Arrange
             const string article = "an-article-name";
             var expectedResult = A.Fake<CurrentOpportunitiesSegmentModel>();
+            var dummyBodyViewModel = A.Dummy<BodyViewModel>();
+            dummyBodyViewModel.Data = A.Dummy<BodyDataViewModel>();
+
             var controller = BuildSegmentController(mediaTypeName);
 
             expectedResult.CanonicalName = article;
 
             A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).Returns(expectedResult);
-            A.CallTo(() => FakeMapper.Map<BodyViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(A.Fake<BodyViewModel>());
+            A.CallTo(() => FakeMapper.Map<BodyViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(dummyBodyViewModel);
 
             // Act
             var result = await controller.Body(article).ConfigureAwait(false);

@@ -6,7 +6,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Repository.SitefinityApi
     {
         public string AuthTokenEndpoint { get; set; }
 
-        public string SitefinityApiUrlBase { get; set; }
+        public string SitefinityApiBaseEndpoint { get; set; }
 
         public string SitefinityApiDataEndpoint { get; set; }
 
