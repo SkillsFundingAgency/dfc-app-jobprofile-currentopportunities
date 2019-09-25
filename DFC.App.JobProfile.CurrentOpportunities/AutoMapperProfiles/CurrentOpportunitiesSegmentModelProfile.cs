@@ -13,13 +13,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles
               .ForMember(d => d.Data, s => s.MapFrom(a => a.Data))
               ;
 
-            CreateMap<CurrentOpportunitiesSegmentData, DocumentDataViewModel>();
+            CreateMap<CurrentOpportunitiesSegmentDataModel, DocumentDataViewModel>();
 
             CreateMap<CurrentOpportunitiesSegmentModel, BodyViewModel>()
             .ForMember(d => d.Data, s => s.MapFrom(a => a.Data))
             ;
 
-            CreateMap<CurrentOpportunitiesSegmentData, BodyDataViewModel>()
+            CreateMap<CurrentOpportunitiesSegmentDataModel, BodyDataViewModel>()
             .ForMember(d => d.CourseSearchUrl, opt => opt.Ignore())
             ;
 

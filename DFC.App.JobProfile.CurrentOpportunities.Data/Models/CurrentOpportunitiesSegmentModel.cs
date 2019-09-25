@@ -13,6 +13,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
         [Required]
         public string CanonicalName { get; set; }
 
+        public CurrentOpportunitiesSegmentDataModel Data { get; set; }
+
+        public DateTime LastReviewed { get; set; }
         public DateTime Created { get; set; } = DateTime.UtcNow;
 
         public int PartitionKey => Created.Second;
