@@ -15,14 +15,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
     public class SegmentController : Controller
     {
         private readonly ILogger<SegmentController> logger;
-        private readonly ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentModelegmentService;
+        private readonly ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService;
         private readonly AutoMapper.IMapper mapper;
         private readonly CourseSearchConfig courseSearchConfig;
 
         public SegmentController(ILogger<SegmentController> logger, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService, AutoMapper.IMapper mapper, CourseSearchConfig courseSearchConfig)
         {
             this.logger = logger;
-            this.currentOpportunitiesSegmentModelegmentService = currentOpportunitiesSegmentService;
+            this.currentOpportunitiesSegmentService = currentOpportunitiesSegmentService;
             this.mapper = mapper;
             this.courseSearchConfig = courseSearchConfig;
         }
@@ -33,7 +33,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             logger.LogInformation($"{nameof(Index)} has been called");
 
             var viewModel = new IndexViewModel();
-            var currentOpportunitiesSegmentModels = await currentOpportunitiesSegmentModelegmentService.GetAllAsync().ConfigureAwait(false);
+            var currentOpportunitiesSegmentModels = await currentOpportunitiesSegmentService.GetAllAsync().ConfigureAwait(false);
 
             if (currentOpportunitiesSegmentModels != null)
             {
@@ -56,7 +56,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         {
             logger.LogInformation($"{nameof(Document)} has been called with: {article}");
 
-            var currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentModelegmentService.GetByNameAsync(article, Request.IsDraftRequest()).ConfigureAwait(false);
+            var currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByNameAsync(article, Request.IsDraftRequest()).ConfigureAwait(false);
 
             if (currentOpportunitiesSegmentModel != null)
             {
@@ -77,19 +77,78 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         public async Task<IActionResult> Body(string article)
         {
             logger.LogInformation($"{nameof(Body)} has been called with: {article}");
-            var currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentModelegmentService.GetByNameAsync(article, Request.IsDraftRequest()).ConfigureAwait(false);
+            var currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByNameAsync(article, Request.IsDraftRequest()).ConfigureAwait(false);
 
             if (currentOpportunitiesSegmentModel != null)
             {
                 var viewModel = mapper.Map<BodyViewModel>(currentOpportunitiesSegmentModel);
                 viewModel.Data.CourseSearchUrl = courseSearchConfig.CourseSearchUrl;
                 logger.LogInformation($"{nameof(Body)} has succeeded for: {article}");
-                return this.NegotiateContentResult(viewModel);
+                return this.NegotiateContentResult(viewModel, currentOpportunitiesSegmentModel.Data);
             }
 
             logger.LogWarning($"{nameof(Body)} has returned no content for: {article}");
 
             return NoContent();
+        }
+
+        [HttpPut]
+        [HttpPost]
+        [Route("segment")]
+        public async Task<IActionResult> CreateOrUpdate([FromBody]CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel)
+        {
+            logger.LogInformation($"{nameof(CreateOrUpdate)} has been called");
+
+            if (currentOpportunitiesSegmentModel == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var existingCareerPathSegmentModel = await currentOpportunitiesSegmentService.GetByIdAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false);
+
+            if (existingCareerPathSegmentModel == null)
+            {
+                var createdResponse = await currentOpportunitiesSegmentService.CreateAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
+
+                logger.LogInformation($"{nameof(CreateOrUpdate)} has created content for: {currentOpportunitiesSegmentModel.CanonicalName}");
+
+                return new CreatedAtActionResult(nameof(Document), "Segment", new { article = createdResponse.CanonicalName }, createdResponse);
+            }
+            else
+            {
+                var updatedResponse = await currentOpportunitiesSegmentService.ReplaceAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
+
+                logger.LogInformation($"{nameof(CreateOrUpdate)} has updated content for: {currentOpportunitiesSegmentModel.CanonicalName}");
+
+                return new OkObjectResult(updatedResponse);
+            }
+        }
+
+        [HttpDelete]
+        [Route("segment/{documentId}")]
+        public async Task<IActionResult> Delete(Guid documentId)
+        {
+            logger.LogInformation($"{nameof(Delete)} has been called");
+
+            var currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByIdAsync(documentId).ConfigureAwait(false);
+
+            if (currentOpportunitiesSegmentModel == null)
+            {
+                logger.LogWarning($"{nameof(Document)} has returned no content for: {documentId}");
+
+                return NotFound();
+            }
+
+            await currentOpportunitiesSegmentService.DeleteAsync(documentId, currentOpportunitiesSegmentModel.PartitionKey).ConfigureAwait(false);
+
+            logger.LogInformation($"{nameof(Delete)} has deleted content for: {currentOpportunitiesSegmentModel.CanonicalName}");
+
+            return Ok();
         }
     }
 }

@@ -1,17 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
 {
     public class DocumentDataViewModel
     {
+        public DateTime Updated { get; set; }
+
         [Display(Name = "Job Title")]
         public string JobTitle { get; set; }
 
-        [Display(Name = "Standards")]
+        [Display(Name = "Last Reviewed")]
+        public DateTime LastReviewed { get; set; }
+
         public IEnumerable<string> Standards { get; set; }
 
-        [Display(Name = "Frameworks")]
         public IEnumerable<string> Frameworks { get; set; }
 
         [Display(Name = "Course Keywords")]

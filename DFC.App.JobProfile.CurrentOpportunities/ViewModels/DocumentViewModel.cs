@@ -13,7 +13,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
 
         public DocumentDataViewModel Data { get; set; }
 
-        [Display(Name = "Last Reviewed")]
-        public DateTime LastReviewed { get; set; }
+        public DateTime Created { get; set; } = DateTime.UtcNow;
+
+        public int PartitionKey => Created.Second;
+
+        public DateTime Updated { get; set; }
     }
 }

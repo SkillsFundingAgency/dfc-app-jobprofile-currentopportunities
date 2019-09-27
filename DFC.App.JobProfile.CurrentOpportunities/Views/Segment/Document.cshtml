@@ -30,6 +30,22 @@
         </dl>
         <dl class="row">
             <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Created)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Created)
+            </dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Updated)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Updated)
+            </dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">
                 @Html.DisplayNameFor(model => model.Data.JobTitle)
             </dt>
             <dd class="col-sm-10">
@@ -38,10 +54,18 @@
         </dl>
         <dl class="row">
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.LastReviewed)
+                @Html.DisplayNameFor(model => model.Data.LastReviewed)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.LastReviewed)
+                @Html.DisplayFor(model => model.Data.LastReviewed)
+            </dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Data.Updated)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Data.Updated)
             </dd>
         </dl>
         <dl class="row">
