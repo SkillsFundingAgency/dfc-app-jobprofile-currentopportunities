@@ -22,18 +22,78 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             var dummyBodyViewModel = A.Dummy<BodyViewModel>();
             dummyBodyViewModel.Data = A.Dummy<BodyDataViewModel>();
 
-            A.CallTo(() => FakeCareerPathSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).Returns(expectedResult);
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).Returns(expectedResult);
             A.CallTo(() => FakeMapper.Map<BodyViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(dummyBodyViewModel);
 
             // Act
             var result = await controller.Body(article).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeCareerPathSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => FakeMapper.Map<BodyViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
 
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsAssignableFrom<BodyViewModel>(viewResult.ViewData.Model);
+
+            controller.Dispose();
+        }
+
+        [Theory]
+        [MemberData(nameof(JsonMediaTypes))]
+        public async void SegmentControllerBodyJsonReturnsSuccess(string mediaTypeName)
+        {
+            // Arrange
+            const string article = "an-article-name";
+            var expectedResult = A.Fake<CurrentOpportunitiesSegmentModel>();
+            var dummyBodyViewModel = A.Dummy<BodyViewModel>();
+            dummyBodyViewModel.Data = A.Dummy<BodyDataViewModel>();
+
+            var controller = BuildSegmentController(mediaTypeName);
+            expectedResult.CanonicalName = article;
+
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).Returns(expectedResult);
+            A.CallTo(() => FakeMapper.Map<BodyViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(dummyBodyViewModel);
+
+            // Act
+            var result = await controller.Body(article).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeMapper.Map<BodyViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
+
+            var jsonResult = Assert.IsType<OkObjectResult>(result);
+            var model = Assert.IsAssignableFrom<BodyViewModel>(jsonResult.Value);
+
+            controller.Dispose();
+        }
+
+        [Theory]
+        [MemberData(nameof(InvalidMediaTypes))]
+        public async void SegmentControllerBodyReturnsNotAcceptable(string mediaTypeName)
+        {
+            // Arrange
+            const string article = "an-article-name";
+            var expectedResult = A.Fake<CurrentOpportunitiesSegmentModel>();
+            var dummyBodyViewModel = A.Dummy<BodyViewModel>();
+            dummyBodyViewModel.Data = A.Dummy<BodyDataViewModel>();
+
+            var controller = BuildSegmentController(mediaTypeName);
+
+            expectedResult.CanonicalName = article;
+
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).Returns(expectedResult);
+            A.CallTo(() => FakeMapper.Map<BodyViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(dummyBodyViewModel);
+
+            // Act
+            var result = await controller.Body(article).ConfigureAwait(false);
+
+            // Assert
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeMapper.Map<BodyViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
+
+            var statusResult = Assert.IsType<StatusCodeResult>(result);
+
+            A.Equals((int)HttpStatusCode.NotAcceptable, statusResult.StatusCode);
 
             controller.Dispose();
         }
@@ -47,13 +107,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             CurrentOpportunitiesSegmentModel expectedResult = null;
             var controller = BuildSegmentController(mediaTypeName);
 
-            A.CallTo(() => FakeCareerPathSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).Returns(expectedResult);
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).Returns(expectedResult);
 
             // Act
             var result = await controller.Body(article).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeCareerPathSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByNameAsync(A<string>.Ignored, A<bool>.Ignored)).MustHaveHappenedOnceExactly();
 
             var statusResult = Assert.IsType<NoContentResult>(result);
 

@@ -88,4 +88,3 @@ namespace DFC.App.JobProfile.CurrentOpportunities
         }
     }
 }
-

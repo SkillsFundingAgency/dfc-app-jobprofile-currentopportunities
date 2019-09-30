@@ -1,4 +1,5 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb
@@ -17,13 +19,16 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb
         private readonly CosmosDbConnection cosmosDbConnection;
         private readonly IDocumentClient documentClient;
 
-        public CosmosRepository(CosmosDbConnection cosmosDbConnection, IDocumentClient documentClient)
+        public CosmosRepository(CosmosDbConnection cosmosDbConnection, IDocumentClient documentClient, IHostingEnvironment env)
         {
             this.cosmosDbConnection = cosmosDbConnection;
             this.documentClient = documentClient;
 
-            CreateDatabaseIfNotExistsAsync().Wait();
-            CreateCollectionIfNotExistsAsync().Wait();
+            if (env.IsDevelopment())
+            {
+                CreateDatabaseIfNotExistsAsync().Wait();
+                CreateCollectionIfNotExistsAsync().Wait();
+            }
         }
 
         private Uri DocumentCollectionUri => UriFactory.CreateDocumentCollectionUri(cosmosDbConnection.DatabaseId, cosmosDbConnection.CollectionId);
@@ -66,23 +71,50 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb
             return default(T);
         }
 
-        private async Task CreateDatabaseIfNotExistsAsync()
+        public async Task<bool> PingAsync()
         {
-            try
+            var query = documentClient.CreateDocumentQuery<T>(DocumentCollectionUri, new FeedOptions { MaxItemCount = 1, EnableCrossPartitionQuery = true })
+                                        .AsDocumentQuery();
+
+            if (query == null)
             {
-                await documentClient.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(cosmosDbConnection.DatabaseId)).ConfigureAwait(false);
+                return false;
             }
-            catch (DocumentClientException e)
-            {
-                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    await documentClient.CreateDatabaseAsync(new Database { Id = cosmosDbConnection.DatabaseId }).ConfigureAwait(false);
-                }
-                else
-                {
-                    throw;
-                }
-            }
+
+            var models = await query.ExecuteNextAsync<T>().ConfigureAwait(false);
+            var firstModel = models.FirstOrDefault();
+
+            return firstModel != null;
+        }
+
+        public async Task<HttpStatusCode> CreateAsync(T model)
+        {
+            var result = await documentClient.CreateDocumentAsync(DocumentCollectionUri, model).ConfigureAwait(false);
+
+            return result.StatusCode;
+        }
+
+        public async Task<HttpStatusCode> UpdateAsync(Guid documentId, T model)
+        {
+            var documentUri = CreateDocumentUri(documentId);
+
+            var result = await documentClient.ReplaceDocumentAsync(documentUri, model).ConfigureAwait(false);
+
+            return result.StatusCode;
+        }
+
+        public async Task<HttpStatusCode> DeleteAsync(Guid documentId, int partitionKey)
+        {
+            var documentUri = CreateDocumentUri(documentId);
+
+            var result = await documentClient.DeleteDocumentAsync(documentUri, new RequestOptions { PartitionKey = new PartitionKey(partitionKey) }).ConfigureAwait(false);
+
+            return result.StatusCode;
+        }
+
+        private Uri CreateDocumentUri(Guid documentId)
+        {
+            return UriFactory.CreateDocumentUri(cosmosDbConnection.DatabaseId, cosmosDbConnection.CollectionId, documentId.ToString());
         }
 
         private async Task CreateCollectionIfNotExistsAsync()
@@ -112,9 +144,23 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb
             }
         }
 
-        private Uri CreateDocumentUri(Guid documentId)
+        private async Task CreateDatabaseIfNotExistsAsync()
         {
-            return UriFactory.CreateDocumentUri(cosmosDbConnection.DatabaseId, cosmosDbConnection.CollectionId, documentId.ToString());
+            try
+            {
+                await documentClient.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(cosmosDbConnection.DatabaseId)).ConfigureAwait(false);
+            }
+            catch (DocumentClientException e)
+            {
+                if (e.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    await documentClient.CreateDatabaseAsync(new Database { Id = cosmosDbConnection.DatabaseId }).ConfigureAwait(false);
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
     }
 }

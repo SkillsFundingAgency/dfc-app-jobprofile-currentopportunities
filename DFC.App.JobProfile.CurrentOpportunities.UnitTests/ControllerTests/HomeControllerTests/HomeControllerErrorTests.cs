@@ -21,7 +21,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Home
 
             // Assert
             var viewResult = Assert.IsType<ViewResult>(result);
-            var model = Assert.IsAssignableFrom<ErrorViewModel>(viewResult.ViewData.Model);
+            _ = Assert.IsAssignableFrom<ErrorViewModel>(viewResult.ViewData.Model);
 
             controller.Dispose();
         }
