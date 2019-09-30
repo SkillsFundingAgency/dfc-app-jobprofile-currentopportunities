@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DFC.App.JobProfile.CurrentOpportunities.AVService;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
@@ -21,6 +22,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
     {
         public const string CosmosDbConfigAppSettings = "Configuration:CosmosDbConnections:JobProfileSegment";
         public const string CousrseSearchConfigAppSettings = "Configuration:CourseSearch";
+        public const string AVAPIServiceAppSettings = "Configuration:AVAPIService";
 
         private readonly IConfiguration configuration;
 
@@ -44,8 +46,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             var documentClient = new DocumentClient(cosmosDbConnection.EndpointUrl, cosmosDbConnection.AccessKey);
 
             var courseSearchConfig = configuration.GetSection(CousrseSearchConfigAppSettings).Get<CourseSearchConfig>();
-
             services.AddSingleton(courseSearchConfig ?? new CourseSearchConfig());
+
+            var aVAPIServiceSettings = configuration.GetSection(AVAPIServiceAppSettings).Get<AVAPIServiceSettings>();
+            services.AddSingleton(aVAPIServiceSettings ?? new AVAPIServiceSettings());
+
             services.AddSingleton(cosmosDbConnection);
             services.AddSingleton<IDocumentClient>(documentClient);
             services.AddSingleton<ICosmosRepository<CurrentOpportunitiesSegmentModel>, CosmosRepository<CurrentOpportunitiesSegmentModel>>();
