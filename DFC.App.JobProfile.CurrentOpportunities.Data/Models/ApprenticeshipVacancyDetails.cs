@@ -2,7 +2,7 @@
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 {
-    public class ApprenticeshipVacancyDetails : BaseIntegrationModel
+    public class ApprenticeshipVacancyDetails
     {
         #region Feed Data
         public int VacancyReference { get; set; }

@@ -55,13 +55,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests
                 CourseKeywords = $"CousreKeyword{index}",
                 Apprenticeships = new List<Apprenticeship>()
                 {
-                    new Apprenticeship { ApprenticeshipId = $"1{index}", LocationPostCode = $"PC1{index}", LocationTown = $"Location1{index}", Title = $"Title1{index}", WageUnit = $"£10{index}", WageText = $"Per 1{index} days" },
-                    new Apprenticeship { ApprenticeshipId = $"2{index}", LocationPostCode = $"PC2{index}", LocationTown = $"Location2{index}", Title = $"Title2{index}", WageUnit = $"£10{index}", WageText = $"Per 2{index} days" },
+                    new Apprenticeship { ApprenticeshipId = $"1{index}", Location = new Location() { PostCode = $"PC1{index}", Town = $"Location1{index}" }, Title = $"Title1{index}", WageUnit = $"£10{index}", WageText = $"Per 1{index} days" },
+                    new Apprenticeship { ApprenticeshipId = $"2{index}", Location = new Location() { PostCode = $"PC2{index}", Town = $"Location2{index}" }, Title = $"Title2{index}", WageUnit = $"£10{index}", WageText = $"Per 2{index} days" },
                 },
                 Courses = new List<Course>()
                 {
-                    new Course() { CourseId = $"1{index}", Location = $"Location1{index}", Provider = $"Provider1{index}", Title = $"Title1{index}" },
-                    new Course() { CourseId = $"2{index}", Location = $"Location2{index}", Provider = $"Provider2{index}", Title = $"Title2{index}" },
+                    new Course() { CourseId = $"1{index}", Location = new Location() { PostCode = $"PC1{index}", Town = $"Location1{index}" }, Provider = $"Provider1{index}", Title = $"Title1{index}" },
+                    new Course() { CourseId = $"2{index}", Location = new Location() { PostCode = $"PC1{index}", Town = $"Location1{index}" }, Provider = $"Provider2{index}", Title = $"Title2{index}" },
                 },
             };
         }

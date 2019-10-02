@@ -109,9 +109,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
                 return BadRequest(ModelState);
             }
 
-            var existingCareerPathSegmentModel = await currentOpportunitiesSegmentService.GetByIdAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false);
+            var existingCurrentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByIdAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false);
 
-            if (existingCareerPathSegmentModel == null)
+            if (existingCurrentOpportunitiesSegmentModel == null)
             {
                 var createdResponse = await currentOpportunitiesSegmentService.CreateAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 

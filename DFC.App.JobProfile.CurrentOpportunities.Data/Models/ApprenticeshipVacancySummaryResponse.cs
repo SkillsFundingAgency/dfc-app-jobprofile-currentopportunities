@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DFC.Integration.AVFeed.Data.Models
+namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 {
     public class ApprenticeshipVacancySummaryResponse
     {

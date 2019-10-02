@@ -1,5 +1,7 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -9,40 +11,42 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
     public class ApprenticeshipVacancyApi : IApprenticeshipVacancyApi
     {
         private readonly ILogger<ApprenticeshipVacancyApi> logger;
-        private readonly IAuditService auditService;
+        private readonly ICosmosRepository<APIAuditRecord> auditRepository;
         private readonly AVAPIServiceSettings aVAPIServiceSettings;
+        private readonly HttpClient httpClient;
+        private readonly Guid correlationId;
 
-        public ApprenticeshipVacancyApi(ILogger<ApprenticeshipVacancyApi> logger, IAuditService auditService, AVAPIServiceSettings aVAPIServiceSettings)
+        public ApprenticeshipVacancyApi(ILogger<ApprenticeshipVacancyApi> logger, ICosmosRepository<APIAuditRecord> auditRepository,  AVAPIServiceSettings aVAPIServiceSettings, HttpClient httpClient)
         {
             this.logger = logger;
-            this.auditService = auditService;
-            this.aVAPIServiceSettings = aVAPIServiceSettings;
+            this.auditRepository = auditRepository;
+            this.aVAPIServiceSettings = aVAPIServiceSettings ?? throw new ArgumentNullException(nameof(aVAPIServiceSettings));
+            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+
+            this.httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", aVAPIServiceSettings.FAASubscriptionKey);
+            this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            correlationId = Guid.NewGuid();
         }
 
-        public async Task<string> GetAsync(string requestQueryString, RequestType requestType )
+        public async Task<string> GetAsync(string requestQueryString, RequestType requestType)
         {
-            using (var clientProxy = new HttpClient())
-            {
-                clientProxy.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", aVAPIServiceSettings.FAASubscriptionKey);
-                clientProxy.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));//ACCEPT header
-
-                var requestRoute = requestType == RequestType.search ? $"{requestType.ToString()}?" : string.Empty;
+                var requestRoute = requestType == RequestType.Search ? $"{requestType.ToString()}?" : string.Empty;
                 var fullRequest = $"{aVAPIServiceSettings.FAAEndPoint}/{requestRoute}{requestQueryString}";
                 logger.LogInformation($"Getting API data for request :'{fullRequest}'");
 
-                var response = await clientProxy.GetAsync(fullRequest).ConfigureAwait(false);
-                string responseContent = await response.Content?.ReadAsStringAsync();
-                await auditService.AuditAsync(responseContent, requestQueryString);
+                var response = await httpClient.GetAsync(new Uri(fullRequest)).ConfigureAwait(false);
+                string responseContent = await (response.Content?.ReadAsStringAsync()).ConfigureAwait(false);
+                await auditRepository.CreateAsync( new APIAuditRecord() {CorrelationId = correlationId, Request = fullRequest, Response = responseContent }).ConfigureAwait(false);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    logger.LogError($"Error status {response.StatusCode},  Getting API data for request :'{fullRequest}' \nResponse : {responseContent}", null );
+                    logger.LogError($"Error status {response.StatusCode},  Getting API data for request :'{fullRequest}' \nResponse : {responseContent}");
 
                     //this will throw an exception as is not a success code
                     response.EnsureSuccessStatusCode();
                 }
+
                 return responseContent;
             }
-        }
     }
 }

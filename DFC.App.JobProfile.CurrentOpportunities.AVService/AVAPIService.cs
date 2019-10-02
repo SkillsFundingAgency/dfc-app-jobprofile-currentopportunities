@@ -1,6 +1,5 @@
-﻿using DDFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
-using DFC.Integration.AVFeed.Data.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
@@ -11,7 +10,7 @@ using System.Web;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.AVService
 {
-    public class AVAPIService : IAVService
+    public class AVAPIService : IAVAPIService
     {
         private readonly IApprenticeshipVacancyApi apprenticeshipVacancyApi;
         private readonly ILogger<AVAPIService> logger;
@@ -25,35 +24,30 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
         }
 
 
-        public async Task<ApprenticeshipVacancyDetails> GetApprenticeshipVacancyDetailsAsync(string vacancyRef)
+        public async Task<ApprenticeshipVacancyDetails> GetApprenticeshipVacancyDetailsAsync(int vacancyRef)
         {
-            if (vacancyRef == null)
-            {
-                throw new ArgumentNullException(nameof(vacancyRef));
-            }
-
-            var responseResult = await apprenticeshipVacancyApi.GetAsync($"{vacancyRef}", RequestType.apprenticeships).ConfigureAwait(true);
+            var responseResult = await apprenticeshipVacancyApi.GetAsync($"{vacancyRef}", RequestType.Apprenticeships).ConfigureAwait(true);
             logger.LogInformation($"Got details for vacancy ref : {vacancyRef}");
             return JsonConvert.DeserializeObject<ApprenticeshipVacancyDetails>(responseResult);
         }
 
-        public async Task<IEnumerable<ApprenticeshipVacancySummary>> GetAVsForMultipleProvidersAsync(SocMapping mapping)
+        public async Task<IEnumerable<ApprenticeshipVacancySummary>> GetAVsForMultipleProvidersAsync(AVMapping mapping)
         {
             if (mapping == null)
             {
-                throw new ArgumentNullException(nameof(SocMapping));
+                throw new ArgumentNullException(nameof(mapping));
             }
 
             List<ApprenticeshipVacancySummary> avSummary = new List<ApprenticeshipVacancySummary>();
 
             var pageNumber = 0;
-  
+
             logger.LogInformation($"Getting vacancies for mapping {JsonConvert.SerializeObject(mapping)}");
 
             //Allways break after a given number off loops
             while (aVAPIServiceSettings.FAAMaxPagesToTryPerMapping > pageNumber)
             {
-                var apprenticeshipVacancySummaryResponse = await GetAVSumaryPageAsync(mapping, ++pageNumber);
+                var apprenticeshipVacancySummaryResponse = await GetAVSumaryPageAsync(mapping, ++pageNumber).ConfigureAwait(false);
 
                 logger.LogInformation($"Got {apprenticeshipVacancySummaryResponse.TotalReturned} vacancies of {apprenticeshipVacancySummaryResponse.TotalMatched} on page: {pageNumber} of {apprenticeshipVacancySummaryResponse.TotalPages}");
 
@@ -70,31 +64,34 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
             return avSummary;
         }
 
-        public async Task<ApprenticeshipVacancySummaryResponse> GetAVSumaryPageAsync(SocMapping mapping, int pageNumber)
+        public async Task<ApprenticeshipVacancySummaryResponse> GetAVSumaryPageAsync(AVMapping mapping, int pageNumber)
         {
             if (mapping == null)
             {
-                throw new ArgumentNullException(nameof(SocMapping));
+                throw new ArgumentNullException(nameof(mapping));
             }
 
-            logger.LogInformation($"Extracting AV summaries for SOC {mapping.SocCode} page : {pageNumber}");
+            logger.LogInformation($"Extracting AV summaries for Standards = {mapping.Frameworks} Frameworks = {mapping.Standards} page : {pageNumber}");
 
             var queryString = HttpUtility.ParseQueryString(string.Empty);
 
-            queryString["standardLarsCodes"] = string.Join(",", mapping.Standards);
-            queryString["frameworkLarsCodes"] = string.Join(",", mapping.Frameworks);
+            if (mapping.Standards != null)
+            {
+                queryString["standardLarsCodes"] = string.Join(",", mapping.Standards);
+            }
+
+            if (mapping.Frameworks != null)
+            {
+                queryString["frameworkLarsCodes"] = string.Join(",", mapping.Frameworks);
+            }
+
             queryString["pageSize"] = $"{aVAPIServiceSettings.FAAPageSize}";
             queryString["pageNumber"] = $"{pageNumber}";
             queryString["sortBy"] = aVAPIServiceSettings.FAASortBy;
 
-            var responseResult = await apprenticeshipVacancyApi.GetAsync(queryString.ToString(), RequestType.search).ConfigureAwait(false);
+            var responseResult = await apprenticeshipVacancyApi.GetAsync(queryString.ToString(), RequestType.Search).ConfigureAwait(false);
 
             return JsonConvert.DeserializeObject<ApprenticeshipVacancySummaryResponse>(responseResult);
-        }
-
-        Task<ApprenticeshipVacancySummaryResponse> IAVService.GetAVSumaryPageAsync(SocMapping mapping, int pageNumber)
-        {
-            throw new NotImplementedException();
         }
     }
 }

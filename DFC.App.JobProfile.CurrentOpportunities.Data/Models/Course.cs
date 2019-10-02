@@ -13,6 +13,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 
         public string StartDate { get; set; }
 
-        public string Location { get; set; }
+        public Location Location { get; set; }
     }
 }
