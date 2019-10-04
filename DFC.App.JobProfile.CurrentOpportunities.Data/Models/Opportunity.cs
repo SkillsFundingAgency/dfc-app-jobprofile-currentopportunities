@@ -3,7 +3,7 @@ using System;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 {
-    public class Course : IDataModel
+    public class Opportunity
     {
         public string Title { get; set; }
 
@@ -14,5 +14,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
         public string StartDate { get; set; }
 
         public Location Location { get; set; }
+
+        public Uri URL { get; set; }
+
+        public DateTime PullDate { get; set; }
     }
 }

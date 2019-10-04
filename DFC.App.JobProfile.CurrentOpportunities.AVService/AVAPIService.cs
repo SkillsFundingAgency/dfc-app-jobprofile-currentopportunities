@@ -77,12 +77,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
 
             if (mapping.Standards != null)
             {
-                queryString["standardLarsCodes"] = string.Join(",", mapping.Standards);
+                queryString["standardLarsCodes"] = string.Join(",", mapping.Standards.Where(s => !string.IsNullOrEmpty(s)));
             }
 
             if (mapping.Frameworks != null)
             {
-                queryString["frameworkLarsCodes"] = string.Join(",", mapping.Frameworks);
+                queryString["frameworkLarsCodes"] = string.Join(",", mapping.Frameworks.Where(s => !string.IsNullOrEmpty(s)));
             }
 
             queryString["pageSize"] = $"{aVAPIServiceSettings.FAAPageSize}";

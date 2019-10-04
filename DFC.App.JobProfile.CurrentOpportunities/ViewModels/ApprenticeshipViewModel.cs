@@ -16,8 +16,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
 
         public string WageText { get; set; }
 
-        public string LocationTown { get; set; }
-
-        public string LocationPostCode { get; set; }
+        public LocationViewModel Location { get; set; }
     }
 }

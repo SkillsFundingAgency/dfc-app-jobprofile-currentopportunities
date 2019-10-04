@@ -9,43 +9,44 @@ using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.AVService
 {
-    public class AVCurrentOpportunatiesUpdate : IAVCurrentOpportunatiesUpdate
+    public class AVCurrentOpportuntiesRefresh : IAVCurrentOpportuntiesRefresh
     {
-        private readonly ILogger<AVCurrentOpportunatiesUpdate> logger;
+        private readonly ILogger<AVCurrentOpportuntiesRefresh> logger;
         private readonly ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService;
         private readonly IAVAPIService aVAPIService;
+        private readonly AutoMapper.IMapper mapper;
 
-        public AVCurrentOpportunatiesUpdate(ILogger<AVCurrentOpportunatiesUpdate> logger, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService, IAVAPIService aVAPIService)
+        public AVCurrentOpportuntiesRefresh(ILogger<AVCurrentOpportuntiesRefresh> logger, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService, IAVAPIService aVAPIService, AutoMapper.IMapper mapper)
         {
             this.logger = logger;
             this.currentOpportunitiesSegmentService = currentOpportunitiesSegmentService;
             this.aVAPIService = aVAPIService;
+            this.mapper = mapper;
         }
 
-        public async Task<bool> UpdateApprenticeshipVacanciesAsync(string article)
+        public async Task<bool> RefreshApprenticeshipVacanciesAsync(string article)
         {
-            logger.LogInformation($"{nameof(UpdateApprenticeshipVacanciesAsync)} has been called for article {article}");
+            logger.LogInformation($"{nameof(RefreshApprenticeshipVacanciesAsync)} has been called for article {article}");
 
-            var currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByNameAsync(article, false).ConfigureAwait(false);
+            CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByNameAsync(article, false).ConfigureAwait(false);
 
-            var aVMapping = new AVMapping() { Standards = currentOpportunitiesSegmentModel.Data.Standards , Frameworks = currentOpportunitiesSegmentModel.Data.Frameworks };
+            var aVMapping = new AVMapping() { Standards = currentOpportunitiesSegmentModel.Data.Apprenticeships.Standards, Frameworks = currentOpportunitiesSegmentModel.Data.Apprenticeships.Frameworks };
             var mappedVacancies = await aVAPIService.GetAVsForMultipleProvidersAsync(aVMapping).ConfigureAwait(false);
 
-            var apprenticeships = Enumerable.Empty<Apprenticeship>();
+            var projectedVacancies = ProjectVacanciesForSOC(mappedVacancies);
+            var vacancies = new List<Vacancy>();
 
-            foreach (var vacancy in mappedVacancies)
+            //projectedVacancies will contain at most 2 records
+            foreach (var vacancy in projectedVacancies)
             {
                 var projectedVacancyDetails = await aVAPIService.GetApprenticeshipVacancyDetailsAsync(vacancy.VacancyReference).ConfigureAwait(false);
-
+                vacancies.Add(mapper.Map<Vacancy>(projectedVacancyDetails));
+                logger.LogInformation($"{nameof(RefreshApprenticeshipVacanciesAsync)} added details for {vacancy.VacancyReference} to list");
             }
 
-        
+            currentOpportunitiesSegmentModel.Data.Apprenticeships.Vacancies = vacancies;
+            await currentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
-            //Read article
-            //Get vacancies
-            //Project vacancies
-            //get details
-            //update reacord
             return true;
         }
 

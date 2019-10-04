@@ -18,32 +18,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             this.draftCurrentOpportunitiesSegmentService = draftCurrentOpportunitiesSegmentService;
         }
 
-        public async Task<CurrentOpportunitiesSegmentModel> CreateAsync(CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel)
+        public async Task<bool> PingAsync()
         {
-            if (currentOpportunitiesSegmentModel == null)
-            {
-                throw new ArgumentNullException(nameof(currentOpportunitiesSegmentModel));
-            }
-
-            if (currentOpportunitiesSegmentModel.Data == null)
-            {
-                currentOpportunitiesSegmentModel.Data = new CurrentOpportunitiesSegmentDataModel();
-            }
-
-            currentOpportunitiesSegmentModel.Updated = DateTime.UtcNow;
-
-            var result = await repository.CreateAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
-
-            return result == HttpStatusCode.Created
-                ? await GetByIdAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false)
-                : null;
-        }
-
-        public async Task<bool> DeleteAsync(Guid documentId, int partitionKey)
-        {
-            var result = await repository.DeleteAsync(documentId, partitionKey).ConfigureAwait(false);
-
-            return result == HttpStatusCode.NoContent;
+            return await repository.PingAsync().ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<CurrentOpportunitiesSegmentModel>> GetAllAsync()
@@ -68,12 +45,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 : await repository.GetAsync(d => d.CanonicalName == canonicalName.ToLowerInvariant()).ConfigureAwait(false);
         }
 
-        public async Task<bool> PingAsync()
-        {
-            return await repository.PingAsync().ConfigureAwait(false);
-        }
-
-        public async Task<CurrentOpportunitiesSegmentModel> ReplaceAsync(CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel)
+        public async Task<HttpStatusCode> UpsertAsync(CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel)
         {
             if (currentOpportunitiesSegmentModel == null)
             {
@@ -85,13 +57,16 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 currentOpportunitiesSegmentModel.Data = new CurrentOpportunitiesSegmentDataModel();
             }
 
-            currentOpportunitiesSegmentModel.Updated = DateTime.UtcNow;
+            var result = await repository.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
-            var result = await repository.UpdateAsync(currentOpportunitiesSegmentModel.DocumentId, currentOpportunitiesSegmentModel).ConfigureAwait(false);
+            return result;
+        }
 
-            return result == HttpStatusCode.OK
-                ? await GetByIdAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false)
-                : null;
+        public async Task<bool> DeleteAsync(Guid documentId)
+        {
+            var result = await repository.DeleteAsync(documentId).ConfigureAwait(false);
+
+            return result == HttpStatusCode.NoContent;
         }
     }
 }

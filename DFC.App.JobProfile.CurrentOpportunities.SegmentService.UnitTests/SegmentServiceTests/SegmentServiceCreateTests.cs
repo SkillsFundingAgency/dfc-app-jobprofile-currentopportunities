@@ -31,14 +31,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             var careerPathSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
             var expectedResult = A.Fake<CurrentOpportunitiesSegmentModel>();
 
-            A.CallTo(() => repository.CreateAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.Created);
+            A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.Created);
             A.CallTo(() => repository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(expectedResult);
 
             // act
-            var result = currentOpportunitiesSegmentService.CreateAsync(careerPathSegmentModel).Result;
+            var result = currentOpportunitiesSegmentService.UpsertAsync(careerPathSegmentModel).Result;
 
             // assert
-            A.CallTo(() => repository.CreateAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => repository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.Equals(result, expectedResult);
         }
@@ -49,7 +49,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             // arrange
 
             // act
-            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await currentOpportunitiesSegmentService.CreateAsync(null).ConfigureAwait(false)).ConfigureAwait(false);
+            var exceptionResult = await Assert.ThrowsAsync<ArgumentNullException>(async () => await currentOpportunitiesSegmentService.UpsertAsync(null).ConfigureAwait(false)).ConfigureAwait(false);
 
             // assert
             Assert.Equal("Value cannot be null.\r\nParameter name: currentOpportunitiesSegmentModel", exceptionResult.Message);
@@ -62,13 +62,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             var createOrUdateCareerPathSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
             var expectedResult = A.Dummy<CurrentOpportunitiesSegmentModel>();
 
-            A.CallTo(() => repository.CreateAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.BadRequest);
+            A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.BadRequest);
 
             // act
-            var result = currentOpportunitiesSegmentService.CreateAsync(createOrUdateCareerPathSegmentModel).Result;
+            var result = currentOpportunitiesSegmentService.UpsertAsync(createOrUdateCareerPathSegmentModel).Result;
 
             // assert
-            A.CallTo(() => repository.CreateAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => repository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).MustNotHaveHappened();
             A.Equals(result, expectedResult);
         }
@@ -80,13 +80,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             var careerPathSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
             CurrentOpportunitiesSegmentModel expectedResult = null;
 
-            A.CallTo(() => repository.CreateAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.FailedDependency);
+            A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.FailedDependency);
 
             // act
-            var result = currentOpportunitiesSegmentService.CreateAsync(careerPathSegmentModel).Result;
+            var result = currentOpportunitiesSegmentService.UpsertAsync(careerPathSegmentModel).Result;
 
             // assert
-            A.CallTo(() => repository.CreateAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => repository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).MustNotHaveHappened();
             A.Equals(result, expectedResult);
         }

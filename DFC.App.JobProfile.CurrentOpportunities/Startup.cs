@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles;
 using DFC.App.JobProfile.CurrentOpportunities.AVService;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
@@ -64,7 +65,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
                 return new CosmosRepository<APIAuditRecord>(cosmosDbAuditConnection, documentClient, s.GetService<IHostingEnvironment>());
             });
 
-            services.AddScoped<IAVCurrentOpportunatiesUpdate, AVCurrentOpportunatiesUpdate>();
+            services.AddScoped<IAVCurrentOpportuntiesRefresh, AVCurrentOpportuntiesRefresh>();
             services.AddScoped<IAVAPIService, AVAPIService>();
             services.AddScoped<ICurrentOpportunitiesSegmentService, CurrentOpportunitiesSegmentService>();
             services.AddScoped<IDraftCurrentOpportunitiesSegmentService, DraftCurrentOpportunitiesSegmentService>();

@@ -10,19 +10,19 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
     public class AVFeedController : Controller
     {
         private readonly ILogger<AVFeedController> logger;
-        private readonly IAVCurrentOpportunatiesUpdate aVCurrentOpportunatiesUpdate;
+        private readonly IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh;
 
 
-        public AVFeedController(ILogger<AVFeedController> logger, IAVCurrentOpportunatiesUpdate aVCurrentOpportunatiesUpdate)
+        public AVFeedController(ILogger<AVFeedController> logger, IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh)
         {
             this.logger = logger;
-            this.aVCurrentOpportunatiesUpdate = aVCurrentOpportunatiesUpdate;
+            this.aVCurrentOpportunatiesRefresh = aVCurrentOpportunatiesRefresh;
         }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            await aVCurrentOpportunatiesUpdate.UpdateApprenticeshipVacanciesAsync("jobprofile1").ConfigureAwait(false);
+            await aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync("jobprofile1").ConfigureAwait(false);
             return Ok();
         }
     }
