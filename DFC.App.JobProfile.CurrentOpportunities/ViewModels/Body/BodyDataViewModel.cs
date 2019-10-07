@@ -9,11 +9,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
         public string JobTitle { get; set; }
 
         [Display(Name = "Apprenticeships")]
-        public IEnumerable<ApprenticeshipViewModel> Apprenticeships { get; set; }
+        public BodyApprenticeshipsViewModel Apprenticeships { get; set; }
 
         [Display(Name = "Courses")]
-        public IEnumerable<CourseViewModel> Courses { get; set; }
+        public BodyCoursesViewModel Courses { get; set; }
 
-        public Uri CourseSearchUrl { get; set; }
     }
 }

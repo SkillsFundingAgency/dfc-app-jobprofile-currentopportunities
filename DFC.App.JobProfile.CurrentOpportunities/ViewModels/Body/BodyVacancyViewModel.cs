@@ -6,19 +6,18 @@ using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
 {
-    public class CourseViewModel
+    public class BodyVacancyViewModel
     {
         public string Title { get; set; }
 
-        public string CourseId { get; set; }
+        public string ApprenticeshipId { get; set; }
 
-        [Display(Name = "Provider")]
-        public string Provider { get; set; }
+        public string WageUnit { get; set; }
 
-        [Display(Name = "Start Date")]
-        public DateTime StartDate { get; set; }
+        public string WageText { get; set; }
 
-        [Display(Name = "Location")]
         public LocationViewModel Location { get; set; }
+
+        public Uri URL { get; set; }
     }
 }

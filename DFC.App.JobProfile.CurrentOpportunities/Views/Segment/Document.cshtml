@@ -30,207 +30,255 @@
         </dl>
         <dl class="row">
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Created)
+                @Html.DisplayNameFor(model => model.LastReviewed)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Created)
+                @Html.DisplayFor(model => model.LastReviewed)
             </dd>
         </dl>
         <dl class="row">
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Updated)
+                @Html.DisplayNameFor(model => model.SocLevelTwo)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Updated)
+                @Html.DisplayFor(model => model.SocLevelTwo)
             </dd>
         </dl>
         <dl class="row">
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Data.JobTitle)
+                @Html.DisplayNameFor(model => model.PartitionKey)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Data.JobTitle)
+                @Html.DisplayFor(model => model.PartitionKey)
             </dd>
         </dl>
-        <dl class="row">
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Data.LastReviewed)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Data.LastReviewed)
-            </dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Data.Updated)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Data.Updated)
-            </dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Data.Standards)
-            </dt>
 
-            @foreach (var standard in Model.Data.Standards)
+        <h3>Data</h3>
+        <div style="margin-left:20px">
+            <dl class="row">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Data.JobTitle)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Data.JobTitle)
+                </dd>
+            </dl>
+
+            <dl class="row">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Data.TitlePrefix)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Data.TitlePrefix)
+                </dd>
+            </dl>
+
+            <dl class="row">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Data.LastReviewed)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Data.LastReviewed)
+                </dd>
+            </dl>
+        </div>
+        <div style="margin-left:40px">
+
+            <h3>Apprenticeships</h3>
+
+            <dl class="row">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Data.Apprenticeships.Standards)
+                </dt>
+
+                @foreach (var standard in Model.Data.Apprenticeships.Standards)
+                {
+                    <dd class="col-sm-1">
+                        @standard,
+                    </dd>
+                }
+            </dl>
+            <dl class="row">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Data.Apprenticeships.Frameworks)
+                </dt>
+
+                @foreach (var framework in Model.Data.Apprenticeships.Frameworks)
+                {
+                    <dd class="col-sm-1">
+                        @framework,
+                    </dd>
+                }
+            </dl>
+
+            @foreach (var apprenticeship in Model.Data.Apprenticeships.Vacancies)
             {
-                <dd class="col-sm-1">
-                    @standard
-                </dd>
+                <dl class="row">
+                    <dt class="col-sm-12">
+                        Apprenticeship
+                    </dt>
+                </dl>
+                <dl class="row">
+                    <dt class="col-sm-1">
+                    </dt>
+                    <dd class="col-sm-11">
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => apprenticeship.Title)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @apprenticeship.Title
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => apprenticeship.ApprenticeshipId)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @apprenticeship.ApprenticeshipId
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => apprenticeship.WageUnit)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @apprenticeship.WageUnit
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => apprenticeship.WageText)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @apprenticeship.WageText
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => apprenticeship.Location.Town)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @apprenticeship.Location.Town
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => apprenticeship.Location.PostCode)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @apprenticeship.Location.PostCode
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => apprenticeship.URL)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @apprenticeship.URL
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => apprenticeship.PullDate)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @apprenticeship.PullDate
+                            </dd>
+                        </dl>
+                    </dd>
+                </dl>
             }
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Data.Frameworks)
-            </dt>
+        </div>
 
-            @foreach (var framework in Model.Data.Frameworks)
+        <div style="margin-left:40px">
+
+            <h3>Courses</h3>
+
+            <dl class="row">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Data.Courses.CourseKeywords)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Data.Courses.CourseKeywords)
+                </dd>
+            </dl>
+
+            @foreach (var course in Model.Data.Courses.Opportunities)
             {
-                <dd class="col-sm-1">
-                    @framework
-                </dd>
+                <dl class="row">
+                    <dt class="col-sm-12">
+                        Course
+                    </dt>
+                </dl>
+                <dl class="row">
+                    <dt class="col-sm-1">
+                    </dt>
+                    <dd class="col-sm-11">
+                        <dl class="row">
+                            <dt class="col-sm-1">
+                                @Html.DisplayNameFor(model => course.Title)
+                            </dt>
+                            <dd class="col-sm-11">
+                                @course.Title
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-1">
+                                @Html.DisplayNameFor(model => course.CourseId)
+                            </dt>
+                            <dd class="col-sm-11">
+                                @course.CourseId
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-1">
+                                @Html.DisplayNameFor(model => course.Provider)
+                            </dt>
+                            <dd class="col-sm-11">
+                                @course.Provider
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-1">
+                                @Html.DisplayNameFor(model => course.StartDate)
+                            </dt>
+                            <dd class="col-sm-11">
+                                @course.StartDate
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-1">
+                                @Html.DisplayNameFor(model => course.Location.Town)
+                            </dt>
+                            <dd class="col-sm-11">
+                                @course.Location.Town
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-1">
+                                @Html.DisplayNameFor(model => course.Location.PostCode)
+                            </dt>
+                            <dd class="col-sm-11">
+                                @course.Location.PostCode
+                            </dd>
+                        </dl>
+                        <dl class="row">
+                            <dt class="col-sm-1">
+                                @Html.DisplayNameFor(model => course.PullDate)
+                            </dt>
+                            <dd class="col-sm-11">
+                                @course.PullDate
+                            </dd>
+                        </dl>
+                    </dd>
+                </dl>
             }
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.Data.CourseKeywords)
-            </dt>
-            <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.Data.CourseKeywords)
-            </dd>
-        </dl>
+            </div>
+        </div>
 
-        @foreach (var apprenticeship in Model.Data.Apprenticeships)
-        {
-            <dl class="row">
-                <dt class="col-sm-12">
-                    Apprenticeship
-                </dt>
-            </dl>
-            <dl class="row">
-                <dt class="col-sm-1">
-                </dt>
-                <dd class="col-sm-11">
-                    <dl class="row">
-                        <dt class="col-sm-2">
-                            @Html.DisplayNameFor(model => apprenticeship.Title)
-                        </dt>
-                        <dd class="col-sm-10">
-                            @apprenticeship.Title
-                        </dd>
-                    </dl>
-                    <dl class="row">
-                        <dt class="col-sm-2">
-                            @Html.DisplayNameFor(model => apprenticeship.ApprenticeshipId)
-                        </dt>
-                        <dd class="col-sm-10">
-                            @apprenticeship.ApprenticeshipId
-                        </dd>
-                    </dl>
-                    <dl class="row">
-                        <dt class="col-sm-2">
-                            @Html.DisplayNameFor(model => apprenticeship.WageUnit)
-                        </dt>
-                        <dd class="col-sm-10">
-                            @apprenticeship.WageUnit
-                        </dd>
-                    </dl>
-                    <dl class="row">
-                        <dt class="col-sm-2">
-                            @Html.DisplayNameFor(model => apprenticeship.WageText)
-                        </dt>
-                        <dd class="col-sm-10">
-                            @apprenticeship.WageText
-                        </dd>
-                    </dl>
-                    <dl class="row">
-                        <dt class="col-sm-2">
-                            @Html.DisplayNameFor(model => apprenticeship.Location.Town)
-                        </dt>
-                        <dd class="col-sm-10">
-                            @apprenticeship.Location.Town
-                        </dd>
-                    </dl>
-                    <dl class="row">
-                        <dt class="col-sm-2">
-                            @Html.DisplayNameFor(model => apprenticeship.Location.PostCode)
-                        </dt>
-                        <dd class="col-sm-10">
-                            @apprenticeship.Location.PostCode
-                        </dd>
-                    </dl>
-
-                </dd>
-            </dl>
-        }
-
-        @foreach (var course in Model.Data.Courses)
-        {
-            <dl class="row">
-                <dt class="col-sm-12">
-                    Course
-                </dt>
-            </dl>
-            <dl class="row">
-                <dt class="col-sm-1">
-                </dt>
-                <dd class="col-sm-11">
-                    <dl class="row">
-                        <dt class="col-sm-1">
-                            @Html.DisplayNameFor(model => course.Title)
-                        </dt>
-                        <dd class="col-sm-11">
-                            @course.Title
-                        </dd>
-                    </dl>
-                    <dl class="row">
-                        <dt class="col-sm-1">
-                            @Html.DisplayNameFor(model => course.CourseId)
-                        </dt>
-                        <dd class="col-sm-11">
-                            @course.CourseId
-                        </dd>
-                    </dl>
-                    <dl class="row">
-                        <dt class="col-sm-1">
-                            @Html.DisplayNameFor(model => course.Provider)
-                        </dt>
-                        <dd class="col-sm-11">
-                            @course.Provider
-                        </dd>
-                    </dl>
-                    <dl class="row">
-                        <dt class="col-sm-1">
-                            @Html.DisplayNameFor(model => course.StartDate)
-                        </dt>
-                        <dd class="col-sm-11">
-                            @course.StartDate
-                        </dd>
-                    </dl>
-                    <dl class="row">
-                        <dt class="col-sm-1">
-                            @Html.DisplayNameFor(model => course.Location.Town)
-                        </dt>
-                        <dd class="col-sm-11">
-                            @course.Location.Town
-                        </dd>
-                    </dl>
-                    <dl class="row">
-                        <dt class="col-sm-1">
-                            @Html.DisplayNameFor(model => course.Location.PostCode)
-                        </dt>
-                        <dd class="col-sm-11">
-                            @course.Location.PostCode
-                        </dd>
-                    </dl>
-                </dd>
-            </dl>
-        }
-    </div>
-
-    <div>
-        <a asp-action="Index">Back to List</a>
-    </div>
+        <div>
+            <a asp-action="Index">Back to List</a>
+        </div>
 </body>
 </html>

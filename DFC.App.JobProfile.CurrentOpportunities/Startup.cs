@@ -97,7 +97,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=AVFeed}/{action=Index}");
+                    template: "{controller=AVFeed}/{action=RefreshApprenticeships}");
 
                 //template: "{controller=Segment}/{action=Index}");
             });

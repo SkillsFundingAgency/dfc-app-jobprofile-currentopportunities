@@ -12,6 +12,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 
         public string JobTitle { get; set; }
 
+        public string TitlePrefix { get; set; }
+
         public Apprenticeships Apprenticeships { get; set; }
 
         public Courses Courses { get; set; }

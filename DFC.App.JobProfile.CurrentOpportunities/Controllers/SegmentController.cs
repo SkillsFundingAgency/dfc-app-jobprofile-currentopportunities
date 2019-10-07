@@ -81,7 +81,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             if (currentOpportunitiesSegmentModel != null)
             {
                 var viewModel = mapper.Map<BodyViewModel>(currentOpportunitiesSegmentModel);
-                viewModel.Data.CourseSearchUrl = courseSearchConfig.CourseSearchUrl;
+                viewModel.Data.Courses.CourseSearchUrl = courseSearchConfig.CourseSearchUrl;
                 logger.LogInformation($"{nameof(Body)} has succeeded for: {article}");
                 return this.NegotiateContentResult(viewModel, currentOpportunitiesSegmentModel.Data);
             }

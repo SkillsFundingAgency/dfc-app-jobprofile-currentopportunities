@@ -24,11 +24,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
             this.mapper = mapper;
         }
 
-        public async Task<bool> RefreshApprenticeshipVacanciesAsync(string article)
+        public async Task<int> RefreshApprenticeshipVacanciesAsync(Guid documentId)
         {
-            logger.LogInformation($"{nameof(RefreshApprenticeshipVacanciesAsync)} has been called for article {article}");
+            logger.LogInformation($"{nameof(RefreshApprenticeshipVacanciesAsync)} has been called for document {documentId}");
 
-            CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByNameAsync(article, false).ConfigureAwait(false);
+            CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByIdAsync(documentId).ConfigureAwait(false);
 
             var aVMapping = new AVMapping() { Standards = currentOpportunitiesSegmentModel.Data.Apprenticeships.Standards, Frameworks = currentOpportunitiesSegmentModel.Data.Apprenticeships.Frameworks };
             var mappedVacancies = await aVAPIService.GetAVsForMultipleProvidersAsync(aVMapping).ConfigureAwait(false);
@@ -47,12 +47,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
             currentOpportunitiesSegmentModel.Data.Apprenticeships.Vacancies = vacancies;
             await currentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
-            return true;
+            return vacancies.Count();
         }
 
         private IEnumerable<ApprenticeshipVacancySummary> ProjectVacanciesForSOC(IEnumerable<ApprenticeshipVacancySummary> mappedVacancies)
         {
-
             var projectedVacancies = Enumerable.Empty<ApprenticeshipVacancySummary>();
 
             //if none were found for SOC
