@@ -72,21 +72,21 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         }
 
         [HttpGet]
-        [Route("segment/{article}/contents")]
-        public async Task<IActionResult> Body(string article)
+        [Route("segment/{documentId}/contents")]
+        public async Task<IActionResult> Body(Guid documentId)
         {
-            logger.LogInformation($"{nameof(Body)} has been called with: {article}");
-            var currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByNameAsync(article, Request.IsDraftRequest()).ConfigureAwait(false);
+            logger.LogInformation($"{nameof(Body)} has been called with: {documentId}");
+            var currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByIdAsync(documentId).ConfigureAwait(false);
 
             if (currentOpportunitiesSegmentModel != null)
             {
                 var viewModel = mapper.Map<BodyViewModel>(currentOpportunitiesSegmentModel);
                 viewModel.Data.Courses.CourseSearchUrl = courseSearchConfig.CourseSearchUrl;
-                logger.LogInformation($"{nameof(Body)} has succeeded for: {article}");
-                return this.NegotiateContentResult(viewModel, currentOpportunitiesSegmentModel.Data);
+                logger.LogInformation($"{nameof(Body)} has succeeded for: {documentId}");
+                return this.NegotiateContentResult(viewModel, currentOpportunitiesSegmentModel);
             }
 
-            logger.LogWarning($"{nameof(Body)} has returned no content for: {article}");
+            logger.LogWarning($"{nameof(Body)} has returned no content for: {documentId}");
 
             return NoContent();
         }

@@ -25,26 +25,24 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         }
 
         [Fact]
-        public void CareerPathSegmentServiceCreateReturnsSuccessWhenSegmentCreated()
+        public void CurrentOpportunitiesSegementServiceCreateReturnsCreatedWhenSegmentCreated()
         {
             // arrange
             var careerPathSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
-            var expectedResult = A.Fake<CurrentOpportunitiesSegmentModel>();
+            var expectedResult = HttpStatusCode.Created;
 
             A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.Created);
-            A.CallTo(() => repository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(expectedResult);
 
             // act
             var result = currentOpportunitiesSegmentService.UpsertAsync(careerPathSegmentModel).Result;
 
             // assert
             A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => repository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.Equals(result, expectedResult);
         }
 
         [Fact]
-        public async Task CareerPathSegmentServiceCreateReturnsArgumentNullExceptionWhenNullIsUsedAsync()
+        public async Task CurrentOpportunitiesSegmentServiceCreateReturnsArgumentNullExceptionWhenNullIsUsedAsync()
         {
             // arrange
 
@@ -56,7 +54,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         }
 
         [Fact]
-        public void CareerPathSegmentServiceCreateReturnsNullWhenSegmentNotCreated()
+        public void CurrentOpportunitiesSegmentServiceCreateReturnsNullWhenSegmentNotCreated()
         {
             // arrange
             var createOrUdateCareerPathSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
@@ -74,7 +72,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         }
 
         [Fact]
-        public void CareerPathSegmentServiceCreateReturnsNullWhenMissingRepository()
+        public void CurrentOpportunitiesSegmentServiceCreateReturnsNullWhenMissingRepository()
         {
             // arrange
             var careerPathSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();

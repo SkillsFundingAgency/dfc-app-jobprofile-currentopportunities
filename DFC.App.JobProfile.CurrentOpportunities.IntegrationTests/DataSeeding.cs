@@ -39,6 +39,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests
                 DocumentId = documentId,
                 CanonicalName = canonicalName,
                 LastReviewed = created,
+                SocLevelTwo = $"0{dataIndex}",
                 Data = GetDummyCurrentOpportunitiesSegmentModel(dataIndex),
             };
         }
