@@ -11,13 +11,13 @@ using Xunit;
 namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.SegmentServiceTests
 {
     [Trait("Segment Service", "Create Tests")]
-    public class SegmentServiceCreateTests
+    public class SegmentServiceUpsertTests
     {
         private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
         private readonly IDraftCurrentOpportunitiesSegmentService draftCurrentOpportunitiesSegmentService;
         private readonly ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService;
 
-        public SegmentServiceCreateTests()
+        public SegmentServiceUpsertTests()
         {
             repository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
             draftCurrentOpportunitiesSegmentService = A.Fake<DraftCurrentOpportunitiesSegmentService>();

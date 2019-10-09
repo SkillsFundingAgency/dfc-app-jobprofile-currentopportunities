@@ -16,8 +16,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
     [Trait("Integration Tests", "Segment Controller Tests")]
     public class SegmentControllerRouteTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private const string DefaultArticleName = "segment-article";
-
         private readonly CustomWebApplicationFactory<Startup> factory;
 
         public SegmentControllerRouteTests(CustomWebApplicationFactory<Startup> factory)

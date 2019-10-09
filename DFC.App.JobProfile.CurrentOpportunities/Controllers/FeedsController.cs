@@ -9,13 +9,12 @@ using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
 {
-    public class AVFeedController : Controller
+    public class FeedsController : Controller
     {
-        private readonly ILogger<AVFeedController> logger;
+        private readonly ILogger<FeedsController> logger;
         private readonly IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh;
 
-
-        public AVFeedController(ILogger<AVFeedController> logger, IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh)
+        public FeedsController(ILogger<FeedsController> logger, IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh)
         {
             this.logger = logger;
             this.aVCurrentOpportunatiesRefresh = aVCurrentOpportunatiesRefresh;
@@ -25,17 +24,17 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         [Route("AVFeed/RefreshApprenticeships/{documentId}")]
         public async Task<IActionResult> RefreshApprenticeships(Guid documentId)
         {
-            var aVFeedRefreshResponseModel = new AVFeedRefreshResponseModel();
+            var feedRefreshResponseModel = new FeedRefreshResponseModel();
             try
             {
                 //catch any exception that the outgoing request may throw.
-                aVFeedRefreshResponseModel.NumberPulled = await aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(documentId).ConfigureAwait(false);
-                return Ok(aVFeedRefreshResponseModel);
+                feedRefreshResponseModel.NumberPulled = await aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(documentId).ConfigureAwait(false);
+                return Ok(feedRefreshResponseModel);
             }
             catch (HttpRequestException httpRequestException)
             {
-                aVFeedRefreshResponseModel.RequestErrorMessage = httpRequestException.Message;
-                return BadRequest(aVFeedRefreshResponseModel);
+                feedRefreshResponseModel.RequestErrorMessage = httpRequestException.Message;
+                return BadRequest(feedRefreshResponseModel);
             }
         }
     }

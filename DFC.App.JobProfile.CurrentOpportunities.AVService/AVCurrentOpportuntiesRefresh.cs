@@ -33,7 +33,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
             var aVMapping = new AVMapping() { Standards = currentOpportunitiesSegmentModel.Data.Apprenticeships.Standards, Frameworks = currentOpportunitiesSegmentModel.Data.Apprenticeships.Frameworks };
             var mappedVacancies = await aVAPIService.GetAVsForMultipleProvidersAsync(aVMapping).ConfigureAwait(false);
 
-            var projectedVacancies = ProjectVacanciesForSOC(mappedVacancies);
+            var projectedVacancies = ProjectVacanciesForProfile(mappedVacancies);
             var vacancies = new List<Vacancy>();
 
             //projectedVacancies will contain at most 2 records
@@ -50,7 +50,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
             return vacancies.Count();
         }
 
-        private IEnumerable<ApprenticeshipVacancySummary> ProjectVacanciesForSOC(IEnumerable<ApprenticeshipVacancySummary> mappedVacancies)
+        public IEnumerable<ApprenticeshipVacancySummary> ProjectVacanciesForProfile(IEnumerable<ApprenticeshipVacancySummary> mappedVacancies)
         {
             var projectedVacancies = Enumerable.Empty<ApprenticeshipVacancySummary>();
 

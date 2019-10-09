@@ -23,7 +23,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
             this.aVAPIServiceSettings = aVAPIServiceSettings;
         }
 
-
         public async Task<ApprenticeshipVacancyDetails> GetApprenticeshipVacancyDetailsAsync(int vacancyRef)
         {
             var responseResult = await apprenticeshipVacancyApi.GetAsync($"{vacancyRef}", RequestType.Apprenticeships).ConfigureAwait(true);
