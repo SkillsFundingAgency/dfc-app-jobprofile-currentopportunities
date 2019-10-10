@@ -73,7 +73,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
             }
             else
             {
-                //just have a single or no provider 
+                //just have a single or no provider
                 projection = mappedVacancies.Take(2);
             }
 

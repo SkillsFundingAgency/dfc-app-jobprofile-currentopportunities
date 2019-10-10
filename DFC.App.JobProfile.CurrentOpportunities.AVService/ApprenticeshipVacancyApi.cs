@@ -7,7 +7,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.AVService
-{ 
+{
     public class ApprenticeshipVacancyApi : IApprenticeshipVacancyApi
     {
         private readonly ILogger<ApprenticeshipVacancyApi> logger;
@@ -25,6 +25,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
 
             this.httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", aVAPIServiceSettings.FAASubscriptionKey);
             this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            this.httpClient.Timeout = TimeSpan.FromSeconds(aVAPIServiceSettings.RequestTimeOutSeconds);
             correlationId = Guid.NewGuid();
         }
 

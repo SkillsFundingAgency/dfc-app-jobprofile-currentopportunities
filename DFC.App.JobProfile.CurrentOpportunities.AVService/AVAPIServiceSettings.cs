@@ -15,5 +15,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
         public int FAAMaxPagesToTryPerMapping { get; set; }
 
         public string FAASortBy { get; set; }
+
+        public int RequestTimeOutSeconds { get; set; }
     }
 }

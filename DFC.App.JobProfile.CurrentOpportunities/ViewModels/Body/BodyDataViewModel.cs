@@ -13,6 +13,5 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
 
         [Display(Name = "Courses")]
         public BodyCoursesViewModel Courses { get; set; }
-
     }
 }

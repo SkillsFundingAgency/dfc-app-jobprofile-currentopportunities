@@ -15,6 +15,7 @@ using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
 using System;
 
 namespace DFC.App.JobProfile.CurrentOpportunities

@@ -45,8 +45,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
             CheckResultIsAsExpected(projectedVacancies, expectedNumberDisplayed);
         }
 
-        [Fact]
-        public void RefreshApprenticeshipVacanciesAsync()
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        [InlineData(2)]
+        public void RefreshApprenticeshipVacanciesAsync(int numberVacanciesFound)
         {
             //arrange
             var fakeLogger = A.Fake<ILogger<AVCurrentOpportuntiesRefresh>>();
@@ -60,14 +63,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
                 {
                     Apprenticeships = new Apprenticeships()
                     {
-                        Standards = new string [] { "S1" },
+                        Standards = new string[] { "S1" },
                         Frameworks = new string[] { "F1" },
                     },
                 },
             };
 
             A.CallTo(() => fakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).Returns(currentOpportunitiesSegmentModel);
-            A.CallTo(() => fakeAVAPIService.GetAVsForMultipleProvidersAsync(A<AVMapping>.Ignored)).Returns(GetTestVacanciesOnlyOneAvailable());
+            A.CallTo(() => fakeAVAPIService.GetAVsForMultipleProvidersAsync(A<AVMapping>.Ignored)).Returns(GetTestVacancies(numberVacanciesFound));
             A.CallTo(() => fakeAVAPIService.GetApprenticeshipVacancyDetailsAsync(A<int>.Ignored)).Returns(A.Dummy<ApprenticeshipVacancyDetails>());
             A.CallTo(() => fakeMapper.Map<Vacancy>(A<ApprenticeshipVacancyDetails>.Ignored)).Returns(A.Dummy<Vacancy>());
 
@@ -77,10 +80,18 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
             var result = aVCurrentOpportuntiesRefresh.RefreshApprenticeshipVacanciesAsync(A.Dummy<Guid>()).Result;
 
             //Asserts
-            result.Should().Be(1);
+            result.Should().Be(numberVacanciesFound);
             A.CallTo(() => fakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeAVAPIService.GetApprenticeshipVacancyDetailsAsync(A<int>.Ignored)).MustHaveHappened(1, Times.Exactly);
+            A.CallTo(() => fakeAVAPIService.GetApprenticeshipVacancyDetailsAsync(A<int>.Ignored)).MustHaveHappened(numberVacanciesFound, Times.Exactly);
             A.CallTo(() => fakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
+        }
+
+        private static IEnumerable<ApprenticeshipVacancySummary> GetTestVacancies(int numberToGet)
+        {
+            for (int ii = 0; ii < numberToGet; ii++)
+            {
+                yield return new ApprenticeshipVacancySummary() { TrainingProviderName = "Provider A", Title = "Displayed" };
+            }
         }
 
         private static IEnumerable<ApprenticeshipVacancySummary> GetTestVacanciesMultipeProvidersMoreThanTwo()
@@ -113,6 +124,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
                     v.Title.Should().Be("Displayed");
                 }
             }
+
             numberOfProjectedVacanices.Should().Be(expectedCount);
         }
 
