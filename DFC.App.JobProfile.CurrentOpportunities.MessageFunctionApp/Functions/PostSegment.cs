@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
 {
-
     public static class PostSegment
     {
         private static readonly string ThisClassPath = typeof(PostSegment).FullName;

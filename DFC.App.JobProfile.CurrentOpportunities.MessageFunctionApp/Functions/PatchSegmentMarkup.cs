@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
 {
-
     public static class PatchSegmentMarkup
     {
         private static readonly string ThisClassPath = typeof(PatchSegmentMarkup).FullName;
