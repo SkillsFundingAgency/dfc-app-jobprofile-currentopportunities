@@ -1,5 +1,4 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
-using System;
+﻿using System;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 {

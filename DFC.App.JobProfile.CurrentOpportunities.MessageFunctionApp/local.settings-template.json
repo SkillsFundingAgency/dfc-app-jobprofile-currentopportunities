@@ -1,0 +1,22 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "service-bus-connection-string": "[service bus connection string]",
+    "patch-segment-topic-name": "current-opportunities-segment-topic",
+    "patch-segment-subscription-name": "current-opportunities-patch",
+    "post-segment-topic-name": "current-opportunities-segment-topic",
+    "post-segment-subscription-name": "current-opportunities-post",
+    "delete-topic-name": "current-opportunities-delete-topic",
+    "delete-subscription-name": "current-opportunities-delete"
+  },
+  "CareerPathSegmentClientOptions": {
+    "Timeout": "00:00:30",
+    "BaseAddress": "https://localhost",
+    "GetEndpoint": "segment/{0}/contents",
+    "PatchEndpoint": "segment/{0}/content-type/markup",
+    "PostEndpoint": "segment",
+    "DeleteEndpoint": "segment/{0}"
+  }
+}
