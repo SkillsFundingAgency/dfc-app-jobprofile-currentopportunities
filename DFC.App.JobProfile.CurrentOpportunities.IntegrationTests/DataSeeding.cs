@@ -52,8 +52,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests
                 JobTitle = $"JobProfile{index}",
                 Apprenticeships = new Apprenticeships()
                 {
-                    Standards = new string[] { $"S1{index}", $"S2{index}" },
-                    Frameworks = new string[] { $"F1{index}", $"F2{index}" },
+                    Standards = new string[] { "25", "36" },   //Standards and frameworks should be valid or intergration tests will fail
+                    Frameworks = new string[] { string.Empty },
                     Vacancies = new List<Vacancy>()
                     {
                         new Vacancy { ApprenticeshipId = $"1{index}", Location = new Location() { PostCode = $"PC1{index}", Town = $"Location1{index}" }, Title = $"Title1{index}", WageUnit = $"£10{index}", WageText = $"Per 1{index} days" },

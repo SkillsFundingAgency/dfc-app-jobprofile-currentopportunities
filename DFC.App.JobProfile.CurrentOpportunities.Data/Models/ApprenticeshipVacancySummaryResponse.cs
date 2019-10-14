@@ -20,6 +20,5 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
         public string SortBy { get; set; }
 
         public IEnumerable<ApprenticeshipVacancySummary> Results { get; set; }
-
     }
 }

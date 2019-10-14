@@ -20,7 +20,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
         NoneAvailable,
     }
 
-    [Trait("AV Service", "Tests")]
+    [Trait("AVCurrentOpportuntiesRefresh", "Tests")]
     public class AVCurrentOpportuntiesRefreshTests
     {
         [Theory]

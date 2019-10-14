@@ -1,3 +1,5 @@
+using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using FakeItEasy;
 using FluentAssertions;
@@ -9,6 +11,7 @@ using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
 {
+    [Trait("AVAPI Service", "Tests")]
     public class AVAPIServiceTests
     {
         private ILogger<AVAPIService> fakeLogger;
@@ -100,7 +103,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
         }
 
         [Fact]
-        public async System.Threading.Tasks.Task GetApprenticeshipVacancyDetailsTestAsync()
+        public async Task GetApprenticeshipVacancyDetailsTestAsync()
         {
             //Arrange
             A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.Apprenticeships)).Returns(AVAPIDummyResponses.GetDummyApprenticeshipVacancyDetailsResponse());

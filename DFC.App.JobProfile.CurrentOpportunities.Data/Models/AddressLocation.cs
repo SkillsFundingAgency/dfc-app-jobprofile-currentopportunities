@@ -1,5 +1,4 @@
-﻿
-namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
+﻿namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 {
     public class AddressLocation
     {

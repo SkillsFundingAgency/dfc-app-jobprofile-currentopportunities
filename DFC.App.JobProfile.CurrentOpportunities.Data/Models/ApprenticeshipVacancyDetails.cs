@@ -92,5 +92,4 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 
         public int ResultPage { get; set; }
     }
-
 }

@@ -1,4 +1,5 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -67,6 +68,37 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             var result = await repository.DeleteAsync(documentId).ConfigureAwait(false);
 
             return result == HttpStatusCode.NoContent;
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "We want to catch any type of error for this health check and report it")]
+        public async Task<ServiceHealthStatus> GetCurrentHealthStatusAsync()
+        {
+            var serviceHealthStatus = new ServiceHealthStatus();
+            serviceHealthStatus.Service = typeof(CurrentOpportunitiesSegmentService).Namespace;
+            serviceHealthStatus.SubService = "Cosmos Document Store";
+            serviceHealthStatus.HealthServiceState = HealthServiceState.Red;
+            serviceHealthStatus.CheckParametersUsed = string.Empty;
+
+            try
+            {
+                var isHealthy = await PingAsync().ConfigureAwait(false);
+
+                if (isHealthy)
+                {
+                    serviceHealthStatus.Message = "Document store is available";
+                    serviceHealthStatus.HealthServiceState = HealthServiceState.Green;
+                }
+                else
+                {
+                    serviceHealthStatus.Message = "Ping has failed";
+                }
+            }
+            catch (Exception ex)
+            {
+                serviceHealthStatus.Message = $"Exception: {ex.Message}";
+            }
+
+            return serviceHealthStatus;
         }
     }
 }

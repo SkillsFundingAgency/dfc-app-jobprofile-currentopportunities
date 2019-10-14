@@ -1,4 +1,6 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -91,6 +93,30 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
             var responseResult = await apprenticeshipVacancyApi.GetAsync(queryString.ToString(), RequestType.Search).ConfigureAwait(false);
 
             return JsonConvert.DeserializeObject<ApprenticeshipVacancySummaryResponse>(responseResult);
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "We want to catch any type of error for this health check and report it")]
+        public async Task<ServiceHealthStatus> GetCurrentHealthStatusAsync()
+        {
+            var serviceHealthStatus = new ServiceHealthStatus();
+            serviceHealthStatus.Service = typeof(AVAPIService).Namespace;
+            serviceHealthStatus.SubService = "Apprenticeship API";
+            serviceHealthStatus.HealthServiceState = HealthServiceState.Red;
+            serviceHealthStatus.CheckParametersUsed = $"Parameters used - standards {aVAPIServiceSettings.StandardsForHealthCheck}";
+
+            try
+            {
+                //catch any exception that the outgoing request may throw.
+                var apprenticeshipVacancySummaryResponse = await GetAVSumaryPageAsync(new AVMapping { Standards = aVAPIServiceSettings.StandardsForHealthCheck.Split(',') }, 1).ConfigureAwait(false);
+                serviceHealthStatus.Message = "AV API is available";
+                serviceHealthStatus.HealthServiceState = HealthServiceState.Green;
+            }
+            catch (Exception ex)
+            {
+                serviceHealthStatus.Message = $"Exception: {ex.Message}";
+            }
+
+            return serviceHealthStatus;
         }
     }
 }

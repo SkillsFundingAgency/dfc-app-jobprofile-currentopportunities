@@ -1,3 +1,4 @@
+using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using FakeItEasy;
@@ -11,6 +12,7 @@ using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
 {
+    [Trait("Apprenticeship Vacancy Api", "Tests")]
     public class ApprenticeshipVacancyApiTests
     {
         private ILogger<ApprenticeshipVacancyApi> fakeLogger;

@@ -27,6 +27,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles
             CreateMap<Location, LocationViewModel>();
 
             CreateMap<CurrentOpportunitiesSegmentModel, IndexDocumentViewModel>();
+
+            CreateMap<ServiceHealthStatus, HealthItemViewModel>();
         }
     }
 }
