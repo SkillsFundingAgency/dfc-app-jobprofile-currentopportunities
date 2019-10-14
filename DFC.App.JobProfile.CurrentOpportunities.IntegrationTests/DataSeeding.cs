@@ -38,7 +38,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests
             {
                 DocumentId = documentId,
                 CanonicalName = canonicalName,
-                Created = created,
+                LastReviewed = created,
+                SocLevelTwo = $"0{dataIndex}",
                 Data = GetDummyCurrentOpportunitiesSegmentModel(dataIndex),
             };
         }
@@ -47,21 +48,26 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests
         {
             return new CurrentOpportunitiesSegmentDataModel()
             {
-                Updated = DateTime.UtcNow,
-                JobTitle = $"JobProfile{index}",
                 LastReviewed = DateTime.UtcNow,
-                Standards = new string[] { $"S1{index}", $"S2{index}" },
-                Frameworks = new string[] { $"F1{index}", $"F2{index}" },
-                CourseKeywords = $"CousreKeyword{index}",
-                Apprenticeships = new List<Apprenticeship>()
+                JobTitle = $"JobProfile{index}",
+                Apprenticeships = new Apprenticeships()
                 {
-                    new Apprenticeship { ApprenticeshipId = $"1{index}", LocationPostCode = $"PC1{index}", LocationTown = $"Location1{index}", Title = $"Title1{index}", WageUnit = $"£10{index}", WageText = $"Per 1{index} days" },
-                    new Apprenticeship { ApprenticeshipId = $"2{index}", LocationPostCode = $"PC2{index}", LocationTown = $"Location2{index}", Title = $"Title2{index}", WageUnit = $"£10{index}", WageText = $"Per 2{index} days" },
+                    Standards = new string[] { "25", "36" },   //Standards and frameworks should be valid or intergration tests will fail
+                    Frameworks = new string[] { string.Empty },
+                    Vacancies = new List<Vacancy>()
+                    {
+                        new Vacancy { ApprenticeshipId = $"1{index}", Location = new Location() { PostCode = $"PC1{index}", Town = $"Location1{index}" }, Title = $"Title1{index}", WageUnit = $"£10{index}", WageText = $"Per 1{index} days" },
+                        new Vacancy { ApprenticeshipId = $"2{index}", Location = new Location() { PostCode = $"PC2{index}", Town = $"Location2{index}" }, Title = $"Title2{index}", WageUnit = $"£10{index}", WageText = $"Per 2{index} days" },
+                    },
                 },
-                Courses = new List<Course>()
+                Courses = new Courses()
                 {
-                    new Course() { CourseId = $"1{index}", Location = $"Location1{index}", Provider = $"Provider1{index}", Title = $"Title1{index}" },
-                    new Course() { CourseId = $"2{index}", Location = $"Location2{index}", Provider = $"Provider2{index}", Title = $"Title2{index}" },
+                    CourseKeywords = $"CousreKeyword{index}",
+                    Opportunities = new List<Opportunity>()
+                    {
+                        new Opportunity() { CourseId = $"1{index}", Location = new Location() { PostCode = $"PC1{index}", Town = $"Location1{index}" }, Provider = $"Provider1{index}", Title = $"Title1{index}" },
+                        new Opportunity() { CourseId = $"2{index}", Location = new Location() { PostCode = $"PC1{index}", Town = $"Location1{index}" }, Provider = $"Provider2{index}", Title = $"Title2{index}" },
+                    },
                 },
             };
         }

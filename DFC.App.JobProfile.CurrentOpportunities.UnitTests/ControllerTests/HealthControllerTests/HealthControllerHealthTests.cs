@@ -1,4 +1,6 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
@@ -13,71 +15,31 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Heal
     [Trait("Health Controller", "Health Tests")]
     public class HealthControllerHealthTests : BaseHealthController
     {
-        [Fact]
-        public async void HealthControllerHealthReturnsSuccessWhenhealthy()
+        [Theory]
+        [InlineData (HealthServiceState.Green, HttpStatusCode.OK)]
+        [InlineData(HealthServiceState.Red, HttpStatusCode.BadGateway)]
+        public async void HealthControllerHealthReturnsSuccessWhenhealthy(HealthServiceState healthServiceState, HttpStatusCode expectedStatusCode)
         {
             // Arrange
-            bool expectedResult = true;
+            var returnedServiceHealthStatus = new ServiceHealthStatus() { HealthServiceState = healthServiceState };
             var controller = BuildHealthController(MediaTypeNames.Application.Json);
 
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.PingAsync()).Returns(expectedResult);
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetCurrentHealthStatusAsync()).Returns(returnedServiceHealthStatus);
+            A.CallTo(() => FakeAVAPIService.GetCurrentHealthStatusAsync()).Returns(returnedServiceHealthStatus);
 
             // Act
             var result = await controller.Health().ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.PingAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetCurrentHealthStatusAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeAVAPIService.GetCurrentHealthStatusAsync()).MustHaveHappenedOnceExactly();
 
-            var jsonResult = Assert.IsType<OkObjectResult>(result);
-            var model = Assert.IsAssignableFrom<HealthViewModel>(jsonResult.Value);
+            var statusResult = Assert.IsType<OkObjectResult>(result);
+            var model = Assert.IsAssignableFrom<HealthViewModel>(statusResult.Value);
 
-            model.HealthItems.Count.Should().BeGreaterThan(0);
-            model.HealthItems.First().Service.Should().NotBeNullOrWhiteSpace();
-            model.HealthItems.First().Message.Should().NotBeNullOrWhiteSpace();
+            A.Equals((int)expectedStatusCode, statusResult.StatusCode);
 
-            controller.Dispose();
-        }
-
-        [Fact]
-        public async void HealthControllerHealthReturnsServiceUnavailableWhenUnhealthy()
-        {
-            // Arrange
-            bool expectedResult = false;
-            var controller = BuildHealthController(MediaTypeNames.Application.Json);
-
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.PingAsync()).Returns(expectedResult);
-
-            // Act
-            var result = await controller.Health().ConfigureAwait(false);
-
-            // Assert
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.PingAsync()).MustHaveHappenedOnceExactly();
-
-            var statusResult = Assert.IsType<StatusCodeResult>(result);
-
-            A.Equals((int)HttpStatusCode.ServiceUnavailable, statusResult.StatusCode);
-
-            controller.Dispose();
-        }
-
-        [Fact]
-        public async void HealthControllerHealthReturnsServiceUnavailableWhenException()
-        {
-            // Arrange
-            var controller = BuildHealthController(MediaTypeNames.Application.Json);
-
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.PingAsync()).Throws<Exception>();
-
-            // Act
-            var result = await controller.Health().ConfigureAwait(false);
-
-            // Assert
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.PingAsync()).MustHaveHappenedOnceExactly();
-
-            var statusResult = Assert.IsType<StatusCodeResult>(result);
-
-            A.Equals((int)HttpStatusCode.ServiceUnavailable, statusResult.StatusCode);
-
+            model.HealthItems.Count.Should().Be(2);
             controller.Dispose();
         }
     }

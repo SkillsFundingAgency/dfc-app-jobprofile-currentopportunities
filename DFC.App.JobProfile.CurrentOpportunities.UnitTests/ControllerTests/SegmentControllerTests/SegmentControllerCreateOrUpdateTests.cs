@@ -16,23 +16,19 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
         {
             // Arrange
             var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
-            CurrentOpportunitiesSegmentModel existingCareerPathSegmentModel = null;
-            var createdCareerPathSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
             var controller = BuildSegmentController(mediaTypeName);
 
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).Returns(existingCareerPathSegmentModel);
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.CreateAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(createdCareerPathSegmentModel);
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.Created);
 
             // Act
             var result = await controller.CreateOrUpdate(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.CreateAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
 
-            var okResult = Assert.IsType<CreatedAtActionResult>(result);
+            var statusCodeResult = Assert.IsType<StatusCodeResult>(result);
 
-            A.Equals((int)HttpStatusCode.Created, okResult.StatusCode);
+            A.Equals((int)HttpStatusCode.OK, statusCodeResult.StatusCode);
 
             controller.Dispose();
         }
@@ -43,23 +39,19 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
         {
             // Arrange
             var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
-            var existingcareerPathSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
-            CurrentOpportunitiesSegmentModel updatedCareerPathSegmentModel = null;
             var controller = BuildSegmentController(mediaTypeName);
 
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).Returns(existingcareerPathSegmentModel);
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.ReplaceAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(updatedCareerPathSegmentModel);
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.OK);
 
             // Act
             var result = await controller.CreateOrUpdate(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.ReplaceAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
 
-            var okResult = Assert.IsType<OkObjectResult>(result);
+            var statusCodeResult = Assert.IsType<StatusCodeResult>(result);
 
-            A.Equals((int)HttpStatusCode.OK, okResult.StatusCode);
+            A.Equals((int)HttpStatusCode.OK, statusCodeResult.StatusCode);
 
             controller.Dispose();
         }

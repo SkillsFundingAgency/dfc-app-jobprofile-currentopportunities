@@ -1,4 +1,5 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -18,32 +19,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             this.draftCurrentOpportunitiesSegmentService = draftCurrentOpportunitiesSegmentService;
         }
 
-        public async Task<CurrentOpportunitiesSegmentModel> CreateAsync(CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel)
+        public async Task<bool> PingAsync()
         {
-            if (currentOpportunitiesSegmentModel == null)
-            {
-                throw new ArgumentNullException(nameof(currentOpportunitiesSegmentModel));
-            }
-
-            if (currentOpportunitiesSegmentModel.Data == null)
-            {
-                currentOpportunitiesSegmentModel.Data = new CurrentOpportunitiesSegmentDataModel();
-            }
-
-            currentOpportunitiesSegmentModel.Updated = DateTime.UtcNow;
-
-            var result = await repository.CreateAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
-
-            return result == HttpStatusCode.Created
-                ? await GetByIdAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false)
-                : null;
-        }
-
-        public async Task<bool> DeleteAsync(Guid documentId, int partitionKey)
-        {
-            var result = await repository.DeleteAsync(documentId, partitionKey).ConfigureAwait(false);
-
-            return result == HttpStatusCode.NoContent;
+            return await repository.PingAsync().ConfigureAwait(false);
         }
 
         public async Task<IEnumerable<CurrentOpportunitiesSegmentModel>> GetAllAsync()
@@ -68,12 +46,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 : await repository.GetAsync(d => d.CanonicalName == canonicalName.ToLowerInvariant()).ConfigureAwait(false);
         }
 
-        public async Task<bool> PingAsync()
-        {
-            return await repository.PingAsync().ConfigureAwait(false);
-        }
-
-        public async Task<CurrentOpportunitiesSegmentModel> ReplaceAsync(CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel)
+        public async Task<HttpStatusCode> UpsertAsync(CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel)
         {
             if (currentOpportunitiesSegmentModel == null)
             {
@@ -85,13 +58,47 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 currentOpportunitiesSegmentModel.Data = new CurrentOpportunitiesSegmentDataModel();
             }
 
-            currentOpportunitiesSegmentModel.Updated = DateTime.UtcNow;
+            var result = await repository.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
-            var result = await repository.UpdateAsync(currentOpportunitiesSegmentModel.DocumentId, currentOpportunitiesSegmentModel).ConfigureAwait(false);
+            return result;
+        }
 
-            return result == HttpStatusCode.OK
-                ? await GetByIdAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false)
-                : null;
+        public async Task<bool> DeleteAsync(Guid documentId)
+        {
+            var result = await repository.DeleteAsync(documentId).ConfigureAwait(false);
+
+            return result == HttpStatusCode.NoContent;
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "We want to catch any type of error for this health check and report it")]
+        public async Task<ServiceHealthStatus> GetCurrentHealthStatusAsync()
+        {
+            var serviceHealthStatus = new ServiceHealthStatus();
+            serviceHealthStatus.Service = typeof(CurrentOpportunitiesSegmentService).Namespace;
+            serviceHealthStatus.SubService = "Cosmos Document Store";
+            serviceHealthStatus.HealthServiceState = HealthServiceState.Red;
+            serviceHealthStatus.CheckParametersUsed = string.Empty;
+
+            try
+            {
+                var isHealthy = await PingAsync().ConfigureAwait(false);
+
+                if (isHealthy)
+                {
+                    serviceHealthStatus.Message = "Document store is available";
+                    serviceHealthStatus.HealthServiceState = HealthServiceState.Green;
+                }
+                else
+                {
+                    serviceHealthStatus.Message = "Ping has failed";
+                }
+            }
+            catch (Exception ex)
+            {
+                serviceHealthStatus.Message = $"Exception: {ex.Message}";
+            }
+
+            return serviceHealthStatus;
         }
     }
 }

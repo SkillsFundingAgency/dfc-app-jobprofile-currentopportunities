@@ -1,11 +1,13 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
 using DFC.App.JobProfile.CurrentOpportunities.Extensions;
 using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Net;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
@@ -14,46 +16,40 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
     {
         private readonly ILogger<HealthController> logger;
         private readonly ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService;
+        private readonly IAVAPIService aVAPIService;
+        private readonly AutoMapper.IMapper mapper;
 
-        public HealthController(ILogger<HealthController> logger, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService)
+        public HealthController(ILogger<HealthController> logger, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService, IAVAPIService aVAPIService, AutoMapper.IMapper mapper)
         {
             this.logger = logger;
             this.currentOpportunitiesSegmentService = currentOpportunitiesSegmentService;
+            this.aVAPIService = aVAPIService;
+            this.mapper = mapper;
         }
 
         [HttpGet]
         [Route("health")]
         public async Task<IActionResult> Health()
         {
-            string resourceName = typeof(Program).Namespace;
-            string message;
-
             logger.LogInformation($"{nameof(Health)} has been called");
 
-            try
+            var viewModel = new HealthViewModel() { HealthItems = new List<HealthItemViewModel>() };
+
+            viewModel.HealthItems.Add(mapper.Map<HealthItemViewModel>(await currentOpportunitiesSegmentService.GetCurrentHealthStatusAsync().ConfigureAwait(false)));
+            viewModel.HealthItems.Add(mapper.Map<HealthItemViewModel>(await aVAPIService.GetCurrentHealthStatusAsync().ConfigureAwait(false)));
+
+            foreach (var healthItem in viewModel.HealthItems)
             {
-                var isHealthy = await currentOpportunitiesSegmentService.PingAsync().ConfigureAwait(false);
-
-                if (isHealthy)
-                {
-                    message = "Document store is available";
-                    logger.LogInformation($"{nameof(Health)} responded with: {resourceName} - {message}");
-
-                    var viewModel = CreateHealthViewModel(resourceName, message);
-
-                    return this.NegotiateContentResult(viewModel);
-                }
-
-                message = $"Ping to {resourceName} has failed";
-                logger.LogError($"{nameof(Health)}: {message}");
-            }
-            catch (Exception ex)
-            {
-                message = $"{resourceName} exception: {ex.Message}";
-                logger.LogError(ex, $"{nameof(Health)}: {message}");
+                LogResponse(healthItem);
             }
 
-            return StatusCode((int)HttpStatusCode.ServiceUnavailable);
+            //if we have any state thats is not green
+            if (viewModel.HealthItems.Any(s => s.HealthServiceState != HealthServiceState.Green))
+            {
+                this.HttpContext.Response.StatusCode = 502;
+            }
+
+            return this.NegotiateContentResult(viewModel);
         }
 
         [HttpGet]
@@ -65,19 +61,17 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             return Ok();
         }
 
-        private static HealthViewModel CreateHealthViewModel(string resourceName, string message)
+        private void LogResponse(HealthItemViewModel healthItemViewModel)
         {
-            return new HealthViewModel
+            var message = $"{nameof(Health)} responded with: {healthItemViewModel.Service} - {healthItemViewModel.SubService} - {healthItemViewModel.HealthServiceState} - {healthItemViewModel.CheckParametersUsed} - {healthItemViewModel.Message}";
+            if (healthItemViewModel.HealthServiceState == HealthServiceState.Red)
             {
-                HealthItems = new List<HealthItemViewModel>
-                {
-                    new HealthItemViewModel
-                    {
-                        Service = resourceName,
-                        Message = message,
-                    },
-                },
-            };
+                logger.LogError(message);
+            }
+            else
+            {
+                logger.LogInformation(message);
+            }
         }
     }
 }

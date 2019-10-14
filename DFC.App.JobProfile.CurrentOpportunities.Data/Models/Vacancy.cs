@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 {
-    public class Apprenticeship : IDataModel
+    public class Vacancy
     {
         public string Title { get; set; }
 
@@ -14,8 +14,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 
         public string WageText { get; set; }
 
-        public string LocationTown { get; set; }
+        public Location Location { get; set; }
 
-        public string LocationPostCode { get; set; }
+        public Uri URL { get; set; }
+
+        public DateTime PullDate => DateTime.UtcNow;
     }
 }

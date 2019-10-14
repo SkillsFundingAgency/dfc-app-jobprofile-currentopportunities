@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
 {
-    public class CourseViewModel
+    public class BodyOpportunityViewModel
     {
         public string Title { get; set; }
 
@@ -19,6 +19,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
         public DateTime StartDate { get; set; }
 
         [Display(Name = "Location")]
-        public string Location { get; set; }
+        public LocationViewModel Location { get; set; }
     }
 }

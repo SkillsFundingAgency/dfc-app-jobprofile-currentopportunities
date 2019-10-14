@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles;
+using DFC.App.JobProfile.CurrentOpportunities.AVService;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
@@ -13,6 +15,7 @@ using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
 using System;
 
 namespace DFC.App.JobProfile.CurrentOpportunities
@@ -21,12 +24,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities
     {
         public const string CosmosDbConfigAppSettings = "Configuration:CosmosDbConnections:JobProfileSegment";
         public const string CousrseSearchConfigAppSettings = "Configuration:CourseSearch";
+        public const string AVAPIServiceAppSettings = "Configuration:AVAPIService";
+        public const string AVFeedAuditSettings = "Configuration:CosmosDbConnections:AVFeedAudit";
 
         private readonly IConfiguration configuration;
 
         public Startup(IConfiguration configuration)
         {
-           this.configuration = configuration;
+            this.configuration = configuration;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -39,19 +44,34 @@ namespace DFC.App.JobProfile.CurrentOpportunities
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            var cosmosDbConnection = configuration.GetSection(CosmosDbConfigAppSettings).Get<CosmosDbConnection>();
-
-            var documentClient = new DocumentClient(cosmosDbConnection.EndpointUrl, cosmosDbConnection.AccessKey);
-
             var courseSearchConfig = configuration.GetSection(CousrseSearchConfigAppSettings).Get<CourseSearchConfig>();
-
             services.AddSingleton(courseSearchConfig ?? new CourseSearchConfig());
-            services.AddSingleton(cosmosDbConnection);
-            services.AddSingleton<IDocumentClient>(documentClient);
-            services.AddSingleton<ICosmosRepository<CurrentOpportunitiesSegmentModel>, CosmosRepository<CurrentOpportunitiesSegmentModel>>();
+
+            var aVAPIServiceSettings = configuration.GetSection(AVAPIServiceAppSettings).Get<AVAPIServiceSettings>();
+            services.AddSingleton(aVAPIServiceSettings ?? new AVAPIServiceSettings());
+
+            services.AddSingleton<ICosmosRepository<CurrentOpportunitiesSegmentModel>, CosmosRepository<CurrentOpportunitiesSegmentModel>>(s =>
+            {
+                var cosmosDbConnection = configuration.GetSection(CosmosDbConfigAppSettings).Get<CosmosDbConnection>();
+                var documentClient = new DocumentClient(cosmosDbConnection.EndpointUrl, cosmosDbConnection.AccessKey);
+
+                return new CosmosRepository<CurrentOpportunitiesSegmentModel>(cosmosDbConnection, documentClient, s.GetService<IHostingEnvironment>());
+            });
+
+            services.AddSingleton<ICosmosRepository<APIAuditRecord>, CosmosRepository<APIAuditRecord>>(s =>
+            {
+                var cosmosDbAuditConnection = configuration.GetSection(AVFeedAuditSettings).Get<CosmosDbConnection>();
+                var documentClient = new DocumentClient(cosmosDbAuditConnection.EndpointUrl, cosmosDbAuditConnection.AccessKey);
+
+                return new CosmosRepository<APIAuditRecord>(cosmosDbAuditConnection, documentClient, s.GetService<IHostingEnvironment>());
+            });
+
+            services.AddScoped<IAVCurrentOpportuntiesRefresh, AVCurrentOpportuntiesRefresh>();
+            services.AddScoped<IAVAPIService, AVAPIService>();
             services.AddScoped<ICurrentOpportunitiesSegmentService, CurrentOpportunitiesSegmentService>();
             services.AddScoped<IDraftCurrentOpportunitiesSegmentService, DraftCurrentOpportunitiesSegmentService>();
             services.AddAutoMapper(typeof(Startup).Assembly);
+            services.AddHttpClient<IApprenticeshipVacancyApi, ApprenticeshipVacancyApi>();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -78,6 +98,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             {
                 routes.MapRoute(
                     name: "default",
+
+                    //template: "{controller=AVFeed}/{action=RefreshApprenticeships}");
                     template: "{controller=Segment}/{action=Index}");
             });
         }

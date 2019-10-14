@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
 {
-    public class ApprenticeshipViewModel
+    public class BodyVacancyViewModel
     {
         public string Title { get; set; }
 
@@ -16,8 +16,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
 
         public string WageText { get; set; }
 
-        public string LocationTown { get; set; }
+        public LocationViewModel Location { get; set; }
 
-        public string LocationPostCode { get; set; }
+        public Uri URL { get; set; }
     }
 }

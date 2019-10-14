@@ -4,7 +4,6 @@ using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Extensions;
 using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -73,21 +72,21 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         }
 
         [HttpGet]
-        [Route("segment/{article}/contents")]
-        public async Task<IActionResult> Body(string article)
+        [Route("segment/{documentId}/contents")]
+        public async Task<IActionResult> Body(Guid documentId)
         {
-            logger.LogInformation($"{nameof(Body)} has been called with: {article}");
-            var currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByNameAsync(article, Request.IsDraftRequest()).ConfigureAwait(false);
+            logger.LogInformation($"{nameof(Body)} has been called with: {documentId}");
+            var currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByIdAsync(documentId).ConfigureAwait(false);
 
             if (currentOpportunitiesSegmentModel != null)
             {
                 var viewModel = mapper.Map<BodyViewModel>(currentOpportunitiesSegmentModel);
-                viewModel.Data.CourseSearchUrl = courseSearchConfig.CourseSearchUrl;
-                logger.LogInformation($"{nameof(Body)} has succeeded for: {article}");
-                return this.NegotiateContentResult(viewModel, currentOpportunitiesSegmentModel.Data);
+                viewModel.Data.Courses.CourseSearchUrl = courseSearchConfig.CourseSearchUrl;
+                logger.LogInformation($"{nameof(Body)} has succeeded for: {documentId}");
+                return this.NegotiateContentResult(viewModel, currentOpportunitiesSegmentModel);
             }
 
-            logger.LogWarning($"{nameof(Body)} has returned no content for: {article}");
+            logger.LogWarning($"{nameof(Body)} has returned no content for: {documentId}");
 
             return NoContent();
         }
@@ -109,24 +108,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
                 return BadRequest(ModelState);
             }
 
-            var existingCareerPathSegmentModel = await currentOpportunitiesSegmentService.GetByIdAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false);
+            var response = await currentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
-            if (existingCareerPathSegmentModel == null)
-            {
-                var createdResponse = await currentOpportunitiesSegmentService.CreateAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
+            logger.LogInformation($"{nameof(CreateOrUpdate)} has upserted content for: {currentOpportunitiesSegmentModel.CanonicalName}");
 
-                logger.LogInformation($"{nameof(CreateOrUpdate)} has created content for: {currentOpportunitiesSegmentModel.CanonicalName}");
-
-                return new CreatedAtActionResult(nameof(Document), "Segment", new { article = createdResponse.CanonicalName }, createdResponse);
-            }
-            else
-            {
-                var updatedResponse = await currentOpportunitiesSegmentService.ReplaceAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
-
-                logger.LogInformation($"{nameof(CreateOrUpdate)} has updated content for: {currentOpportunitiesSegmentModel.CanonicalName}");
-
-                return new OkObjectResult(updatedResponse);
-            }
+            return new StatusCodeResult((int)response);
         }
 
         [HttpDelete]
@@ -144,7 +130,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
                 return NotFound();
             }
 
-            await currentOpportunitiesSegmentService.DeleteAsync(documentId, currentOpportunitiesSegmentModel.PartitionKey).ConfigureAwait(false);
+            await currentOpportunitiesSegmentService.DeleteAsync(documentId).ConfigureAwait(false);
 
             logger.LogInformation($"{nameof(Delete)} has deleted content for: {currentOpportunitiesSegmentModel.CanonicalName}");
 

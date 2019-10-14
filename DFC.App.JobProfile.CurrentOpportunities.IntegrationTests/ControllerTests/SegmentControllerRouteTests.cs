@@ -16,8 +16,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
     [Trait("Integration Tests", "Segment Controller Tests")]
     public class SegmentControllerRouteTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {
-        private const string DefaultArticleName = "segment-article";
-
         private readonly CustomWebApplicationFactory<Startup> factory;
 
         public SegmentControllerRouteTests(CustomWebApplicationFactory<Startup> factory)
@@ -29,9 +27,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
         public static IEnumerable<object[]> SegmentContentRouteData => new List<object[]>
         {
             new object[] { "/Segment", "text/html" },
-            new object[] { $"/Segment/{DefaultArticleName}", "text/html" },
-            new object[] { $"/Segment/{DefaultArticleName}/contents", "text/html" },
-            new object[] { $"/Segment/{DefaultArticleName}/contents", "application/json" },
+            new object[] { $"/Segment/{DataSeeding.DefaultArticleName}", "text/html" },
+            new object[] { $"/Segment/{DataSeeding.DefaultArticleGuid}/contents", "text/html" },
+            new object[] { $"/Segment/{DataSeeding.DefaultArticleGuid}/contents", "application/json" },
         };
 
         public static IEnumerable<object[]> MissingSegmentContentRouteData => new List<object[]>
@@ -46,7 +44,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
             // Arrange
             var uri = new Uri(url, UriKind.Relative);
             var client = factory.CreateClient();
-
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(acceptType));
 

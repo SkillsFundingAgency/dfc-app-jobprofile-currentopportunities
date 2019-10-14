@@ -1,4 +1,5 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Controllers;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
@@ -14,11 +15,19 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Heal
         {
             FakeCurrentOpportunitiesSegmentService = A.Fake<ICurrentOpportunitiesSegmentService>();
             FakeLogger = A.Fake<ILogger<HealthController>>();
+            FakeAVAPIService = A.Fake<IAVAPIService>();
+            FakeMapper = A.Fake<AutoMapper.IMapper>();
         }
 
         protected ICurrentOpportunitiesSegmentService FakeCurrentOpportunitiesSegmentService { get; }
 
         protected ILogger<HealthController> FakeLogger { get; }
+
+        protected IAVAPIService FakeAVAPIService { get; }
+
+        protected AVAPIServiceSettings AVAPIServiceSettings { get; }
+
+        protected AutoMapper.IMapper FakeMapper { get; }
 
         protected HealthController BuildHealthController(string mediaTypeName)
         {
@@ -26,7 +35,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Heal
 
             httpContext.Request.Headers[HeaderNames.Accept] = mediaTypeName;
 
-            var controller = new HealthController(FakeLogger, FakeCurrentOpportunitiesSegmentService)
+            var controller = new HealthController(FakeLogger, FakeCurrentOpportunitiesSegmentService, FakeAVAPIService, FakeMapper)
             {
                 ControllerContext = new ControllerContext()
                 {

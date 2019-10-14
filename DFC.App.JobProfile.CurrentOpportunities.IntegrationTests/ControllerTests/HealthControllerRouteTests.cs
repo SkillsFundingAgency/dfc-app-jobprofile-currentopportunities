@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Microsoft.Net.Http.Headers;
+using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -19,6 +22,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
 
         public static IEnumerable<object[]> HealthOkRouteData => new List<object[]>
         {
+            new object[] { "/health" },
             new object[] { "/health/ping" },
         };
 
@@ -29,7 +33,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
             // Arrange
             var uri = new Uri(url, UriKind.Relative);
             var client = factory.CreateClient();
-            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
 
             // Act
             var response = await client.GetAsync(uri).ConfigureAwait(false);
