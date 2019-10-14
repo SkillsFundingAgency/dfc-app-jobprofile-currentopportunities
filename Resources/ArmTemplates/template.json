@@ -67,11 +67,11 @@
         "cosmosDbDatabaseName": "dfc-app-jobprofiles",
         "cosmosDbEndpoint": "[concat('https://', parameters('cosmosDbName'), '.documents.azure.com:443/')]",
         "webAppName": "[concat(parameters('resourcePrefix'), '-as')]",
-        "mainTopicName": "jobprofiles-overview-segment-topic",
-        "postSubscriptionName": "jobprofiles-overview-post",
-        "patchSubscriptionName": "jobprofiles-overview-patch",
-        "deleteTopicName": "jobprofiles-overview-delete-topic",
-        "deleteSubscriptionName": "jobprofiles-overview-delete"
+        "mainTopicName": "jobprofile-currentopportunities-segment-topic",
+        "postSubscriptionName": "jobprofile-currentopportunities-post",
+        "patchSubscriptionName": "jobprofile-currentopportunities-patch",
+        "deleteTopicName": "jobprofile-currentopportunities-delete-topic",
+        "deleteSubscriptionName": "jobprofile-currentopportunities-delete"
     },
     "resources": [
         {
