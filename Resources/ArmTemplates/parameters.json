@@ -26,9 +26,6 @@
         "cosmosDbKey": {
             "value": "__appSharedCosmosPrimaryKey__"
         },
-        "cosmosDbResourceGroup": {
-            "value": "__appSharedResourceGroup__"
-        },
         "CourseSearchUrl": {
             "value": "__CourseSearchUrl__"
         },
@@ -37,6 +34,9 @@
         },
         "sharedAppServicePlanResourceGroup": {
             "value": "__appSharedResourceGroup__"
+        },
+        "sharedServiceBusNamespace": {
+            "value": "__appSharedServiceBusName__"
         },
         "cosmosDbCollectionName": {
             "value": "__cosmosDbCollectionName__"
