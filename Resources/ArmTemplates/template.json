@@ -75,7 +75,8 @@
         "functionAppInsightsName": "[concat(variables('functionAppName'), '-ai')]",
         "urlJobProfileCurrentOpportunities": "[toLower(concat('https://', variables('webAppName'), '.', parameters('appServiceDomain')))]",
         "cmsTopicName": "cms-messages",
-        "cmsSubscriptionName": "job-profile-metadata"
+        "cmsSubscriptionName": "job-profile-metadata",
+        "refreshTopicName": "job-profile-refresh"
     },
     "resources": [
         {
@@ -194,6 +195,14 @@
                             {
                                 "name": "Configuration__CourseSearch__CourseSearchUrl",
                                 "value": "[parameters('CourseSearchUrl')]"
+                            },
+                            {
+                                "name": "ServiceBusOptions__ServiceBusConnectionString",
+                                "value": "[listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.ServiceBus/namespaces/authorizationRules', parameters('appSharedServiceBusName'), 'ReadWrite'), '2017-04-01').primaryConnectionString]"
+                            },
+                            {
+                                "name": "ServiceBusOptions__topicName",
+                                "value": "[variables('refreshTopicName')]"
                             }
                         ]
                     }
