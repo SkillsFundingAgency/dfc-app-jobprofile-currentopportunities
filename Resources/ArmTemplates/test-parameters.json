@@ -20,6 +20,9 @@
         "CourseSearchUrl": {
             "value": "http://coursesearch.example.net"
         },
+        "Environment": {
+            "value": "FOO"
+        },
         "sharedAppServicePlanName": {
             "value": "dfc-dev-app-shared-asp"
         },
