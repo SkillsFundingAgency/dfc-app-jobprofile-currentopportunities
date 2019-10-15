@@ -46,6 +46,9 @@
         },
         "cosmosDbCollectionName": {
             "value": "__cosmosDbCollectionName__"
+        },
+        "cmsSubscriptionSqlFilter": {
+            "value": "__cmsSubscriptionSqlFilter__"
         }
     }
 }
