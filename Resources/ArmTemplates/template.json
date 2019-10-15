@@ -353,7 +353,7 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "appSharedServiceBusName": {
+                    "serviceBusNamespaceName": {
                         "value": "[parameters('appSharedServiceBusName')]"
                     },
                     "serviceBusTopicName": {
