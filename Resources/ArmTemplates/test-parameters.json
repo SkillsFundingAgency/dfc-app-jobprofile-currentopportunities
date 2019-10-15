@@ -23,6 +23,9 @@
         "sharedAppServicePlanName": {
             "value": "dfc-dev-app-shared-asp"
         },
+        "sharedAppServicePlanResourceGroup": {
+            "value": "dfc-dev-app-sharedresources-rg"
+        },
         "appSharedServiceBusName": {
             "value": "dfc-dev-app-sharedresources-ns"
         },
