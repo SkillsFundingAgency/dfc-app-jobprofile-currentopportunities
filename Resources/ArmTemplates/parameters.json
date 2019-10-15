@@ -2,8 +2,8 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "resourcePrefix": {
-            "value": "__resourcePrefix__"
+        "appServiceDomain": {
+            "value": "__appServiceDomain__"
         },
         "appSharedResourceGroup": {
             "value": "__appSharedResourceGroup__"
@@ -26,17 +26,23 @@
         "cosmosDbKey": {
             "value": "__appSharedCosmosPrimaryKey__"
         },
-        "cosmosDbResourceGroup": {
-            "value": "__appSharedResourceGroup__"
-        },
         "CourseSearchUrl": {
             "value": "__CourseSearchUrl__"
+        },
+        "environment": {
+            "value": "__ReleaseEnvironmentName__",
+            "metadata": {
+                "comment": "Bug in tokenisation task prevents referencing Release.EnvironmentName directly.  https://github.com/TotalALM/VSTS-Tasks/issues/29"
+            }
         },
         "sharedAppServicePlanName": {
             "value": "__sharedAppServicePlanName__"
         },
         "sharedAppServicePlanResourceGroup": {
             "value": "__appSharedResourceGroup__"
+        },
+        "appSharedServiceBusName": {
+            "value": "__appSharedServiceBusName__"
         },
         "cosmosDbCollectionName": {
             "value": "__cosmosDbCollectionName__"
