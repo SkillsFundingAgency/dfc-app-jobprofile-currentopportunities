@@ -59,6 +59,13 @@
         },
         "cosmosDbCollectionName": {
             "type": "string"
+        },
+        "cmsSubscriptionSqlFilter": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Filter to apply to subscription (no filter applied if left blank)"
+            }
         }
     },
     "variables": {
@@ -370,6 +377,9 @@
                     },
                     "serviceBusTopicSubscriptionName": {
                         "value": "[variables('cmsSubscriptionName')]"
+                    },
+                    "subscriptionSqlFilter": {
+                        "value": "[parameters('cmsSubscriptionSqlFilter')]"
                     }
                 }
             }
