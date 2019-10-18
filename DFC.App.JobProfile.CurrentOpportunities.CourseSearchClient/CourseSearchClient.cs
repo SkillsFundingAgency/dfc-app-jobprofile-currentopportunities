@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 using System.ServiceModel;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using DFC.App.FindACourseClient.Models.CosmosDb;
+using DFC.App.FindACourseClient.Contracts.CosmosDb;
+using Microsoft.Azure.Documents.Client;
+using DFC.App.FindACourseClient.Repository.CosmosDb;
+using System;
 
 namespace DFC.App.FindACourseClient
 {
@@ -13,12 +18,17 @@ namespace DFC.App.FindACourseClient
     {
         private readonly ILogger<CourseSearchClient> logger;
         private readonly CourseSearchClientSettings courseSearchClientSettings;
-        //private readonly ICosmosRepository<APIAuditRecordCourse> auditRepository;
+        private readonly ICosmosRepository<APIAuditRecordCourse> auditRepository;
 
         public CourseSearchClient(CourseSearchClientSettings courseSearchClientSettings, ILogger<CourseSearchClient> logger = null)
         {
             this.logger = logger;
             this.courseSearchClientSettings = courseSearchClientSettings;
+
+            var documentClient = new DocumentClient(courseSearchClientSettings.courseSearchAuditCosmosDbSettings.EndpointUrl, courseSearchClientSettings.courseSearchAuditCosmosDbSettings.AccessKey);
+
+            auditRepository =  new CosmosRepository<APIAuditRecordCourse>(courseSearchClientSettings.courseSearchAuditCosmosDbSettings, documentClient);
+            
         }
 
         public async Task<IEnumerable<CourseSumary>> GetCoursesAsync(string courseSearchKeywords)
@@ -39,6 +49,9 @@ namespace DFC.App.FindACourseClient
                 var courseListResult = await ((ServiceInterface)serviceInterfaceClient).CourseListAsync(request);
                 serviceInterfaceClient.Close();
                 success = true;
+
+                var auditRecord = new APIAuditRecordCourse() { DocumentId = Guid.NewGuid(), CorrelationId = Guid.NewGuid(), Request = request, Response = courseListResult };
+                await auditRepository.UpsertAsync(auditRecord).ConfigureAwait(false);
 
                 var convertedResults = courseListResult?.ConvertToCourse();
                 logger?.LogInformation($"{nameof(GetCoursesAsync)} has returned {convertedResults.Count()} courses for keywords {courseSearchKeywords} ");

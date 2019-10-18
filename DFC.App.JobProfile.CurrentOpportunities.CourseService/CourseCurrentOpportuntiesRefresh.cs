@@ -33,8 +33,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "We want to catch all errors that happen when we call the external API")]
-        public async Task<int> RefreshCoursesAsync(Guid documentId)
+        public async Task<FeedRefreshResponseModel> RefreshCoursesAsync(Guid documentId)
         {
+            var feedRefreshResponseModel = new FeedRefreshResponseModel() { NumberPulled = 0 };
+
             logger.LogInformation($"{nameof(RefreshCoursesAsync)} has been called for document {documentId}");
             CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByIdAsync(documentId).ConfigureAwait(false);
 
@@ -48,7 +50,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
             }
             catch (Exception ex)
             {
-                logger.LogError($"{nameof(RefreshCoursesAsync)} had error - {ex.Message} ");
+                var errorMessge = $"{nameof(RefreshCoursesAsync)} had error - {ex.Message}";
+                logger.LogError(errorMessge);
+                feedRefreshResponseModel.RequestErrorMessage = errorMessge;
+
                 courseSearchResults = Enumerable.Empty<CourseSumary>();
             }
 
@@ -64,7 +69,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
 
             currentOpportunitiesSegmentModel.Data.Courses.Opportunities = opportunities;
             await currentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
-            return selectedCourses.Count();
+            feedRefreshResponseModel.NumberPulled = selectedCourses.Count();
+            return feedRefreshResponseModel;
         }
 
         public IEnumerable<CourseSumary> SelectCoursesForJobProfile(IEnumerable<CourseSumary> courses)

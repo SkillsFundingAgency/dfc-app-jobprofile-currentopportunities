@@ -14,11 +14,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
     {
         private readonly ILogger<FeedsController> logger;
         private readonly ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh;
+        private readonly AutoMapper.IMapper mapper;
 
-        public CourseFeedController(ILogger<FeedsController> logger, ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh)
+        public CourseFeedController(ILogger<FeedsController> logger, ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh, AutoMapper.IMapper mapper)
         {
             this.logger = logger;
             this.courseCurrentOpportuntiesRefresh = courseCurrentOpportuntiesRefresh;
+            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -26,19 +28,21 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         public async Task<IActionResult> RefreshCourses(Guid documentId)
         {
             logger.LogInformation($"{nameof(RefreshCourses)} has been called with document Id {documentId}");
-            var feedRefreshResponseModel = new FeedRefreshResponseModel();
+            var feedRefreshResponseViewModel = new FeedRefreshResponseViewModel();
             try
             {
                 //catch any exception that the outgoing request may throw.
-                feedRefreshResponseModel.NumberPulled = await courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(documentId).ConfigureAwait(false);
-                logger.LogInformation($"Get courses has succeeded for: document {documentId} - Got {feedRefreshResponseModel.NumberPulled} courses");
-                return Ok(feedRefreshResponseModel);
+                var feedRefreshResponseModel = await courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(documentId).ConfigureAwait(false);
+                feedRefreshResponseViewModel = mapper.Map<FeedRefreshResponseViewModel>(feedRefreshResponseModel);
+
+                logger.LogInformation($"Get courses has succeeded for: document {documentId} - Got {feedRefreshResponseViewModel.NumberPulled} courses");
+                return Ok(feedRefreshResponseViewModel);
             }
             catch (HttpRequestException httpRequestException)
             {
-                feedRefreshResponseModel.RequestErrorMessage = httpRequestException.Message;
-                logger.LogError($"{nameof(RefreshCourses)} had exception when getting courses for document {documentId}, Exception - {feedRefreshResponseModel.RequestErrorMessage}");
-                return BadRequest(feedRefreshResponseModel);
+                feedRefreshResponseViewModel.RequestErrorMessage = httpRequestException.ToString();
+                logger.LogError($"{nameof(RefreshCourses)} had exception when getting courses for document {documentId}, Exception - {feedRefreshResponseViewModel.RequestErrorMessage}");
+                return BadRequest(feedRefreshResponseViewModel);
             }
         }
     }
