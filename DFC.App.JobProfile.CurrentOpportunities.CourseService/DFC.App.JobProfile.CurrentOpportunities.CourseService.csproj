@@ -10,11 +10,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.5.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.CourseSearchClient\DFC.App.JobProfile.CurrentOpportunities.CourseSearchClient.csproj" />
+    <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Data\DFC.App.JobProfile.CurrentOpportunities.Data.csproj" />
   </ItemGroup>
 
 </Project>

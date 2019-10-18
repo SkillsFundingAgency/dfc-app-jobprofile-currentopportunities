@@ -4,8 +4,6 @@ using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
 using System.Net;
 using System.Net.Mime;
 using Xunit;

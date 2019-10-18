@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
-using DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles;
+using DFC.App.FindACourseClient;
+using DFC.App.FindACourseClient.Contracts;
+using DFC.App.FindACourseClient.Models.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.AVService;
+using DFC.App.JobProfile.CurrentOpportunities.CourseService;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
@@ -11,21 +14,20 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Polly;
-using System;
 
 namespace DFC.App.JobProfile.CurrentOpportunities
 {
     public class Startup
     {
         public const string CosmosDbConfigAppSettings = "Configuration:CosmosDbConnections:JobProfileSegment";
-        public const string CousrseSearchConfigAppSettings = "Configuration:CourseSearch";
         public const string AVAPIServiceAppSettings = "Configuration:AVAPIService";
         public const string AVFeedAuditSettings = "Configuration:CosmosDbConnections:AVFeedAudit";
+        public const string CourseSearchAppSettings = "Configuration:CourseSearch";
+        public const string CourseSearchClientSvcSettings = "Configuration:CourseSearchClient:CourseSearchSvc";
+        public const string CourseSearchClientAuditSettings = "Configuration:CourseSearchClient:CosmosAuditConnection";
 
         private readonly IConfiguration configuration;
 
@@ -44,11 +46,20 @@ namespace DFC.App.JobProfile.CurrentOpportunities
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            var courseSearchConfig = configuration.GetSection(CousrseSearchConfigAppSettings).Get<CourseSearchConfig>();
-            services.AddSingleton(courseSearchConfig ?? new CourseSearchConfig());
+            var courseSearchClientSettings = new CourseSearchClientSettings
+            {
+                courseSearchSvcSettings = configuration.GetSection(CourseSearchClientSvcSettings).Get<CourseSearchSvcSettings>() ?? new CourseSearchSvcSettings(),
+                courseSearchAuditCosmosDbSettings = configuration.GetSection(CourseSearchClientAuditSettings).Get<CourseSearchAuditCosmosDbSettings>() ?? new CourseSearchAuditCosmosDbSettings(),
+            };
+            services.AddSingleton(courseSearchClientSettings);
 
             var aVAPIServiceSettings = configuration.GetSection(AVAPIServiceAppSettings).Get<AVAPIServiceSettings>();
             services.AddSingleton(aVAPIServiceSettings ?? new AVAPIServiceSettings());
+
+
+            var courseSearchSettings = configuration.GetSection(CourseSearchAppSettings).Get<CourseSearchSettings>();
+            services.AddSingleton(courseSearchSettings ?? new CourseSearchSettings());
+            services.AddSingleton<ICourseSearchClient, CourseSearchClient>();
 
             services.AddSingleton<ICosmosRepository<CurrentOpportunitiesSegmentModel>, CosmosRepository<CurrentOpportunitiesSegmentModel>>(s =>
             {
@@ -58,20 +69,23 @@ namespace DFC.App.JobProfile.CurrentOpportunities
                 return new CosmosRepository<CurrentOpportunitiesSegmentModel>(cosmosDbConnection, documentClient, s.GetService<IHostingEnvironment>());
             });
 
-            services.AddSingleton<ICosmosRepository<APIAuditRecord>, CosmosRepository<APIAuditRecord>>(s =>
+            services.AddSingleton<ICosmosRepository<APIAuditRecordAV>, CosmosRepository<APIAuditRecordAV>>(s =>
             {
                 var cosmosDbAuditConnection = configuration.GetSection(AVFeedAuditSettings).Get<CosmosDbConnection>();
                 var documentClient = new DocumentClient(cosmosDbAuditConnection.EndpointUrl, cosmosDbAuditConnection.AccessKey);
 
-                return new CosmosRepository<APIAuditRecord>(cosmosDbAuditConnection, documentClient, s.GetService<IHostingEnvironment>());
+                return new CosmosRepository<APIAuditRecordAV>(cosmosDbAuditConnection, documentClient, s.GetService<IHostingEnvironment>());
             });
 
+            services.AddScoped<ICourseCurrentOpportuntiesRefresh, CourseCurrentOpportuntiesRefresh>();
             services.AddScoped<IAVCurrentOpportuntiesRefresh, AVCurrentOpportuntiesRefresh>();
-            services.AddScoped<IAVAPIService, AVAPIService>();
             services.AddScoped<ICurrentOpportunitiesSegmentService, CurrentOpportunitiesSegmentService>();
             services.AddScoped<IDraftCurrentOpportunitiesSegmentService, DraftCurrentOpportunitiesSegmentService>();
             services.AddAutoMapper(typeof(Startup).Assembly);
+
             services.AddHttpClient<IApprenticeshipVacancyApi, ApprenticeshipVacancyApi>();
+            services.AddScoped<IAVAPIService, AVAPIService>();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 

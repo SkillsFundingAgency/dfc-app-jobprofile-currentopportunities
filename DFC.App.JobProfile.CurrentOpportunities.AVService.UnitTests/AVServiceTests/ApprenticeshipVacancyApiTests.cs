@@ -17,12 +17,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
     {
         private ILogger<ApprenticeshipVacancyApi> fakeLogger;
         private AVAPIServiceSettings aVAPIServiceSettings;
-        private ICosmosRepository<APIAuditRecord> fakeAuditRepository;
+        private ICosmosRepository<APIAuditRecordAV> fakeAuditRepository;
 
         public ApprenticeshipVacancyApiTests()
         {
             fakeLogger = A.Fake<ILogger<ApprenticeshipVacancyApi>>();
-            fakeAuditRepository = A.Fake<ICosmosRepository<APIAuditRecord>>();
+            fakeAuditRepository = A.Fake<ICosmosRepository<APIAuditRecordAV>>();
             aVAPIServiceSettings = new AVAPIServiceSettings() { FAAMaxPagesToTryPerMapping = 100, FAAEndPoint = "https://doesnotgoanywhere.com", RequestTimeOutSeconds = 10 };
         }
 
@@ -42,7 +42,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
                     var result = await apprenticeshipVacancyApi.GetAsync("fakeRequest", RequestType.Search).ConfigureAwait(false);
 
                     //Asserts
-                    A.CallTo(() => fakeAuditRepository.UpsertAsync(A<APIAuditRecord>.Ignored)).MustHaveHappened();
+                    A.CallTo(() => fakeAuditRepository.UpsertAsync(A<APIAuditRecordAV>.Ignored)).MustHaveHappened();
 
                     result.Should().Be("ExpectedResponse");
                 }
@@ -65,7 +65,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
                     f.Should().Throw<HttpRequestException>();
 
                     //Asserts
-                    A.CallTo(() => fakeAuditRepository.UpsertAsync(A<APIAuditRecord>.Ignored)).MustHaveHappened();
+                    A.CallTo(() => fakeAuditRepository.UpsertAsync(A<APIAuditRecordAV>.Ignored)).MustHaveHappened();
                 }
             }
         }

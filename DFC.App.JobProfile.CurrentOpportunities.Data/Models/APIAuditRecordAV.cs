@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 {
-    public class APIAuditRecord : IDataModel
+    public class APIAuditRecordAV : IDataModel
     {
         [Required]
         [JsonProperty(PropertyName = "id")]
