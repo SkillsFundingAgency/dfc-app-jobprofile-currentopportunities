@@ -82,7 +82,7 @@
         "functionAppInsightsName": "[concat(variables('functionAppName'), '-ai')]",
         "urlJobProfileCurrentOpportunities": "[toLower(concat('https://', variables('webAppName'), '.', parameters('appServiceDomain')))]",
         "cmsTopicName": "cms-messages",
-        "cmsSubscriptionName": "job-profile-metadata",
+        "cmsSubscriptionName": "job-profile-currentopportunities",
         "refreshTopicName": "job-profile-refresh"
     },
     "resources": [
