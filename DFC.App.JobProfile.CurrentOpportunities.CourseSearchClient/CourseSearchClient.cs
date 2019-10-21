@@ -20,15 +20,11 @@ namespace DFC.App.FindACourseClient
         private readonly CourseSearchClientSettings courseSearchClientSettings;
         private readonly ICosmosRepository<APIAuditRecordCourse> auditRepository;
 
-        public CourseSearchClient(CourseSearchClientSettings courseSearchClientSettings, ILogger<CourseSearchClient> logger = null)
+        public CourseSearchClient(CourseSearchClientSettings courseSearchClientSettings, ILogger<CourseSearchClient> logger = null, ICosmosRepository<APIAuditRecordCourse> auditRepository = null)
         {
             this.logger = logger;
             this.courseSearchClientSettings = courseSearchClientSettings;
-
-            var documentClient = new DocumentClient(courseSearchClientSettings.courseSearchAuditCosmosDbSettings.EndpointUrl, courseSearchClientSettings.courseSearchAuditCosmosDbSettings.AccessKey);
-
-            auditRepository =  new CosmosRepository<APIAuditRecordCourse>(courseSearchClientSettings.courseSearchAuditCosmosDbSettings, documentClient);
-            
+            this.auditRepository = auditRepository;
         }
 
         public async Task<IEnumerable<CourseSumary>> GetCoursesAsync(string courseSearchKeywords)
@@ -39,6 +35,10 @@ namespace DFC.App.FindACourseClient
 
             var binding = new BasicHttpsBinding(BasicHttpsSecurityMode.Transport);
             binding.Security.Transport.ClientCredentialType = HttpClientCredentialType.None;
+
+            //Used to initialize the OperationTimeout, which governs the whole process of sending a message, including receiving a reply message for a request/ reply service operation.
+            binding.SendTimeout = new TimeSpan(0, 0, 0, courseSearchClientSettings.courseSearchSvcSettings.RequestTimeOutSeconds);
+
             var endpoint = new EndpointAddress(courseSearchClientSettings.courseSearchSvcSettings.ServiceEndpoint);
             var factory = new ChannelFactory<ServiceInterface>(binding, endpoint);
             var serviceInterfaceClient = (IClientChannel)factory.CreateChannel();
@@ -50,8 +50,11 @@ namespace DFC.App.FindACourseClient
                 serviceInterfaceClient.Close();
                 success = true;
 
-                var auditRecord = new APIAuditRecordCourse() { DocumentId = Guid.NewGuid(), CorrelationId = Guid.NewGuid(), Request = request, Response = courseListResult };
-                await auditRepository.UpsertAsync(auditRecord).ConfigureAwait(false);
+                if (auditRepository != null)
+                {
+                    var auditRecord = new APIAuditRecordCourse() { DocumentId = Guid.NewGuid(), CorrelationId = Guid.NewGuid(), Request = request, Response = courseListResult };
+                    await auditRepository.UpsertAsync(auditRecord).ConfigureAwait(false);
+                }
 
                 var convertedResults = courseListResult?.ConvertToCourse();
                 logger?.LogInformation($"{nameof(GetCoursesAsync)} has returned {convertedResults.Count()} courses for keywords {courseSearchKeywords} ");

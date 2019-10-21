@@ -14,5 +14,7 @@ namespace DFC.App.FindACourseClient.Models.Configuration
 
         public string SearchPageSize { get; set; }
 
+        public int RequestTimeOutSeconds { get; set; }
+
     }
 }

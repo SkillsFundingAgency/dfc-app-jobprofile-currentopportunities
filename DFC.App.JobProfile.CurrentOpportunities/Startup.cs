@@ -46,20 +46,22 @@ namespace DFC.App.JobProfile.CurrentOpportunities
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            var courseSearchClientSettings = new CourseSearchClientSettings
-            {
-                courseSearchSvcSettings = configuration.GetSection(CourseSearchClientSvcSettings).Get<CourseSearchSvcSettings>() ?? new CourseSearchSvcSettings(),
-                courseSearchAuditCosmosDbSettings = configuration.GetSection(CourseSearchClientAuditSettings).Get<CourseSearchAuditCosmosDbSettings>() ?? new CourseSearchAuditCosmosDbSettings(),
-            };
-            services.AddSingleton(courseSearchClientSettings);
-
             var aVAPIServiceSettings = configuration.GetSection(AVAPIServiceAppSettings).Get<AVAPIServiceSettings>();
             services.AddSingleton(aVAPIServiceSettings ?? new AVAPIServiceSettings());
 
 
             var courseSearchSettings = configuration.GetSection(CourseSearchAppSettings).Get<CourseSearchSettings>();
             services.AddSingleton(courseSearchSettings ?? new CourseSearchSettings());
+
+
+            var courseSearchClientSettings = new CourseSearchClientSettings
+            {
+                courseSearchSvcSettings = configuration.GetSection(CourseSearchClientSvcSettings).Get<CourseSearchSvcSettings>() ?? new CourseSearchSvcSettings(),
+                courseSearchAuditCosmosDbSettings = configuration.GetSection(CourseSearchClientAuditSettings).Get<CourseSearchAuditCosmosDbSettings>() ?? new CourseSearchAuditCosmosDbSettings(),
+            };
+            services.AddSingleton(courseSearchClientSettings);
             services.AddSingleton<ICourseSearchClient, CourseSearchClient>();
+            services.AddFindACourseServices(courseSearchClientSettings);
 
             services.AddSingleton<ICosmosRepository<CurrentOpportunitiesSegmentModel>, CosmosRepository<CurrentOpportunitiesSegmentModel>>(s =>
             {
