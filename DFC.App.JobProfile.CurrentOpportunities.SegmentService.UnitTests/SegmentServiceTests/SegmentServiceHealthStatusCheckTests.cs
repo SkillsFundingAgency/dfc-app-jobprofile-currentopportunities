@@ -1,8 +1,8 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using FakeItEasy;
 using FluentAssertions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System;
 using System.Threading.Tasks;
 using Xunit;
@@ -14,36 +14,39 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
     public class SegmentServiceHealthStatusCheckTests
     {
 
-        [Fact]
-        public async Task GetCurrentHealthStatusAsyncTestAsync()
+        [Theory]
+        [InlineData(true, HealthStatus.Healthy)]
+        [InlineData(false, HealthStatus.Degraded)]
+        public async Task GetCurrentHealthStatusAsyncTestAsync(bool isHealthyResponse, HealthStatus expectedStatus)
         {
             // arrange
             var repository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
-            var expectedResult = true;
-            A.CallTo(() => repository.PingAsync()).Returns(expectedResult);
+            var dummyHealthCheckContext = A.Dummy<HealthCheckContext>();
+            A.CallTo(() => repository.PingAsync()).Returns(isHealthyResponse);
             var currentOpportunitiesSegmentService = new CurrentOpportunitiesSegmentService(repository, A.Fake<IDraftCurrentOpportunitiesSegmentService>());
 
             //Act
-            var serviceHealthStatus = await currentOpportunitiesSegmentService.GetCurrentHealthStatusAsync().ConfigureAwait(false);
+            var serviceHealthStatus = await currentOpportunitiesSegmentService.CheckHealthAsync(dummyHealthCheckContext).ConfigureAwait(false);
 
             //Asserts
-            serviceHealthStatus.HealthServiceState.Should().Be(HealthServiceState.Green);
+            serviceHealthStatus.Status.Should().Be(expectedStatus);
             A.CallTo(() => repository.PingAsync()).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
-        public async Task GetCurrentHealthStatusAsyncExceptionTestAsync()
+        public void GetCurrentHealthStatusAsyncExceptionTestAsync()
         {
             //Arrange
             var repository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
+            var dummyHealthCheckContext = A.Dummy<HealthCheckContext>();
             A.CallTo(() => repository.PingAsync()).Throws(new ApplicationException());
             var currentOpportunitiesSegmentService = new CurrentOpportunitiesSegmentService(repository, A.Fake<IDraftCurrentOpportunitiesSegmentService>());
 
             //Act
-            var serviceHealthStatus = await currentOpportunitiesSegmentService.GetCurrentHealthStatusAsync().ConfigureAwait(false);
+            Func<Task> serviceHealthStatus = async () => await currentOpportunitiesSegmentService.CheckHealthAsync(dummyHealthCheckContext).ConfigureAwait(false);
 
             //Asserts
-            serviceHealthStatus.HealthServiceState.Should().Be(HealthServiceState.Red);
+            serviceHealthStatus.Should().Throw<Exception>();
         }
     }
 }

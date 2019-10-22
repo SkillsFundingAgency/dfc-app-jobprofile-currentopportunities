@@ -11,12 +11,15 @@ namespace DFC.App.FindACourseClient.Models.Configuration
     {
         public static IServiceCollection AddFindACourseServices(this IServiceCollection services, CourseSearchClientSettings courseSearchClientSettings)
         {
-            services.AddSingleton<ICosmosRepository<APIAuditRecordCourse>, CosmosRepository<APIAuditRecordCourse>>(s =>
+            if (courseSearchClientSettings.courseSearchAuditCosmosDbSettings.DatabaseId != null)
             {
-                var cosmosDbAuditConnection = courseSearchClientSettings.courseSearchAuditCosmosDbSettings;
-                var documentClient = new DocumentClient(cosmosDbAuditConnection.EndpointUrl, cosmosDbAuditConnection.AccessKey);
-                return new CosmosRepository<APIAuditRecordCourse>(cosmosDbAuditConnection, documentClient);
-            });
+                services.AddSingleton<ICosmosRepository<APIAuditRecordCourse>, CosmosRepository<APIAuditRecordCourse>>(s =>
+                {
+                    var cosmosDbAuditConnection = courseSearchClientSettings.courseSearchAuditCosmosDbSettings;
+                    var documentClient = new DocumentClient(cosmosDbAuditConnection.EndpointUrl, cosmosDbAuditConnection.AccessKey);
+                    return new CosmosRepository<APIAuditRecordCourse>(cosmosDbAuditConnection, documentClient);
+                });
+            }
             return services;
         }
     }

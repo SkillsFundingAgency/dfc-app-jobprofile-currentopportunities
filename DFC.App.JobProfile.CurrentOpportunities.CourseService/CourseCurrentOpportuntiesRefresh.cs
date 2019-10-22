@@ -4,23 +4,24 @@ using DFC.App.FindACourseClient.Models.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
 {
-    public class CourseCurrentOpportuntiesRefresh : ICourseCurrentOpportuntiesRefresh
+    public class CourseCurrentOpportuntiesRefresh : ICourseCurrentOpportuntiesRefresh, IHealthCheck
     {
         private readonly ILogger<CourseCurrentOpportuntiesRefresh> logger;
         private readonly ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService;
         private readonly ICourseSearchClient courseSearch;
         private readonly AutoMapper.IMapper mapper;
         private readonly CourseSearchSettings courseSearchSettings;
-        private readonly Guid correlationId;
 
         public CourseCurrentOpportuntiesRefresh(ILogger<CourseCurrentOpportuntiesRefresh> logger, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService, ICourseSearchClient courseSearch, AutoMapper.IMapper mapper, CourseSearchSettings courseSearchSettings)
         {
@@ -29,7 +30,22 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
             this.courseSearch = courseSearch;
             this.mapper = mapper;
             this.courseSearchSettings = courseSearchSettings;
-            correlationId = Guid.NewGuid();
+        }
+
+        public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+        {
+            var description = $"{typeof(CourseCurrentOpportuntiesRefresh).Namespace} - SearchKeywords used [{courseSearchSettings.HealthCheckKeyWords}]";
+            logger.LogInformation($"{nameof(CheckHealthAsync)} has been called - service {description}");
+
+            var result = await courseSearch.GetCoursesAsync(courseSearchSettings.HealthCheckKeyWords).ConfigureAwait(false);
+            if (result.Any())
+            {
+                return HealthCheckResult.Healthy(description);
+            }
+            else
+            {
+                return HealthCheckResult.Degraded(description);
+            }
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "We want to catch all errors that happen when we call the external API")]
@@ -50,10 +66,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
             }
             catch (Exception ex)
             {
-                var errorMessge = $"{nameof(RefreshCoursesAsync)} had error - {ex.Message}";
-                logger.LogError(errorMessge);
+                var errorMessge = $"{nameof(RefreshCoursesAsync)} had error";
+                logger.LogError(ex, errorMessge);
                 feedRefreshResponseModel.RequestErrorMessage = errorMessge;
-
                 courseSearchResults = Enumerable.Empty<CourseSumary>();
             }
 

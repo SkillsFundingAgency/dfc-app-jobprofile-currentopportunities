@@ -13,6 +13,5 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Contracts
 
         Task<ApprenticeshipVacancySummaryResponse> GetAVSumaryPageAsync(AVMapping mapping, int pageNumber);
 
-        Task<ServiceHealthStatus> GetCurrentHealthStatusAsync();
     }
 }

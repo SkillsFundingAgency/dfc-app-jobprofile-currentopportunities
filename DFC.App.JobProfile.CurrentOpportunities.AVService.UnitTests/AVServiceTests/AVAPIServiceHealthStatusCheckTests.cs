@@ -1,9 +1,8 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using FakeItEasy;
 using FluentAssertions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
@@ -18,49 +17,51 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
         private ILogger<AVAPIService> fakeLogger;
         private AVAPIServiceSettings aVAPIServiceSettings;
         private IApprenticeshipVacancyApi fakeApprenticeshipVacancyApi;
-        private AutoMapper.IMapper fakeMapper;
-        private AVMapping aVMapping;
+        private HealthCheckContext dummyHealthCheckContext;
 
         public AVAPIServiceHealthStatusCheckTests()
         {
             fakeLogger = A.Fake<ILogger<AVAPIService>>();
             aVAPIServiceSettings = new AVAPIServiceSettings() { FAAMaxPagesToTryPerMapping = 100 };
             fakeApprenticeshipVacancyApi = A.Fake<IApprenticeshipVacancyApi>();
+            aVAPIServiceSettings.StandardsForHealthCheck = A.Dummy<string>();
+            dummyHealthCheckContext = A.Dummy<HealthCheckContext>();
         }
 
-        [Fact]
-        public async Task GetCurrentHealthStatusAsyncTestAsync()
+        [Theory]
+        [InlineData(5, HealthStatus.Healthy)]
+        [InlineData(0, HealthStatus.Degraded)]
+        public async Task GetCurrentHealthStatusAsyncTestAsync(int recordsToReturn, HealthStatus expectedStatus)
         {
             //Arrange
             var pageNumber = 1;
             var pageSize = 5;
             var returnDiffrentProvidersOnPage = 1;
-            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.Search)).Returns(AVAPIDummyResponses.GetDummyApprenticeshipVacancySummaryResponse(pageNumber, 50, pageSize, pageSize, returnDiffrentProvidersOnPage));
-
+            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.Search)).Returns(AVAPIDummyResponses.GetDummyApprenticeshipVacancySummaryResponse(pageNumber, pageSize, recordsToReturn, pageSize, returnDiffrentProvidersOnPage));
             aVAPIServiceSettings.StandardsForHealthCheck = A.Dummy<string>();
 
             var aVAPIService = new AVAPIService(fakeApprenticeshipVacancyApi, fakeLogger, aVAPIServiceSettings);
 
             //Act
-            var serviceHealthStatus = await aVAPIService.GetCurrentHealthStatusAsync().ConfigureAwait(false);
+            var serviceHealthStatus = await aVAPIService.CheckHealthAsync(dummyHealthCheckContext).ConfigureAwait(false);
 
             //Asserts
-            serviceHealthStatus.HealthServiceState.Should().Be(HealthServiceState.Green);
+            serviceHealthStatus.Status.Should().Be(expectedStatus);
             A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.Search)).MustHaveHappened();
         }
 
         [Fact]
-        public async Task GetCurrentHealthStatusAsyncExceptionTestAsync()
+        public void GetCurrentHealthStatusAsyncExceptionTestAsync()
         {
             //Arrange
             A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.Search)).Throws(new ApplicationException());
             var aVAPIService = new AVAPIService(fakeApprenticeshipVacancyApi, fakeLogger, aVAPIServiceSettings);
 
             //Act
-            var serviceHealthStatus = await aVAPIService.GetCurrentHealthStatusAsync().ConfigureAwait(false);
+            Func<Task> serviceHealthStatus = async () => await aVAPIService.CheckHealthAsync(dummyHealthCheckContext).ConfigureAwait(false);
 
             //Asserts
-            serviceHealthStatus.HealthServiceState.Should().Be(HealthServiceState.Red);
+            serviceHealthStatus.Should().Throw<Exception>();
         }
     }
 }

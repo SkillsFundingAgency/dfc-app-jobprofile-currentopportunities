@@ -1,18 +1,19 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.AVService
 {
-    public class AVAPIService : IAVAPIService
+    public class AVAPIService : IAVAPIService, IHealthCheck
     {
         private readonly IApprenticeshipVacancyApi apprenticeshipVacancyApi;
         private readonly ILogger<AVAPIService> logger;
@@ -95,28 +96,21 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
             return JsonConvert.DeserializeObject<ApprenticeshipVacancySummaryResponse>(responseResult);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "We want to catch any type of error for this health check and report it")]
-        public async Task<ServiceHealthStatus> GetCurrentHealthStatusAsync()
+        public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
-            var serviceHealthStatus = new ServiceHealthStatus();
-            serviceHealthStatus.Service = typeof(AVAPIService).Namespace;
-            serviceHealthStatus.SubService = "Apprenticeship API";
-            serviceHealthStatus.HealthServiceState = HealthServiceState.Red;
-            serviceHealthStatus.CheckParametersUsed = $"Parameters used - standards {aVAPIServiceSettings.StandardsForHealthCheck}";
+            var description = $"{typeof(AVAPIService).Namespace} - Mappings used standards[{aVAPIServiceSettings.StandardsForHealthCheck}]";
+            logger.LogInformation($"{nameof(CheckHealthAsync)} has been called - service {description}");
 
-            try
-            {
-                //catch any exception that the outgoing request may throw.
-                var apprenticeshipVacancySummaryResponse = await GetAVSumaryPageAsync(new AVMapping { Standards = aVAPIServiceSettings.StandardsForHealthCheck.Split(',') }, 1).ConfigureAwait(false);
-                serviceHealthStatus.Message = "AV API is available";
-                serviceHealthStatus.HealthServiceState = HealthServiceState.Green;
-            }
-            catch (Exception ex)
-            {
-                serviceHealthStatus.Message = $"Exception: {ex.Message}";
-            }
+            var apprenticeshipVacancySummaryResponse = await GetAVSumaryPageAsync(new AVMapping { Standards = aVAPIServiceSettings.StandardsForHealthCheck.Split(',') }, 1).ConfigureAwait(false);
 
-            return serviceHealthStatus;
+            if (apprenticeshipVacancySummaryResponse.Results.Any())
+            {
+                return HealthCheckResult.Healthy(description);
+            }
+            else
+            {
+                return HealthCheckResult.Degraded(description);
+            }
         }
     }
 }

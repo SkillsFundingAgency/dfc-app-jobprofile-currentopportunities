@@ -11,12 +11,17 @@ using DFC.App.JobProfile.CurrentOpportunities.DraftSegmentService;
 using DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb;
 using DFC.App.JobProfile.CurrentOpportunities.SegmentService;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Newtonsoft.Json;
+using System.Linq;
+using System.Net.Mime;
 
 namespace DFC.App.JobProfile.CurrentOpportunities
 {
@@ -88,6 +93,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             services.AddHttpClient<IApprenticeshipVacancyApi, ApprenticeshipVacancyApi>();
             services.AddScoped<IAVAPIService, AVAPIService>();
 
+            services.AddHealthChecks()
+            .AddCheck<CurrentOpportunitiesSegmentService>("Current Opportunities Segment Service") 
+            .AddCheck<CourseCurrentOpportuntiesRefresh>("Course Search")
+            .AddCheck<AVAPIService>("Apprenticeship Service");
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -110,12 +120,38 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
+            var healthCheckOptions = new HealthCheckOptions
+            {
+                ResponseWriter = async (c, r) =>
+                {
+                    c.Response.ContentType = MediaTypeNames.Application.Json;
+                    var result = JsonConvert.SerializeObject(
+                       new
+                       {
+                          checks = r.Entries.Select(e =>
+                          new
+                          {
+                            description = e.Value.Description,
+                            status = e.Value.Status.ToString(),
+                            responseTime = e.Value.Duration.TotalMilliseconds,
+                          }),
+                          totalResponseTime = r.TotalDuration.TotalMilliseconds,
+                       });
+                    await c.Response.WriteAsync(result).ConfigureAwait(false);
+                },
+                ResultStatusCodes =
+                {
+                    [HealthStatus.Healthy] = StatusCodes.Status200OK,
+                    [HealthStatus.Degraded] = StatusCodes.Status200OK,
+                    [HealthStatus.Unhealthy] = StatusCodes.Status502BadGateway,
+                },
+            };
+            app.UseHealthChecks("/health", healthCheckOptions);
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
-
-                    //template: "{controller=AVFeed}/{action=RefreshApprenticeships}");
                     template: "{controller=Segment}/{action=Index}");
             });
         }
