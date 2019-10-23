@@ -10,7 +10,7 @@ resources:
   - repository: dfc-devops
     type: github
     name: SkillsFundingAgency/dfc-devops
-    ref: refs/heads/NCSD-1983-FixedBuildStepTemplates
+    ref: refs/tags/v1.6.5
     endpoint: 'GitHub (ESFA)'
 
 jobs:
