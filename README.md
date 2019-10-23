@@ -25,6 +25,8 @@ Clone the project and open the solution in Visual Studio 2019.
 |-------|-------|
 |Sitefinity |Content management system |
 |Azure Cosmos DB | Document storage |
+|Find an Apprenticeship|API to extract available apprenticeships|
+|Find a Course|Service to search and extract courses|
 
 ## Local Config Files
 
@@ -39,7 +41,10 @@ Once you have cloned the public repo you need to rename the appsettings files by
 
 The project contains a number of "appsettings-template.json" files which contain sample appsettings for the web app and the integration test projects. To use these files, rename them to "appsettings.json" and edit and replace the configuration item values with values suitable for your environment.
 
-By default, the appsettings include a local Azure Cosmos Emulator configuration using the well known configuration values. These may be changed to suit your environment if you are not using the Azure Cosmos Emulator. In addition, Sitefinity configuration settings will need to be edited.
+By default, the appsettings include a local Azure Cosmos Emulator configuration using the well known configuration values. These may be changed to suit your environment if you are not using the Azure Cosmos Emulator. 
+In addition -
+
+### Sitefinity configuration settings will need to be edited.
 
 |File                                       |Setting                        |Example value                      |
 |------------------------------------------|------------------------------|----------------------------------|
@@ -51,6 +56,19 @@ By default, the appsettings include a local Azure Cosmos Emulator configuration 
 | appsettings.json     | SitefinityApi.Username           | < sitefinity username >             |
 | appsettings.json     | SitefinityApi.Password           | < sitefinity password >             |
 | appsettings.json     | SitefinityApi.Scopes             | < authentication protocol> OpenId   |
+
+### Course search client settings will need to be edited.
+
+|File                                       |Setting                        |Example value                      |
+|------------------------------------------|------------------------------|----------------------------------|
+| appsettings.json     | CourseSearchSvc.APIKey      | 55e116d6-2f64-47ae-b753-468ed36d7827 |
+
+### Apprenticeship API configuration settings will need to be edited.
+
+|File                                       |Setting                        |Example value                      |
+|------------------------------------------|------------------------------|----------------------------------|
+| appsettings.json     | AVAPIService.FAAEndPoint      |https://apprenticeships.gov.uk/apprenticeships  |
+| appsettings.json     | AVAPIService.FAASubscriptionKey      | 62cd0465d3e243b768ed87843bb4c5c3  |
 
 ## Running locally
 
