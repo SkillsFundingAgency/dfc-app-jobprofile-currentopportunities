@@ -8,6 +8,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 {
     public class APIAuditRecordAV : IDataModel
     {
+        public static DateTime AuditDateTime => DateTime.UtcNow;
+
         [Required]
         [JsonProperty(PropertyName = "id")]
         public Guid DocumentId { get; set; }
@@ -16,8 +18,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
         public string Etag { get; set; }
 
         public Guid CorrelationId { get; set; }
-
-        public DateTime AuditDateTime => DateTime.UtcNow;
 
         public string Request { get; set; }
 

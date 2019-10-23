@@ -42,7 +42,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         protected AutoMapper.IMapper FakeMapper { get; }
 
-
         protected SegmentController BuildSegmentController(string mediaTypeName)
         {
             var httpContext = new DefaultHttpContext();

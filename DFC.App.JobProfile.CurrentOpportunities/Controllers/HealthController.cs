@@ -7,9 +7,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
     public class HealthController : Controller
     {
         private readonly ILogger<HealthController> logger;
-        private readonly ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService;
-        private readonly IAVAPIService aVAPIService;
-        private readonly AutoMapper.IMapper mapper;
 
         public HealthController(ILogger<HealthController> logger)
         {

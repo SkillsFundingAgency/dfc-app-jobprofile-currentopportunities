@@ -12,6 +12,5 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Contracts
         Task<IEnumerable<ApprenticeshipVacancySummary>> GetAVsForMultipleProvidersAsync(AVMapping mapping);
 
         Task<ApprenticeshipVacancySummaryResponse> GetAVSumaryPageAsync(AVMapping mapping, int pageNumber);
-
     }
 }

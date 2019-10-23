@@ -4,7 +4,6 @@ using DFC.App.FindACourseClient.Models.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.CourseService;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
-using DFC.App.JobProfile.CurrentOpportunities.SegmentService;
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -13,7 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace DFC.App.JobProfile.CurrentOpportunities.DraftSegmentService.UnitTests
+namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
 {
     public enum Scenario
     {
@@ -27,12 +26,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.DraftSegmentService.UnitTests
     [Trait("Course Current Opportunties Refresh", "Course refresh for Jobprofiles tests")]
     public class CourseCurrentOpportuntiesRefreshTests
     {
-        private ILogger<CourseCurrentOpportuntiesRefresh> fakeLogger;
-        private ICurrentOpportunitiesSegmentService fakeCurrentOpportunitiesSegmentService;
-        private ICourseSearchClient fakeCourseSearchClient;
-        private AutoMapper.IMapper fakeMapper;
-        private CourseSearchSettings courseSearchSettings;
-        private CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel;
+        private readonly ILogger<CourseCurrentOpportuntiesRefresh> fakeLogger;
+        private readonly ICurrentOpportunitiesSegmentService fakeCurrentOpportunitiesSegmentService;
+        private readonly ICourseSearchClient fakeCourseSearchClient;
+        private readonly AutoMapper.IMapper fakeMapper;
+        private readonly CourseSearchSettings courseSearchSettings;
+        private readonly CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel;
 
         public CourseCurrentOpportuntiesRefreshTests()
         {
@@ -117,7 +116,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.DraftSegmentService.UnitTests
             //Asserts
             CheckResultIsAsExpected(projectedVacancies, expectedNumberDisplayed);
         }
-
 
         private static IEnumerable<CourseSumary> GetTestCourses(int numberToGet)
         {

@@ -54,10 +54,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             var aVAPIServiceSettings = configuration.GetSection(AVAPIServiceAppSettings).Get<AVAPIServiceSettings>();
             services.AddSingleton(aVAPIServiceSettings ?? new AVAPIServiceSettings());
 
-
             var courseSearchSettings = configuration.GetSection(CourseSearchAppSettings).Get<CourseSearchSettings>();
             services.AddSingleton(courseSearchSettings ?? new CourseSearchSettings());
-
 
             var courseSearchClientSettings = new CourseSearchClientSettings
             {
@@ -94,7 +92,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             services.AddScoped<IAVAPIService, AVAPIService>();
 
             services.AddHealthChecks()
-            .AddCheck<CurrentOpportunitiesSegmentService>("Current Opportunities Segment Service") 
+            .AddCheck<CurrentOpportunitiesSegmentService>("Current Opportunities Segment Service")
             .AddCheck<CourseCurrentOpportuntiesRefresh>("Course Search")
             .AddCheck<AVAPIService>("Apprenticeship Service");
 
