@@ -296,27 +296,27 @@
                                 "value": "[variables('cmsSubscriptionName')]"
                             },
                             {
-                                "name": "JobProfileCurrentOpportunitiesSegmentClientOptions__Timeout",
+                                "name": "CareerPathSegmentClientOptions__Timeout",
                                 "value": "00:00:10"
                             },
                             {
-                                "name": "JobProfileCurrentOpportunitiesSegmentClientOptions__BaseAddress",
+                                "name": "CareerPathSegmentClientOptions__BaseAddress",
                                 "value": "[variables('urlJobProfileCurrentOpportunities')]"
                             },
                             {
-                                "name": "JobProfileCurrentOpportunitiesSegmentClientOptions__GetEndpoint",
+                                "name": "CareerPathSegmentClientOptions__GetEndpoint",
                                 "value": "segment/{0}/contents"
                             },
                             {
-                                "name": "JobProfileCurrentOpportunitiesSegmentClientOptions__PatchEndpoint",
+                                "name": "CareerPathSegmentClientOptions__PatchEndpoint",
                                 "value": "segment/{0}/content-type/markup"
                             },
                             {
-                                "name": "JobProfileCurrentOpportunitiesSegmentClientOptions__PostEndpoint",
+                                "name": "CareerPathSegmentClientOptions__PostEndpoint",
                                 "value": "segment"
                             },
                             {
-                                "name": "JobProfileCurrentOpportunitiesSegmentClientOptions__DeleteEndpoint",
+                                "name": "CareerPathSegmentClientOptions__DeleteEndpoint",
                                 "value": "segment/{0}"
                             }
                         ]
