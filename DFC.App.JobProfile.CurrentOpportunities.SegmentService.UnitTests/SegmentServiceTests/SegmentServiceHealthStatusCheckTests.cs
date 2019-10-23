@@ -9,11 +9,9 @@ using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.SegmentServiceTests
 {
-
     [Trait("Segment Service", "Health Status Tests")]
     public class SegmentServiceHealthStatusCheckTests
     {
-
         [Theory]
         [InlineData(true, HealthStatus.Healthy)]
         [InlineData(false, HealthStatus.Degraded)]

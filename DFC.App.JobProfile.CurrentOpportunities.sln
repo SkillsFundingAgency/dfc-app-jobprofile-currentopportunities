@@ -69,6 +69,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.App.JobProfile.CurrentO
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.App.JobProfile.CurrentOpportunities.CourseService", "DFC.App.JobProfile.CurrentOpportunities.CourseService\DFC.App.JobProfile.CurrentOpportunities.CourseService.csproj", "{ADA663D3-9A77-4393-9030-5F5E99377C09}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests", "DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests\DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests.csproj", "{AD0B4E22-EBB1-4455-BEBE-62D68489063D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -139,6 +141,10 @@ Global
 		{ADA663D3-9A77-4393-9030-5F5E99377C09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADA663D3-9A77-4393-9030-5F5E99377C09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADA663D3-9A77-4393-9030-5F5E99377C09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD0B4E22-EBB1-4455-BEBE-62D68489063D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD0B4E22-EBB1-4455-BEBE-62D68489063D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD0B4E22-EBB1-4455-BEBE-62D68489063D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD0B4E22-EBB1-4455-BEBE-62D68489063D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -165,6 +171,7 @@ Global
 		{A45E0A89-BAE8-4F9E-BFB2-D142468D0955} = {048389AA-B637-40C1-9B13-5C86915463BB}
 		{871FC804-F801-4E81-970A-DB60C0050014} = {5FB7D58D-D3E2-4FF7-AF27-92363974DEA9}
 		{ADA663D3-9A77-4393-9030-5F5E99377C09} = {F1B5084F-265E-4E16-B950-C891F6886CEE}
+		{AD0B4E22-EBB1-4455-BEBE-62D68489063D} = {2E12ED6F-6C7F-4B05-BF79-1974F6F71F09}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {147B3C69-E27D-471C-A294-B484874010CC}

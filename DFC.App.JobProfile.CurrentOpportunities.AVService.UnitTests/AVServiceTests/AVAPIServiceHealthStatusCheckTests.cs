@@ -10,7 +10,6 @@ using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
 {
-
     [Trait("AVAPIService", "Health Status Tests")]
     public class AVAPIServiceHealthStatusCheckTests
     {
