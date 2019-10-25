@@ -6,6 +6,8 @@
     <IsPackable>false</IsPackable>
     <CodeAnalysisRuleSet>../DFC.Digital.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
     <LangVersion>latest</LangVersion>
+    <AssemblyName>DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests</AssemblyName>
+    <RootNamespace>DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

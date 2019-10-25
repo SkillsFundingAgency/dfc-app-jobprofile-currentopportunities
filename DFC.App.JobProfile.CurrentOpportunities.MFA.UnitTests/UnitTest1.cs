@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace DFC.App.CareerPath.MessageFunctionApp.UnitTests
+namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests
 {
     public class UnitTest1
     {

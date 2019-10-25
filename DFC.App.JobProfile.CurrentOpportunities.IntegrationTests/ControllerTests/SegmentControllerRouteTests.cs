@@ -30,6 +30,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
             new object[] { $"/Segment/{DataSeeding.DefaultArticleName}", "text/html" },
             new object[] { $"/Segment/{DataSeeding.DefaultArticleGuid}/contents", "text/html" },
             new object[] { $"/Segment/{DataSeeding.DefaultArticleGuid}/contents", "application/json" },
+            new object[] { "/Segment/simplelist", "application/json" },
         };
 
         public static IEnumerable<object[]> MissingSegmentContentRouteData => new List<object[]>
