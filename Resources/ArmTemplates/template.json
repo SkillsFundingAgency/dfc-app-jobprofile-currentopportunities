@@ -2,7 +2,7 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "resourcePrefix": {
+        "appServiceDomain": {
             "type": "string"
         },
         "appSharedResourceGroup": {
@@ -37,10 +37,10 @@
         "cosmosDbKey": {
             "type": "securestring"
         },
-        "cosmosDbResourceGroup": {
+        "CourseSearchUrl": {
             "type": "string"
         },
-        "CourseSearchUrl": {
+        "environment": {
             "type": "string"
         },
         "sharedAppServicePlanName": {
@@ -51,24 +51,44 @@
             "type": "string",
             "defaultValue": ""
         },
+        "appSharedServiceBusName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the shared service bus to attach to"
+            }
+        },
         "cosmosDbCollectionName": {
             "type": "string"
+        },
+        "cmsSubscriptionSqlFilter": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Filter to apply to subscription (no filter applied if left blank)"
+            }
         }
     },
     "variables": {
-        "appServiceAppInsightsName": "[concat(parameters('resourcePrefix'), '-ai')]",
-        "appServicePlanName": "[if(greater(length(parameters('sharedAppServicePlanName')), 0), parameters('sharedAppServicePlanName'), concat(parameters('resourcePrefix'), '-asp'))]",
+        "appServicePlanName": "[if(greater(length(parameters('sharedAppServicePlanName')), 0), parameters('sharedAppServicePlanName'), concat(variables('resourcePrefix'), '-asp'))]",
         "appServicePlanResourceGroup": "[if(greater(length(parameters('SharedAppServicePlanResourceGroup')), 0), parameters('SharedAppServicePlanResourceGroup'), resourceGroup().name)]",
         "buildingBlocksDfcBaseUrl": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
         "cosmosDbCollectionPartitionKey": "/PartitionKey",
         "cosmosDbDatabaseName": "dfc-app-jobprofiles",
         "cosmosDbEndpoint": "[concat('https://', parameters('cosmosDbName'), '.documents.azure.com:443/')]",
-        "webAppName": "[concat(parameters('resourcePrefix'), '-as')]"
+        "resourcePrefix": "[tolower(concat('dfc-', parameters('Environment'), '-app-jobprofcops'))]",
+        "webAppName": "[concat(variables('ResourcePrefix'), '-as')]",
+        "webAppInsightsName": "[concat(variables('webAppName'), '-ai')]",
+        "functionAppName": "[concat(variables('ResourcePrefix'), '-fa')]",
+        "functionAppInsightsName": "[concat(variables('functionAppName'), '-ai')]",
+        "urlJobProfileCurrentOpportunities": "[toLower(concat('https://', variables('webAppName'), '.', parameters('appServiceDomain')))]",
+        "cmsTopicName": "cms-messages",
+        "cmsSubscriptionName": "job-profile-currentopportunities",
+        "refreshTopicName": "job-profile-refresh"
     },
     "resources": [
         {
             "apiVersion": "2017-05-10",
-            "name": "[variables('appServiceAppInsightsName')]",
+            "name": "[variables('webAppInsightsName')]",
             "type": "Microsoft.Resources/deployments",
             "properties": {
                 "mode": "Incremental",
@@ -78,7 +98,7 @@
                 },
                 "parameters": {
                     "appInsightsName": {
-                        "value": "[variables('appServiceAppInsightsName')]"
+                        "value": "[variables('webAppInsightsName')]"
                     },
                     "attachedService": {
                         "value": ""
@@ -153,7 +173,7 @@
                             },
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference(variables('AppServiceAppInsightsName')).outputs.InstrumentationKey.value]"
+                                "value": "[reference(variables('webAppInsightsName')).outputs.InstrumentationKey.value]"
                             },
                             {
                                 "name": "AzureWebJobsStorage",
@@ -182,20 +202,136 @@
                             {
                                 "name": "Configuration__CourseSearch__CourseSearchUrl",
                                 "value": "[parameters('CourseSearchUrl')]"
+                            },
+                            {
+                                "name": "ServiceBusOptions__ServiceBusConnectionString",
+                                "value": "[listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.ServiceBus/namespaces/authorizationRules', parameters('appSharedServiceBusName'), 'ReadWrite'), '2017-04-01').primaryConnectionString]"
+                            },
+                            {
+                                "name": "ServiceBusOptions__topicName",
+                                "value": "[variables('refreshTopicName')]"
                             }
                         ]
                     }
                 }
             },
             "dependsOn": [
-                "[variables('AppServiceAppInsightsName')]"
+                "[variables('webAppInsightsName')]"
+            ]
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[variables('functionAppInsightsName')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('buildingBlocksDfcBaseUrl'), 'application-insights.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appInsightsName": {
+                        "value": "[variables('functionAppInsightsName')]"
+                    },
+                    "attachedService": {
+                        "value": ""
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[variables('functionAppName')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('buildingBlocksDfcBaseUrl'), 'app-service.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appServiceName": {
+                        "value": "[variables('functionAppName')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[variables('appServicePlanName')]"
+                    },
+                    "appServicePlanResourceGroup": {
+                        "value": "[variables('appServicePlanResourceGroup')]"
+                    },
+                    "appServiceType": {
+                        "value": "functionapp"
+                    },
+                    "deployStagingSlot": {
+                        "value": false
+                    },
+                    "appServiceAppSettings": {
+                        "value": [
+                             {
+                                "name": "FUNCTIONS_EXTENSION_VERSION",
+                                "value": "~2"
+                            },
+                            {
+                                "name": "MSDEPLOY_RENAME_LOCKED_FILES",
+                                "value": "1"
+                            },
+                            {
+                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                "value": "[reference(variables('functionAppInsightsName')).outputs.InstrumentationKey.value]"
+                            },
+                            {
+                                "name": "AzureWebJobsStorage",
+                                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('appSharedStorageAccountName'),';AccountKey=',listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.Storage/storageAccounts', parameters('appSharedStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
+                            },
+                            {
+                                "name": "Values__service-bus-connection-string",
+                                "value": "[listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.ServiceBus/namespaces/authorizationRules', parameters('appSharedServiceBusName'), 'ReadWrite'), '2017-04-01').primaryConnectionString]"
+                            },
+                            {
+                                "name": "Values__cms-messages-topic",
+                                "value": "[variables('cmsTopicName')]"
+                            },
+                            {
+                                "name": "Values__cms-messages-subscription",
+                                "value": "[variables('cmsSubscriptionName')]"
+                            },
+                            {
+                                "name": "CareerPathSegmentClientOptions__Timeout",
+                                "value": "00:00:10"
+                            },
+                            {
+                                "name": "CareerPathSegmentClientOptions__BaseAddress",
+                                "value": "[variables('urlJobProfileCurrentOpportunities')]"
+                            },
+                            {
+                                "name": "CareerPathSegmentClientOptions__GetEndpoint",
+                                "value": "segment/{0}/contents"
+                            },
+                            {
+                                "name": "CareerPathSegmentClientOptions__PatchEndpoint",
+                                "value": "segment/{0}/content-type/markup"
+                            },
+                            {
+                                "name": "CareerPathSegmentClientOptions__PostEndpoint",
+                                "value": "segment"
+                            },
+                            {
+                                "name": "CareerPathSegmentClientOptions__DeleteEndpoint",
+                                "value": "segment/{0}"
+                            }
+                        ]
+                    }
+                }
+            },
+            "dependsOn": [
+                "[variables('functionAppInsightsName')]"
             ]
         },
         {
             "apiVersion": "2017-05-10",
             "name": "[parameters('cosmosDbCollectionName')]",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[parameters('cosmosDbResourceGroup')]",
+            "resourceGroup": "[parameters('appSharedResourceGroup')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -217,6 +353,33 @@
                     },
                     "partitionKey": {
                         "value": "[variables('cosmosDbCollectionPartitionKey')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[variables('cmsSubscriptionName')]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('appSharedResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'ServiceBus/servicebus-topic-subscription.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serviceBusNamespaceName": {
+                        "value": "[parameters('appSharedServiceBusName')]"
+                    },
+                    "serviceBusTopicName": {
+                        "value": "[variables('cmsTopicName')]"
+                    },
+                    "serviceBusTopicSubscriptionName": {
+                        "value": "[variables('cmsSubscriptionName')]"
+                    },
+                    "subscriptionSqlFilter": {
+                        "value": "[parameters('cmsSubscriptionSqlFilter')]"
                     }
                 }
             }
