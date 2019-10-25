@@ -15,32 +15,32 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
     {
         private static readonly string ThisClassPath = typeof(DeleteSegment).FullName;
 
-        [FunctionName("DeleteSegment")]
-        public static async Task Run(
-                                        [ServiceBusTrigger("%delete-topic-name%", "%delete-subscription-name%", Connection = "service-bus-connection-string")] string serviceBusMessage,
-                                        ILogger log,
-                                        [Inject] SegmentClientOptions segmentClientOptions,
-                                        [Inject] HttpClient httpClient)
-        {
-            var serviceBusModel = JsonConvert.DeserializeObject<CurrentOpportunitiesDeleteServiceBusModel>(serviceBusMessage);
+        //[FunctionName("DeleteSegment")]
+        //public static async Task Run(
+        //                                [ServiceBusTrigger("%delete-topic-name%", "%delete-subscription-name%", Connection = "service-bus-connection-string")] string serviceBusMessage,
+        //                                ILogger log,
+        //                                [Inject] SegmentClientOptions segmentClientOptions)
+        //{
+        //    var serviceBusModel = JsonConvert.DeserializeObject<CurrentOpportunitiesDeleteServiceBusModel>(serviceBusMessage);
 
-            log.LogInformation($"{ThisClassPath}: JobProfile Id: {serviceBusModel.JobProfileId}: Deleting segment");
+        //    log.LogInformation($"{ThisClassPath}: JobProfile Id: {serviceBusModel.JobProfileId}: Deleting segment");
 
-            var segmentDataModel = await HttpClientService.GetByIdAsync(httpClient, segmentClientOptions, serviceBusModel.JobProfileId).ConfigureAwait(false);
+        //    var httpClient = new HttpClient();
+        //    var segmentDataModel = await HttpClientService.GetByIdAsync(httpClient, segmentClientOptions, serviceBusModel.JobProfileId).ConfigureAwait(false);
 
-            if (segmentDataModel == null || segmentDataModel.Data.LastReviewed < serviceBusModel.LastReviewed)
-            {
-                var result = await HttpClientService.DeleteAsync(httpClient, segmentClientOptions, serviceBusModel.JobProfileId).ConfigureAwait(false);
+        //    if (segmentDataModel == null || segmentDataModel.Data.LastReviewed < serviceBusModel.LastReviewed)
+        //    {
+        //        var result = await HttpClientService.DeleteAsync(httpClient, segmentClientOptions, serviceBusModel.JobProfileId).ConfigureAwait(false);
 
-                if (result == HttpStatusCode.OK)
-                {
-                    log.LogInformation($"{ThisClassPath}: JobProfile Id: {serviceBusModel.JobProfileId}: Deleted segment");
-                }
-                else
-                {
-                    log.LogWarning($"{ThisClassPath}: JobProfile Id: {serviceBusModel.JobProfileId}: Segment not deleted: Status: {result}");
-                }
-            }
-        }
+        //        if (result == HttpStatusCode.OK)
+        //        {
+        //            log.LogInformation($"{ThisClassPath}: JobProfile Id: {serviceBusModel.JobProfileId}: Deleted segment");
+        //        }
+        //        else
+        //        {
+        //            log.LogWarning($"{ThisClassPath}: JobProfile Id: {serviceBusModel.JobProfileId}: Segment not deleted: Status: {result}");
+        //        }
+        //    }
+        //}
     }
 }

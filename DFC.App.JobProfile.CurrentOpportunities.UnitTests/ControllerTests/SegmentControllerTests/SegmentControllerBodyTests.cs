@@ -47,6 +47,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             // Arrange
             var documentId = Guid.NewGuid();
             var expectedResult = A.Fake<CurrentOpportunitiesSegmentModel>();
+            expectedResult.Data = A.Dummy<CurrentOpportunitiesSegmentDataModel>();
             var dummyBodyViewModel = A.Dummy<BodyViewModel>();
             dummyBodyViewModel.Data = A.Dummy<BodyDataViewModel>();
             dummyBodyViewModel.Data.Courses = A.Dummy<BodyCoursesViewModel>();
@@ -64,7 +65,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             A.CallTo(() => FakeMapper.Map<BodyViewModel>(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
 
             var jsonResult = Assert.IsType<OkObjectResult>(result);
-            var model = Assert.IsAssignableFrom<CurrentOpportunitiesSegmentModel>(jsonResult.Value);
+            var model = Assert.IsAssignableFrom<CurrentOpportunitiesSegmentDataModel>(jsonResult.Value);
 
             controller.Dispose();
         }
