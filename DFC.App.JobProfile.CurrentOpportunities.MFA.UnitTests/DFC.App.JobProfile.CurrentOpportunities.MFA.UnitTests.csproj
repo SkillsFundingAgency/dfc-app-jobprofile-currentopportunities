@@ -32,5 +32,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp\DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.csproj" />
+  </ItemGroup>
 
 </Project>
