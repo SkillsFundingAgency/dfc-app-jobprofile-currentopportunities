@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
@@ -81,21 +82,21 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         }
 
         [Fact]
-        public void RefreshCoursesAsyncNullTest()
+        public void RefreshCoursesAsyncExceptionTest()
         {
-            //arrange
+            //Arrange
             A.CallTo(() => fakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).Returns(currentOpportunitiesSegmentModel);
             A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).Throws(new ApplicationException());
 
             var courseCurrentOpportuntiesRefresh = new CourseCurrentOpportuntiesRefresh(fakeLogger, fakeCurrentOpportunitiesSegmentService, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
-
-            //Act
-            var result = courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).Result;
+            Func<Task> serviceHealthStatus = async () => await courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).ConfigureAwait(false);
 
             //Asserts
-            result.NumberPulled.Should().Be(0);
+            serviceHealthStatus.Should().Throw<ApplicationException>();
+
+            //Asserts
             A.CallTo(() => fakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeMapper.Map<Opportunity>(A<object>.Ignored)).MustNotHaveHappened();
         }
 

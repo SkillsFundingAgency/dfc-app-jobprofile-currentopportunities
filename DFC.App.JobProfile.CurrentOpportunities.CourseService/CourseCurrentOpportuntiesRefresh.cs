@@ -68,8 +68,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
             {
                 var errorMessge = $"{nameof(RefreshCoursesAsync)} had error";
                 logger.LogError(ex, errorMessge);
-                feedRefreshResponseModel.RequestErrorMessage = errorMessge;
-                courseSearchResults = Enumerable.Empty<CourseSumary>();
+                throw;
             }
 
             var selectedCourses = SelectCoursesForJobProfile(courseSearchResults);
