@@ -34,12 +34,13 @@ Once you have cloned the public repo you need to rename the appsettings files by
 
 | Location | Repo Filename | Rename to |
 |-------|-------|-------|
+| DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp | local.settings-template.json | local.settings.json |
 | DFC.App.CurrentOppotunities.IntegrationTests | appsettings-template.json | appsettings.json |
 | DFC.App.CurrentOppotunities | appsettings-template.json | appsettings.json |
 
 ## Configuring to run locally
 
-The project contains a number of "appsettings-template.json" files which contain sample appsettings for the web app and the integration test projects. To use these files, rename them to "appsettings.json" and edit and replace the configuration item values with values suitable for your environment.
+The project contains a number of "appsettings-template.json" / "local.settings.json" files which contain sample appsettings for the web app and the integration test projects. To use these files, copy them to "appsettings.json" / "local.settings.json" and edit and replace the configuration item values with values suitable for your environment.
 
 By default, the appsettings include a local Azure Cosmos Emulator configuration using the well known configuration values. These may be changed to suit your environment if you are not using the Azure Cosmos Emulator. 
 In addition -
@@ -56,6 +57,14 @@ In addition -
 | appsettings.json     | SitefinityApi.Username           | < sitefinity username >             |
 | appsettings.json     | SitefinityApi.Password           | < sitefinity password >             |
 | appsettings.json     | SitefinityApi.Scopes             | < authentication protocol> OpenId   |
+
+### Function app settings will need to be edited.
+
+|File                                       |Setting                        |Example value                      |
+|------------------------------------------|------------------------------|----------------------------------|
+| local.settings.json     | Values.RefreshApprenticeshipsCron      | "0 0 3 * * *" |
+| local.settings.json     | Values.RefreshCoursesCron      | "0 0 5 * * *" |
+| local.settings.json     | RefreshClientOptions.BaseAddress      | https://localhost (url to local DFC.App.JobProfile.CurrentOpportunities app |
 
 ### Course search client settings will need to be edited.
 
