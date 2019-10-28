@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -28,7 +29,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
     public class CourseCurrentOpportuntiesRefreshTests
     {
         private readonly ILogger<CourseCurrentOpportuntiesRefresh> fakeLogger;
-        private readonly ICurrentOpportunitiesSegmentService fakeCurrentOpportunitiesSegmentService;
+        private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> fakeRepository;
         private readonly ICourseSearchClient fakeCourseSearchClient;
         private readonly AutoMapper.IMapper fakeMapper;
         private readonly CourseSearchSettings courseSearchSettings;
@@ -37,7 +38,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         public CourseCurrentOpportuntiesRefreshTests()
         {
             fakeLogger = A.Fake<ILogger<CourseCurrentOpportuntiesRefresh>>();
-            fakeCurrentOpportunitiesSegmentService = A.Fake<ICurrentOpportunitiesSegmentService>();
+            fakeRepository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
             fakeCourseSearchClient = A.Fake<ICourseSearchClient>();
             fakeMapper = A.Fake<AutoMapper.IMapper>();
 
@@ -66,37 +67,37 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         public void RefreshCoursesAsync(int numberVacanciesFound)
         {
             //arrange
-            A.CallTo(() => fakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).Returns(currentOpportunitiesSegmentModel);
+            A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
             A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).Returns(GetTestCourses(numberVacanciesFound));
             A.CallTo(() => fakeMapper.Map<Opportunity>(A<CourseSumary>.Ignored)).Returns(new Opportunity() { CourseId = "1" });
 
-            var courseCurrentOpportuntiesRefresh = new CourseCurrentOpportuntiesRefresh(fakeLogger, fakeCurrentOpportunitiesSegmentService, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
+            var courseCurrentOpportuntiesRefresh = new CourseCurrentOpportuntiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
 
             //Act
             var result = courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).Result;
 
             //Asserts
-            result.NumberPulled.Should().Be(numberVacanciesFound);
-            A.CallTo(() => fakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
+            result.Should().Be(numberVacanciesFound);
+            A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
         public void RefreshCoursesAsyncExceptionTest()
         {
             //Arrange
-            A.CallTo(() => fakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).Returns(currentOpportunitiesSegmentModel);
+            A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
             A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).Throws(new ApplicationException());
 
-            var courseCurrentOpportuntiesRefresh = new CourseCurrentOpportuntiesRefresh(fakeLogger, fakeCurrentOpportunitiesSegmentService, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
+            var courseCurrentOpportuntiesRefresh = new CourseCurrentOpportuntiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
             Func<Task> serviceHealthStatus = async () => await courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).ConfigureAwait(false);
 
             //Asserts
             serviceHealthStatus.Should().Throw<ApplicationException>();
 
             //Asserts
-            A.CallTo(() => fakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustNotHaveHappened();
+            A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeMapper.Map<Opportunity>(A<object>.Ignored)).MustNotHaveHappened();
         }
 
@@ -108,8 +109,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         public void SelectCoursesForProfile(Scenario scenario, int expectedNumberDisplayed)
         {
             //arrange
-            A.CallTo(() => fakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).Returns(currentOpportunitiesSegmentModel);
-            var courseCurrentOpportuntiesRefresh = new CourseCurrentOpportuntiesRefresh(fakeLogger, fakeCurrentOpportunitiesSegmentService, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
+            A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
+            var courseCurrentOpportuntiesRefresh = new CourseCurrentOpportuntiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
 
             //Act
             var projectedVacancies = courseCurrentOpportuntiesRefresh.SelectCoursesForJobProfile(GetTestCourseSummaries(scenario));

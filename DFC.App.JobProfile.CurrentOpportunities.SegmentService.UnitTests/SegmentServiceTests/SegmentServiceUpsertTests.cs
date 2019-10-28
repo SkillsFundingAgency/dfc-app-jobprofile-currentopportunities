@@ -2,6 +2,7 @@
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.DraftSegmentService;
 using FakeItEasy;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq.Expressions;
 using System.Net;
@@ -16,25 +17,32 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
         private readonly IDraftCurrentOpportunitiesSegmentService draftCurrentOpportunitiesSegmentService;
         private readonly ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService;
+        private readonly ICourseCurrentOpportuntiesRefresh fakeCourseCurrentOpportuntiesRefresh;
+        private readonly IAVCurrentOpportuntiesRefresh fakeAVCurrentOpportunatiesRefresh;
+        private readonly ILogger<CurrentOpportunitiesSegmentService> fakeLogger;
 
         public SegmentServiceUpsertTests()
         {
             repository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
-            draftCurrentOpportunitiesSegmentService = A.Fake<DraftCurrentOpportunitiesSegmentService>();
-            currentOpportunitiesSegmentService = new CurrentOpportunitiesSegmentService(repository, draftCurrentOpportunitiesSegmentService);
+            draftCurrentOpportunitiesSegmentService = A.Fake<IDraftCurrentOpportunitiesSegmentService>();
+            fakeCourseCurrentOpportuntiesRefresh = A.Fake<ICourseCurrentOpportuntiesRefresh>();
+            fakeAVCurrentOpportunatiesRefresh = A.Fake<IAVCurrentOpportuntiesRefresh>();
+            fakeLogger = A.Fake<ILogger<CurrentOpportunitiesSegmentService>>();
+
+            currentOpportunitiesSegmentService = new CurrentOpportunitiesSegmentService(repository, draftCurrentOpportunitiesSegmentService, fakeCourseCurrentOpportuntiesRefresh, fakeAVCurrentOpportunatiesRefresh, fakeLogger);
         }
 
         [Fact]
         public void CurrentOpportunitiesSegementServiceCreateReturnsCreatedWhenSegmentCreated()
         {
             // arrange
-            var careerPathSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
+            var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
             var expectedResult = HttpStatusCode.Created;
 
             A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.Created);
 
             // act
-            var result = currentOpportunitiesSegmentService.UpsertAsync(careerPathSegmentModel).Result;
+            var result = currentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).Result;
 
             // assert
             A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
@@ -75,18 +83,35 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         public void CurrentOpportunitiesSegmentServiceCreateReturnsNullWhenMissingRepository()
         {
             // arrange
-            var careerPathSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
-            CurrentOpportunitiesSegmentModel expectedResult = null;
+            var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
+            var expectedResult = A.Dummy<CurrentOpportunitiesSegmentModel>();
 
             A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.FailedDependency);
 
             // act
-            var result = currentOpportunitiesSegmentService.UpsertAsync(careerPathSegmentModel).Result;
+            var result = currentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).Result;
 
             // assert
             A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => repository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).MustNotHaveHappened();
             A.Equals(result, expectedResult);
+        }
+
+        [Fact]
+        public void CurrentOpportunitiesSegmentServiceUpdateCoursesAndAppreticeshipsWhenUpserted()
+        {
+            // arrange
+            var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
+
+            A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.Created);
+
+            // act
+            var result = currentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).Result;
+
+            // assert
+            A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeCourseCurrentOpportuntiesRefresh.RefreshCoursesAsync(A<Guid>.Ignored)).MustHaveHappened();
+            A.CallTo(() => fakeAVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).MustHaveHappened();
         }
     }
 }

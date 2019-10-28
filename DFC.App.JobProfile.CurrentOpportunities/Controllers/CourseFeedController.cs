@@ -14,13 +14,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
     {
         private readonly ILogger<FeedsController> logger;
         private readonly ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh;
-        private readonly AutoMapper.IMapper mapper;
 
-        public CourseFeedController(ILogger<FeedsController> logger, ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh, AutoMapper.IMapper mapper)
+        public CourseFeedController(ILogger<FeedsController> logger, ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh)
         {
             this.logger = logger;
             this.courseCurrentOpportuntiesRefresh = courseCurrentOpportuntiesRefresh;
-            this.mapper = mapper;
         }
 
         [HttpGet]
@@ -32,9 +30,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             try
             {
                 //catch any exception that the outgoing request may throw.
-                var feedRefreshResponseModel = await courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(documentId).ConfigureAwait(false);
-                feedRefreshResponseViewModel = mapper.Map<FeedRefreshResponseViewModel>(feedRefreshResponseModel);
-
+                feedRefreshResponseViewModel.NumberPulled = await courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(documentId).ConfigureAwait(false);
                 logger.LogInformation($"Get courses has succeeded for: document {documentId} - Got {feedRefreshResponseViewModel.NumberPulled} courses");
                 return Ok(feedRefreshResponseViewModel);
             }

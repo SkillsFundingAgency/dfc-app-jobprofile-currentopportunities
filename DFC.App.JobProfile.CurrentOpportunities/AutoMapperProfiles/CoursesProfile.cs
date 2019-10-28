@@ -17,7 +17,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles
            .ForMember(o => o.URL, opt => opt.Ignore())
            .ForMember(o => o.PullDate, opt => opt.Ignore());
             CreateMap<CourseLocation, Location>();
-            CreateMap<FeedRefreshResponseModel, FeedRefreshResponseViewModel>();
         }
     }
 }

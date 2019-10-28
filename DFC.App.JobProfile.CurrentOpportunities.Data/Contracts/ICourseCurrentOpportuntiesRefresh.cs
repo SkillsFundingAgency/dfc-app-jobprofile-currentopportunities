@@ -10,7 +10,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Contracts
 {
     public interface ICourseCurrentOpportuntiesRefresh
     {
-        Task<FeedRefreshResponseModel> RefreshCoursesAsync(Guid documentId);
+        Task<int> RefreshCoursesAsync(Guid documentId);
 
         IEnumerable<CourseSumary> SelectCoursesForJobProfile(IEnumerable<CourseSumary> courses);
     }

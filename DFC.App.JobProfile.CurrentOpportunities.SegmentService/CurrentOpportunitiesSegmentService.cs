@@ -1,9 +1,11 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,11 +15,17 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
     {
         private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
         private readonly IDraftCurrentOpportunitiesSegmentService draftCurrentOpportunitiesSegmentService;
+        private readonly ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh;
+        private readonly IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh;
+        private readonly ILogger<CurrentOpportunitiesSegmentService> logger;
 
-        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, IDraftCurrentOpportunitiesSegmentService draftCurrentOpportunitiesSegmentService)
+        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, IDraftCurrentOpportunitiesSegmentService draftCurrentOpportunitiesSegmentService, ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh, IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh, ILogger<CurrentOpportunitiesSegmentService> logger)
         {
             this.repository = repository;
             this.draftCurrentOpportunitiesSegmentService = draftCurrentOpportunitiesSegmentService;
+            this.aVCurrentOpportunatiesRefresh = aVCurrentOpportunatiesRefresh;
+            this.courseCurrentOpportuntiesRefresh = courseCurrentOpportuntiesRefresh;
+            this.logger = logger;
         }
 
         public async Task<bool> PingAsync()
@@ -75,6 +83,20 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             }
 
             var result = await repository.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
+
+            if (result == HttpStatusCode.Created)
+            {
+                try
+                {
+                    var avResult = await aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false);
+                    var avCourse = await courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false);
+                }
+                catch (HttpRequestException httpRequestException)
+                {
+                    logger.LogError($"{nameof(CurrentOpportunitiesSegmentService)} had exception when getting courses and apprenticeships for document {currentOpportunitiesSegmentModel.DocumentId}, Exception - {httpRequestException.Message}");
+                    return HttpStatusCode.Accepted;
+                }
+            }
 
             return result;
         }

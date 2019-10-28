@@ -18,15 +18,15 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
     public class CourseCurrentOpportuntiesRefresh : ICourseCurrentOpportuntiesRefresh, IHealthCheck
     {
         private readonly ILogger<CourseCurrentOpportuntiesRefresh> logger;
-        private readonly ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService;
+        private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
         private readonly ICourseSearchClient courseSearch;
         private readonly AutoMapper.IMapper mapper;
         private readonly CourseSearchSettings courseSearchSettings;
 
-        public CourseCurrentOpportuntiesRefresh(ILogger<CourseCurrentOpportuntiesRefresh> logger, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService, ICourseSearchClient courseSearch, AutoMapper.IMapper mapper, CourseSearchSettings courseSearchSettings)
+        public CourseCurrentOpportuntiesRefresh(ILogger<CourseCurrentOpportuntiesRefresh> logger, ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, ICourseSearchClient courseSearch, AutoMapper.IMapper mapper, CourseSearchSettings courseSearchSettings)
         {
             this.logger = logger;
-            this.currentOpportunitiesSegmentService = currentOpportunitiesSegmentService;
+            this.repository = repository;
             this.courseSearch = courseSearch;
             this.mapper = mapper;
             this.courseSearchSettings = courseSearchSettings;
@@ -49,12 +49,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "We want to catch all errors that happen when we call the external API")]
-        public async Task<FeedRefreshResponseModel> RefreshCoursesAsync(Guid documentId)
+        public async Task<int> RefreshCoursesAsync(Guid documentId)
         {
-            var feedRefreshResponseModel = new FeedRefreshResponseModel() { NumberPulled = 0 };
-
             logger.LogInformation($"{nameof(RefreshCoursesAsync)} has been called for document {documentId}");
-            CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByIdAsync(documentId).ConfigureAwait(false);
+            CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel = await repository.GetAsync(d => d.DocumentId == documentId).ConfigureAwait(false);
 
             IEnumerable<CourseSumary> courseSearchResults = Enumerable.Empty<CourseSumary>();
             logger.LogInformation($"Getting course for {currentOpportunitiesSegmentModel.CanonicalName} - course keywords {currentOpportunitiesSegmentModel.Data.Courses.CourseKeywords}");
@@ -82,9 +80,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
             }
 
             currentOpportunitiesSegmentModel.Data.Courses.Opportunities = opportunities;
-            await currentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
-            feedRefreshResponseModel.NumberPulled = selectedCourses.Count();
-            return feedRefreshResponseModel;
+            await repository.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
+            return selectedCourses.Count();
         }
 
         public IEnumerable<CourseSumary> SelectCoursesForJobProfile(IEnumerable<CourseSumary> courses)
