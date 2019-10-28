@@ -5,7 +5,6 @@ using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -55,6 +54,23 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
             using var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(JsonConvert.SerializeObject(expectedResults), expectedStatusCode);
             using var httpClient = new HttpClient(messageHandler);
             var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
+
+            // act
+            var result = await refreshService.RefreshApprenticeshipsAsync(documentId).ConfigureAwait(false);
+
+            // assert
+            A.Equals(result, expectedStatusCode);
+        }
+
+        [Fact]
+        public async Task RefreshApprenticeshipsReturnsNullWhenException()
+        {
+            // arrange
+            var documentId = Guid.NewGuid();
+            var expectedStatusCode = HttpStatusCode.InternalServerError;
+            using var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(null, expectedStatusCode);
+            using var httpClient = new HttpClient(messageHandler);
+            var refreshService = new RefreshService(null, fakeLogger, fakeRefreshClientOptions);
 
             // act
             var result = await refreshService.RefreshApprenticeshipsAsync(documentId).ConfigureAwait(false);

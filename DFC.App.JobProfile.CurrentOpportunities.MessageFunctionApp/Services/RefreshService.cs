@@ -58,57 +58,73 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
         public async Task<HttpStatusCode> RefreshApprenticeshipsAsync(Guid documentId)
         {
             var url = $"{refreshClientOptions.BaseAddress}AVFeed/RefreshApprenticeships/{documentId}";
+            HttpResponseMessage response = null;
 
-            logger.LogInformation($"{nameof(RefreshApprenticeshipsAsync)}: Refreshing Job Profile Apprenticeships from {url}");
-
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
-
-            request.Headers.Accept.Clear();
-            request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
-
-            var response = await httpClient.SendAsync(request).ConfigureAwait(false);
-
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            try
             {
-                logger.LogInformation($"{nameof(RefreshApprenticeshipsAsync)}: Refreshed Job Profile Apprenticeships from {url}");
+                logger.LogInformation($"{nameof(RefreshApprenticeshipsAsync)}: Refreshing Job Profile Apprenticeships from {url}");
+
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+
+                request.Headers.Accept.Clear();
+                request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
+
+                response = await httpClient.SendAsync(request).ConfigureAwait(false);
+
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    logger.LogInformation($"{nameof(RefreshApprenticeshipsAsync)}: Refreshed Job Profile Apprenticeships from {url}");
+                }
+                else
+                {
+                    var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var result = JsonConvert.DeserializeObject<FeedRefreshResponsModel>(responseString);
+
+                    logger.LogError($"{nameof(RefreshApprenticeshipsAsync)}: Error refreshing Job Profile Apprenticeships from {url}, status: {response.StatusCode}, response message: {result.RequestErrorMessage}");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var result = JsonConvert.DeserializeObject<FeedRefreshResponsModel>(responseString);
-
-                logger.LogError($"{nameof(RefreshApprenticeshipsAsync)}: Error refreshing Job Profile Apprenticeships from {url}, status: {response.StatusCode}, response message: {result.RequestErrorMessage}");
+                logger.LogError(ex, $"{nameof(RefreshApprenticeshipsAsync)}: Error refreshing Job Profile Apprenticeships from {url}, status: {response?.StatusCode}");
             }
 
-            return response.StatusCode;
+            return response?.StatusCode ?? HttpStatusCode.InternalServerError;
         }
 
         public async Task<HttpStatusCode> RefreshCoursesAsync(Guid documentId)
         {
             var url = $"{refreshClientOptions.BaseAddress}CourseFeed/RefreshCourses/{documentId}";
+            HttpResponseMessage response = null;
 
-            logger.LogInformation($"{nameof(RefreshCoursesAsync)}: Refreshing Job Profile Courses from {url}");
-
-            var request = new HttpRequestMessage(HttpMethod.Get, url);
-
-            request.Headers.Accept.Clear();
-            request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
-
-            var response = await httpClient.SendAsync(request).ConfigureAwait(false);
-
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            try
             {
-                logger.LogInformation($"{nameof(RefreshCoursesAsync)}: Refreshed Job Profile Courses from {url}");
+                logger.LogInformation($"{nameof(RefreshCoursesAsync)}: Refreshing Job Profile Courses from {url}");
+
+                var request = new HttpRequestMessage(HttpMethod.Get, url);
+
+                request.Headers.Accept.Clear();
+                request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
+
+                response = await httpClient.SendAsync(request).ConfigureAwait(false);
+
+                if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                {
+                    logger.LogInformation($"{nameof(RefreshCoursesAsync)}: Refreshed Job Profile Courses from {url}");
+                }
+                else
+                {
+                    var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var result = JsonConvert.DeserializeObject<FeedRefreshResponsModel>(responseString);
+
+                    logger.LogError($"{nameof(RefreshCoursesAsync)}: Error refreshing Job Profile Courses from {url}, status: {response.StatusCode}, response message: {result.RequestErrorMessage}");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var result = JsonConvert.DeserializeObject<FeedRefreshResponsModel>(responseString);
-
-                logger.LogError($"{nameof(RefreshCoursesAsync)}: Error refreshing Job Profile Courses from {url}, status: {response.StatusCode}, response message: {result.RequestErrorMessage}");
+                logger.LogError(ex, $"{nameof(RefreshCoursesAsync)}: Error refreshing Job Profile Courses from {url}, status: {response?.StatusCode}");
             }
 
-            return response.StatusCode;
+            return response?.StatusCode ?? HttpStatusCode.InternalServerError;
         }
     }
 }
