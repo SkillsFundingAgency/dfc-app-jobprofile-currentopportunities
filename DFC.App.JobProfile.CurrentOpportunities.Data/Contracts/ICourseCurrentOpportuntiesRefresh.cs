@@ -1,4 +1,4 @@
-﻿using DFC.App.FindACourseClient.Models;
+﻿using DFC.FindACourseClient.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using System;
 using System.Collections.Generic;

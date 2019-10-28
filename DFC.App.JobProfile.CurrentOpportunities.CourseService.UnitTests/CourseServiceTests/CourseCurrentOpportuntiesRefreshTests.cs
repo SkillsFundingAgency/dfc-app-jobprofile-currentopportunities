@@ -1,9 +1,8 @@
-using DFC.App.FindACourseClient.Contracts;
-using DFC.App.FindACourseClient.Models;
 using DFC.App.FindACourseClient.Models.Configuration;
-using DFC.App.JobProfile.CurrentOpportunities.CourseService;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using DFC.FindACourseClient.Contracts;
+using DFC.FindACourseClient.Models;
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
