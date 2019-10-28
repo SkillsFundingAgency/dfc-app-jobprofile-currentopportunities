@@ -97,21 +97,33 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.Equals(result, expectedResult);
         }
 
-        [Fact]
-        public void CurrentOpportunitiesSegmentServiceUpdateCoursesAndAppreticeshipsWhenUpserted()
+        [Theory]
+        [InlineData (HttpStatusCode.Created, true)]
+        [InlineData(HttpStatusCode.OK, true)]
+        [InlineData(HttpStatusCode.FailedDependency, false)]
+        public void CurrentOpportunitiesSegmentServiceUpdateCoursesAndAppreticeshipsWhenUpserted(HttpStatusCode upsertReturnCode, bool shouldRefresh)
         {
             // arrange
             var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
-
-            A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.Created);
+            A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(upsertReturnCode);
 
             // act
             var result = currentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).Result;
 
             // assert
             A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
-            A.CallTo(() => fakeCourseCurrentOpportuntiesRefresh.RefreshCoursesAsync(A<Guid>.Ignored)).MustHaveHappened();
-            A.CallTo(() => fakeAVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).MustHaveHappened();
+
+            if (shouldRefresh)
+            {
+                A.CallTo(() => fakeCourseCurrentOpportuntiesRefresh.RefreshCoursesAsync(A<Guid>.Ignored)).MustHaveHappened();
+                A.CallTo(() => fakeAVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).MustHaveHappened();
+            }
+            else
+            {
+                A.CallTo(() => fakeCourseCurrentOpportuntiesRefresh.RefreshCoursesAsync(A<Guid>.Ignored)).MustNotHaveHappened();
+                A.CallTo(() => fakeAVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).MustNotHaveHappened();
+            }
+
         }
     }
 }

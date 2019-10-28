@@ -84,7 +84,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
 
             var result = await repository.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
-            if (result == HttpStatusCode.Created)
+            if (result == HttpStatusCode.Created || result == HttpStatusCode.OK)
             {
                 try
                 {
