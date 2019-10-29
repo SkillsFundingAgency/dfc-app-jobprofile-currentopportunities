@@ -15,9 +15,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
     [Trait("Apprenticeship Vacancy Api", "Tests")]
     public class ApprenticeshipVacancyApiTests
     {
-        private ILogger<ApprenticeshipVacancyApi> fakeLogger;
-        private AVAPIServiceSettings aVAPIServiceSettings;
-        private ICosmosRepository<APIAuditRecordAV> fakeAuditRepository;
+        private readonly ILogger<ApprenticeshipVacancyApi> fakeLogger;
+        private readonly AVAPIServiceSettings aVAPIServiceSettings;
+        private readonly ICosmosRepository<APIAuditRecordAV> fakeAuditRepository;
 
         public ApprenticeshipVacancyApiTests()
         {

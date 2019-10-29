@@ -5,9 +5,11 @@ using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels;
 using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,12 +18,20 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
     public class CurrentOpportunitiesSegmentService : ICurrentOpportunitiesSegmentService, IHealthCheck
     {
         private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
+        private readonly IDraftCurrentOpportunitiesSegmentService draftCurrentOpportunitiesSegmentService;
+        private readonly ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh;
+        private readonly IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh;
+        private readonly ILogger<CurrentOpportunitiesSegmentService> logger;
         private readonly IMapper mapper;
         private readonly IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> jobProfileSegmentRefreshService;
 
-        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, IMapper mapper, IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> jobProfileSegmentRefreshService)
+        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, IDraftCurrentOpportunitiesSegmentService draftCurrentOpportunitiesSegmentService, ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh, IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh, ILogger<CurrentOpportunitiesSegmentService> logger)
         {
             this.repository = repository;
+            this.draftCurrentOpportunitiesSegmentService = draftCurrentOpportunitiesSegmentService;
+            this.aVCurrentOpportunatiesRefresh = aVCurrentOpportunatiesRefresh;
+            this.courseCurrentOpportuntiesRefresh = courseCurrentOpportuntiesRefresh;
+            this.logger = logger;
             this.mapper = mapper;
             this.jobProfileSegmentRefreshService = jobProfileSegmentRefreshService;
         }
@@ -79,6 +89,20 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             }
 
             var result = await repository.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
+
+            if (result == HttpStatusCode.Created || result == HttpStatusCode.OK)
+            {
+                try
+                {
+                    var avResult = await aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false);
+                    var avCourse = await courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false);
+                }
+                catch (HttpRequestException httpRequestException)
+                {
+                    logger.LogError($"{nameof(CurrentOpportunitiesSegmentService)} had exception when getting courses and apprenticeships for document {currentOpportunitiesSegmentModel.DocumentId}, Exception - {httpRequestException.Message}");
+                    return HttpStatusCode.Accepted;
+                }
+            }
 
             return result;
         }

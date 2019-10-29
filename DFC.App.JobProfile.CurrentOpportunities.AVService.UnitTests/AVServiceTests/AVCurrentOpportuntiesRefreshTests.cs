@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
@@ -32,11 +33,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
         {
             //arrange
             var fakeLogger = A.Fake<ILogger<AVCurrentOpportuntiesRefresh>>();
+            var fakeRepository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
             var fakeCurrentOpportunitiesSegmentService = A.Fake<CurrentOpportunitiesSegmentService>();
             var fakeAVAPIService = A.Fake<AVAPIService>();
             var fakeMapper = A.Fake<AutoMapper.IMapper>();
 
-            var aVCurrentOpportuntiesRefresh = new AVCurrentOpportuntiesRefresh(fakeLogger, fakeCurrentOpportunitiesSegmentService, fakeAVAPIService, fakeMapper);
+            var aVCurrentOpportuntiesRefresh = new AVCurrentOpportuntiesRefresh(fakeLogger, fakeRepository, fakeAVAPIService, fakeMapper);
 
             //Act
             var projectedVacancies = aVCurrentOpportuntiesRefresh.ProjectVacanciesForProfile(GetTestMappedVacancySummary(scenario));
@@ -53,7 +55,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
         {
             //arrange
             var fakeLogger = A.Fake<ILogger<AVCurrentOpportuntiesRefresh>>();
-            var fakeCurrentOpportunitiesSegmentService = A.Fake<ICurrentOpportunitiesSegmentService>();
+            var fakeRepository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
             var fakeAVAPIService = A.Fake<IAVAPIService>();
             var fakeMapper = A.Fake<AutoMapper.IMapper>();
             var currentOpportunitiesSegmentModel = new CurrentOpportunitiesSegmentModel
@@ -69,21 +71,21 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
                 },
             };
 
-            A.CallTo(() => fakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).Returns(currentOpportunitiesSegmentModel);
+            A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
             A.CallTo(() => fakeAVAPIService.GetAVsForMultipleProvidersAsync(A<AVMapping>.Ignored)).Returns(GetTestVacancies(numberVacanciesFound));
             A.CallTo(() => fakeAVAPIService.GetApprenticeshipVacancyDetailsAsync(A<int>.Ignored)).Returns(A.Dummy<ApprenticeshipVacancyDetails>());
             A.CallTo(() => fakeMapper.Map<Vacancy>(A<ApprenticeshipVacancyDetails>.Ignored)).Returns(A.Dummy<Vacancy>());
 
-            var aVCurrentOpportuntiesRefresh = new AVCurrentOpportuntiesRefresh(fakeLogger, fakeCurrentOpportunitiesSegmentService, fakeAVAPIService, fakeMapper);
+            var aVCurrentOpportuntiesRefresh = new AVCurrentOpportuntiesRefresh(fakeLogger, fakeRepository, fakeAVAPIService, fakeMapper);
 
             //Act
             var result = aVCurrentOpportuntiesRefresh.RefreshApprenticeshipVacanciesAsync(A.Dummy<Guid>()).Result;
 
             //Asserts
             result.Should().Be(numberVacanciesFound);
-            A.CallTo(() => fakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeAVAPIService.GetApprenticeshipVacancyDetailsAsync(A<int>.Ignored)).MustHaveHappened(numberVacanciesFound, Times.Exactly);
-            A.CallTo(() => fakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
         }
 
         private static IEnumerable<ApprenticeshipVacancySummary> GetTestVacancies(int numberToGet)

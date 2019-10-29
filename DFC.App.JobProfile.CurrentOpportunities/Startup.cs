@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using DFC.App.FindACourseClient;
-using DFC.App.FindACourseClient.Contracts;
 using DFC.App.FindACourseClient.Models.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.AVService;
 using DFC.App.JobProfile.CurrentOpportunities.CourseService;
@@ -11,6 +9,9 @@ using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
 using DFC.App.JobProfile.CurrentOpportunities.DraftSegmentService;
 using DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb;
 using DFC.App.JobProfile.CurrentOpportunities.SegmentService;
+using DFC.FindACourseClient;
+using DFC.FindACourseClient.Contracts;
+using DFC.FindACourseClient.Models.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -61,8 +62,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities
 
             var courseSearchClientSettings = new CourseSearchClientSettings
             {
-                courseSearchSvcSettings = configuration.GetSection(CourseSearchClientSvcSettings).Get<CourseSearchSvcSettings>() ?? new CourseSearchSvcSettings(),
-                courseSearchAuditCosmosDbSettings = configuration.GetSection(CourseSearchClientAuditSettings).Get<CourseSearchAuditCosmosDbSettings>() ?? new CourseSearchAuditCosmosDbSettings(),
+                CourseSearchSvcSettings = configuration.GetSection(CourseSearchClientSvcSettings).Get<CourseSearchSvcSettings>() ?? new CourseSearchSvcSettings(),
+                CourseSearchAuditCosmosDbSettings = configuration.GetSection(CourseSearchClientAuditSettings).Get<CourseSearchAuditCosmosDbSettings>() ?? new CourseSearchAuditCosmosDbSettings(),
             };
             services.AddSingleton(courseSearchClientSettings);
             services.AddSingleton<ICourseSearchClient, CourseSearchClient>();
