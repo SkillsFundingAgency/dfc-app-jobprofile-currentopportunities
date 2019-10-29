@@ -394,19 +394,19 @@
                                 "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('appSharedStorageAccountName'),';AccountKey=',listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.Storage/storageAccounts', parameters('appSharedStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
                             },
                             {
-                                "name": "Values__service-bus-connection-string",
+                                "name": "service-bus-connection-string",
                                 "value": "[listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.ServiceBus/namespaces/authorizationRules', parameters('appSharedServiceBusName'), 'ReadWrite'), '2017-04-01').primaryConnectionString]"
                             },
                             {
-                                "name": "Values__RefreshApprenticeshipsCron",
+                                "name": "RefreshApprenticeshipsCron",
                                 "value": "0 0 3 * * *"
                             },
                             {
-                                "name": "Values__RefreshCoursesCron",
+                                "name": "RefreshCoursesCron",
                                 "value": "0 0 5 * * *"
                             },
                             {
-                                "name": "Values__AbortAfterErrorCount",
+                                "name": "AbortAfterErrorCount",
                                 "value": "5"
                             },
                             {
