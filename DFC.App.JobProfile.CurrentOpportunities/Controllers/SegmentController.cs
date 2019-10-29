@@ -1,11 +1,13 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels;
 using DFC.App.JobProfile.CurrentOpportunities.Extensions;
 using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
@@ -131,6 +133,31 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             var response = await currentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
             logger.LogInformation($"{nameof(CreateOrUpdate)} has upserted content for: {currentOpportunitiesSegmentModel.CanonicalName}");
+
+            return new StatusCodeResult((int)response);
+        }
+
+        [HttpPatch]
+        [Route("segment/{documentId}/socCodeData")]
+        public async Task<IActionResult> PatchSocCodeData([FromBody]PatchSocDataModel patchSocDataModel, Guid documentId)
+        {
+            logger.LogInformation($"{nameof(PatchSocCodeData)} has been called");
+
+            if (patchSocDataModel == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await currentOpportunitiesSegmentService.PatchSocCodeDataAsync(patchSocDataModel, documentId).ConfigureAwait(false);
+            if (response != HttpStatusCode.OK && response != HttpStatusCode.Created)
+            {
+                logger.LogError($"{nameof(PatchSocCodeData)}: Error while patching Soc Data content for Job Profile with Id: {patchSocDataModel.JobProfileId} for the {patchSocDataModel.SocCode} soc code");
+            }
 
             return new StatusCodeResult((int)response);
         }

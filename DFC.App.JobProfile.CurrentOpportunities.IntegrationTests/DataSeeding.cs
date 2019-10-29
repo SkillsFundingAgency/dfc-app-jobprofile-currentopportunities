@@ -12,14 +12,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests
 
         public static Guid DefaultArticleGuid => Guid.Parse("63DEA97E-B61C-4C14-15DC-1BD08EA20DC8");
 
-        public static DateTime DefaultArticleCreated => new DateTime(2019, 09, 01, 12, 13, 14);
-
         public static void SeedDefaultArticle(CustomWebApplicationFactory<Startup> factory)
         {
             const string url = "/segment";
             var models = new List<CurrentOpportunitiesSegmentModel>()
             {
-                 GetDummyCurrentOpportunitiesSegmentModel(DefaultArticleGuid, DefaultArticleName, DefaultArticleCreated, 1),
+                 GetDummyCurrentOpportunitiesSegmentModel(DefaultArticleGuid, DefaultArticleName, 1),
 
                  //GetDummyCurrentOpportunitiesSegmentModel(Guid.Parse("C16B389D-91AD-4F3D-2485-9F7EE953AFE4"), $"{DefaultArticleName}-2", new DateTime(2019, 09, 02, 12, 13, 24), 2),
                  //GetDummyCurrentOpportunitiesSegmentModel(Guid.Parse("C0103C26-E7C9-4008-3F66-1B2DB192177E"), $"{DefaultArticleName}-3", new DateTime(2018, 08, 12, 15, 20, 10), 2),
@@ -32,13 +30,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests
             models.ForEach(f => client.PostAsync(url, f, new JsonMediaTypeFormatter()).GetAwaiter().GetResult());
         }
 
-        public static CurrentOpportunitiesSegmentModel GetDummyCurrentOpportunitiesSegmentModel(Guid documentId, string canonicalName, DateTime created, int dataIndex)
+        public static CurrentOpportunitiesSegmentModel GetDummyCurrentOpportunitiesSegmentModel(Guid documentId, string canonicalName, int dataIndex)
         {
             return new CurrentOpportunitiesSegmentModel()
             {
                 DocumentId = documentId,
                 CanonicalName = canonicalName,
-                LastReviewed = created,
                 SocLevelTwo = $"0{dataIndex}",
                 Data = GetDummyCurrentOpportunitiesSegmentModel(dataIndex),
             };
@@ -52,7 +49,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests
                 JobTitle = $"JobProfile{index}",
                 Apprenticeships = new Apprenticeships()
                 {
-                    Standards = new string[] { "25", "36" },   //Standards and frameworks should be valid or intergration tests will fail
+                    Standards = new string[] { "25", "36" },   //Standards and frameworks should be valid or integration tests will fail
                     Frameworks = new string[] { string.Empty },
                     Vacancies = new List<Vacancy>()
                     {

@@ -1,4 +1,5 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Extensions;
+﻿using AutoMapper;
+using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Extensions;
 using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.HttpClientPolicies;
 using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.HttpClientPolicies.Polly;
 using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services;
@@ -7,6 +8,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 
 [assembly: WebJobsStartup(typeof(DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Startup.WebJobsExtensionStartup), "Web Jobs Extension Startup")]
@@ -24,6 +26,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Startup
                .Build();
 
             builder.AddDependencyInjection();
+            builder?.Services.AddAutoMapper(typeof(WebJobsExtensionStartup).Assembly);
 
             builder.Services.AddSingleton(configuration.GetSection(nameof(RefreshClientOptions)).Get<RefreshClientOptions>());
             builder.Services.AddSingleton(configuration.GetSection("CurrentOpportunitiesSegmentClientOptions").Get<SegmentClientOptions>());
@@ -33,7 +36,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Startup
 
             builder.Services
                 .AddPolicies(policyRegistry, nameof(RefreshClientOptions), policyOptions)
-                .AddHttpClient<IRefreshService, RefreshService, RefreshClientOptions>(configuration, nameof(RefreshClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker));
+                .AddHttpClient<IRefreshService, RefreshService, RefreshClientOptions>(configuration, nameof(RefreshClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker))
+            .AddSingleton<IHttpClientService, HttpClientService>()
+            .AddSingleton<IMessageProcessor, MessageProcessor>()
+            .AddSingleton<IMappingService, MappingService>()
+            .AddSingleton<ILogger, Logger<WebJobsExtensionStartup>>();
         }
     }
 }

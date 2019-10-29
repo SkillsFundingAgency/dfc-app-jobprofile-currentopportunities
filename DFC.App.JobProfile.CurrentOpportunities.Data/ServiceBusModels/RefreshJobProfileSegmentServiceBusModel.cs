@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models.ServiceBusModels
+namespace DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels
 {
     public class RefreshJobProfileSegmentServiceBusModel
     {
@@ -10,9 +10,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models.ServiceBusModels
 
         [Required]
         public string CanonicalName { get; set; }
-
-        [Required]
-        public string SocLevelTwo { get; set; }
 
         public string Segment { get; set; }
     }

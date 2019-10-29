@@ -1,7 +1,7 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels;
 using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.HttpClientPolicies;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -11,76 +11,88 @@ using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
 {
-    public static class HttpClientService
+    public class HttpClientService : IHttpClientService
     {
-        //public static async Task<CurrentOpportunitiesSegmentModel> GetByIdAsync(HttpClient httpClient, SegmentClientOptions segmentClientOptions, Guid id)
-        //{
-        //    var url = $"{segmentClientOptions.BaseAddress}segment/{id}/contents";
+        private readonly SegmentClientOptions segmentClientOptions;
+        private readonly HttpClient httpClient;
+        private readonly ILogger logger;
 
-        //    using (var request = new HttpRequestMessage(HttpMethod.Get, url))
-        //    {
-        //        request.Headers.Accept.Clear();
-        //        request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
+        public HttpClientService(SegmentClientOptions segmentClientOptions, HttpClient httpClient, ILogger logger)
+        {
+            this.segmentClientOptions = segmentClientOptions;
+            this.httpClient = httpClient;
+            this.logger = logger;
+        }
 
-        //        var response = await httpClient.SendAsync(request).ConfigureAwait(false);
+        public async Task<HttpStatusCode> PostAsync(CurrentOpportunitiesSegmentModel overviewSegmentModel)
+        {
+            var url = new Uri($"{segmentClientOptions?.BaseAddress}segment");
 
-        //        if (response.StatusCode == System.Net.HttpStatusCode.OK)
-        //        {
-        //            var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-        //            var result = JsonConvert.DeserializeObject<CurrentOpportunitiesSegmentModel>(responseString);
+            using (var content = new ObjectContent(typeof(CurrentOpportunitiesSegmentModel), overviewSegmentModel, new JsonMediaTypeFormatter(), MediaTypeNames.Application.Json))
+            {
+                var response = await httpClient.PostAsync(url, content).ConfigureAwait(false);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    logger.LogError($"Failure status code '{response.StatusCode}' received with content '{responseContent}', for POST, Id: {overviewSegmentModel?.DocumentId}.");
+                    response.EnsureSuccessStatusCode();
+                }
 
-        //            return result;
-        //        }
-        //    }
+                return response.StatusCode;
+            }
+        }
 
-        //    return default(CurrentOpportunitiesSegmentModel);
-        //}
+        public async Task<HttpStatusCode> PutAsync(CurrentOpportunitiesSegmentModel overviewSegmentModel)
+        {
+            var url = new Uri($"{segmentClientOptions?.BaseAddress}segment");
 
-        //public static async Task<HttpStatusCode> PatchAsync(HttpClient httpClient, SegmentClientOptions segmentClientOptions, CurrentOpportunitiesPatchSegmentModel careerPathPatchSegmentModel, Guid documentId)
-        //{
-        //    var url = $"{segmentClientOptions.BaseAddress}segment/{documentId}/content-type/markup";
+            using (var content = new ObjectContent(typeof(CurrentOpportunitiesSegmentModel), overviewSegmentModel, new JsonMediaTypeFormatter(), MediaTypeNames.Application.Json))
+            {
+                var response = await httpClient.PutAsync(url, content).ConfigureAwait(false);
 
-        //    using (var request = new HttpRequestMessage(HttpMethod.Patch, url))
-        //    {
-        //        request.Headers.Accept.Clear();
-        //        request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
-        //        request.Content = new ObjectContent(typeof(CurrentOpportunitiesPatchSegmentModel), careerPathPatchSegmentModel, new JsonMediaTypeFormatter(), MediaTypeNames.Application.Json);
+                if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.NotFound)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    logger.LogError($"Failure status code '{response.StatusCode}' received with content '{responseContent}', for Put type {typeof(CurrentOpportunitiesSegmentModel)}, Id: {overviewSegmentModel?.DocumentId}");
+                    response.EnsureSuccessStatusCode();
+                }
 
-        //        var response = await httpClient.SendAsync(request).ConfigureAwait(false);
+                return response.StatusCode;
+            }
+        }
 
-        //        return response.StatusCode;
-        //    }
-        //}
+        public async Task<HttpStatusCode> PatchAsync<T>(T patchModel, string patchTypeEndpoint)
+            where T : BasePatchModel
+        {
+            var url = new Uri($"{segmentClientOptions.BaseAddress}segment/{patchModel?.JobProfileId}/{patchTypeEndpoint}");
+            using (var content = new ObjectContent<T>(patchModel, new JsonMediaTypeFormatter(), MediaTypeNames.Application.Json))
+            {
+                var response = await httpClient.PatchAsync(url, content).ConfigureAwait(false);
+                if (!response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.NotFound)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    logger.LogError($"Failure status code '{response.StatusCode}' received with content '{responseContent}', for patch type {typeof(T)}, Id: {patchModel?.JobProfileId}");
 
-        //public static async Task<HttpStatusCode> PostAsync(HttpClient httpClient, SegmentClientOptions segmentClientOptions, CurrentOpportunitiesSegmentModel careerPathSegmentModel)
-        //{
-        //    var url = $"{segmentClientOptions.BaseAddress}segment";
+                    response.EnsureSuccessStatusCode();
+                }
 
-        //    using (var request = new HttpRequestMessage(HttpMethod.Post, url))
-        //    {
-        //        request.Headers.Accept.Clear();
-        //        request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
-        //        request.Content = new ObjectContent(typeof(CurrentOpportunitiesSegmentModel), careerPathSegmentModel, new JsonMediaTypeFormatter(), MediaTypeNames.Application.Json);
+                return response.StatusCode;
+            }
+        }
 
-        //        var response = await httpClient.SendAsync(request).ConfigureAwait(false);
+        public async Task<HttpStatusCode> DeleteAsync(Guid id)
+        {
+            var url = new Uri($"{segmentClientOptions?.BaseAddress}segment/{id}");
+            var response = await httpClient.DeleteAsync(url).ConfigureAwait(false);
 
-        //        return response.StatusCode;
-        //    }
-        //}
+            if (!response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                logger.LogError($"Failure status code '{response.StatusCode}' received with content '{responseContent}', for DELETE, Id: {id}.");
+                response.EnsureSuccessStatusCode();
+            }
 
-        //public static async Task<HttpStatusCode> DeleteAsync(HttpClient httpClient, SegmentClientOptions segmentClientOptions, Guid id)
-        //{
-        //    var url = $"{segmentClientOptions.BaseAddress}segment/{id}";
-
-        //    using (var request = new HttpRequestMessage(HttpMethod.Delete, url))
-        //    {
-        //        request.Headers.Accept.Clear();
-        //        request.Headers.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
-
-        //        var response = await httpClient.SendAsync(request).ConfigureAwait(false);
-
-        //        return response.StatusCode;
-        //    }
-        //}
+            return response.StatusCode;
+        }
     }
 }

@@ -7,9 +7,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 {
     public class CurrentOpportunitiesSegmentModel : IDataModel
     {
-        public const string SegmentName = "CurrentOpportunities";
-
-        [Required]
         [JsonProperty(PropertyName = "id")]
         public Guid DocumentId { get; set; }
 
@@ -19,13 +16,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
         [Required]
         public string CanonicalName { get; set; }
 
-        [Required]
-        public string SocLevelTwo { get; set; }
-
         public string PartitionKey => SocLevelTwo;
 
         [Required]
-        public DateTime? LastReviewed { get; set; }
+        public string SocLevelTwo { get; set; }
+
+        [Required]
+        public long SequenceNumber { get; set; }
 
         public CurrentOpportunitiesSegmentDataModel Data { get; set; }
     }

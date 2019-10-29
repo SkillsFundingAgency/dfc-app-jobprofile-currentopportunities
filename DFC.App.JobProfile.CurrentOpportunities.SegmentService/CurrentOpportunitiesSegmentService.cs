@@ -1,5 +1,9 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+﻿using AutoMapper;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels;
+using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System;
 using System.Collections.Generic;
@@ -12,12 +16,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
     public class CurrentOpportunitiesSegmentService : ICurrentOpportunitiesSegmentService, IHealthCheck
     {
         private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
-        private readonly IDraftCurrentOpportunitiesSegmentService draftCurrentOpportunitiesSegmentService;
+        private readonly IMapper mapper;
+        private readonly IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> jobProfileSegmentRefreshService;
 
-        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, IDraftCurrentOpportunitiesSegmentService draftCurrentOpportunitiesSegmentService)
+        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, IMapper mapper, IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> jobProfileSegmentRefreshService)
         {
             this.repository = repository;
-            this.draftCurrentOpportunitiesSegmentService = draftCurrentOpportunitiesSegmentService;
+            this.mapper = mapper;
+            this.jobProfileSegmentRefreshService = jobProfileSegmentRefreshService;
         }
 
         public async Task<bool> PingAsync()
@@ -57,9 +63,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 throw new ArgumentNullException(nameof(canonicalName));
             }
 
-            return isDraft
-                ? await draftCurrentOpportunitiesSegmentService.GetSitefinityData(canonicalName.ToLowerInvariant()).ConfigureAwait(false)
-                : await repository.GetAsync(d => d.CanonicalName == canonicalName.ToLowerInvariant()).ConfigureAwait(false);
+            return await repository.GetAsync(d => d.CanonicalName.ToLower() == canonicalName.ToLowerInvariant()).ConfigureAwait(false);
         }
 
         public async Task<HttpStatusCode> UpsertAsync(CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel)
@@ -79,11 +83,64 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             return result;
         }
 
+        public async Task<HttpStatusCode> PatchSocCodeDataAsync(PatchSocDataModel patchModel, Guid documentId)
+        {
+            if (patchModel is null)
+            {
+                throw new ArgumentNullException(nameof(patchModel));
+            }
+
+            var existingSegmentModel = await GetByIdAsync(documentId).ConfigureAwait(false);
+            if (existingSegmentModel is null)
+            {
+                return HttpStatusCode.NotFound;
+            }
+
+            if (patchModel.SequenceNumber <= existingSegmentModel.SequenceNumber)
+            {
+                return HttpStatusCode.AlreadyReported;
+            }
+
+            var existingSocData = existingSegmentModel.Data.Soc;
+            if (existingSocData is null)
+            {
+                return patchModel.MessageAction == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
+            }
+
+            if (patchModel.MessageAction == MessageAction.Deleted) // What should this do on delete of SocData - null or new SocData?
+            {
+                existingSegmentModel.Data.Soc = new SocData();
+            }
+            else
+            {
+                var updatedSocData = mapper.Map<SocData>(patchModel);
+                existingSegmentModel.Data.Soc = updatedSocData;
+            }
+
+            existingSegmentModel.SequenceNumber = patchModel.SequenceNumber;
+
+            return await UpsertAndRefreshSegmentModel(existingSegmentModel).ConfigureAwait(false);
+        }
+
         public async Task<bool> DeleteAsync(Guid documentId)
         {
             var result = await repository.DeleteAsync(documentId).ConfigureAwait(false);
 
             return result == HttpStatusCode.NoContent;
+        }
+
+        private async Task<HttpStatusCode> UpsertAndRefreshSegmentModel(CurrentOpportunitiesSegmentModel existingSegmentModel)
+        {
+            var result = await repository.UpsertAsync(existingSegmentModel).ConfigureAwait(false);
+
+            if (result == HttpStatusCode.OK || result == HttpStatusCode.Created)
+            {
+                var refreshJobProfileSegmentServiceBusModel = mapper.Map<RefreshJobProfileSegmentServiceBusModel>(existingSegmentModel);
+
+                await jobProfileSegmentRefreshService.SendMessageAsync(refreshJobProfileSegmentServiceBusModel).ConfigureAwait(false);
+            }
+
+            return result;
         }
     }
 }
