@@ -21,7 +21,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles
             CreateMap<Apprenticeships, BodyApprenticeshipsViewModel>();
             CreateMap<Vacancy, BodyVacancyViewModel>();
             CreateMap<Courses, BodyCoursesViewModel>()
-            .ForMember(d => d.CourseSearchUrl, opt => opt.Ignore());
+                .ForMember(d => d.CourseSearchUrl, opt => opt.Ignore());
+
             CreateMap<Opportunity, BodyOpportunityViewModel>();
             CreateMap<Location, LocationViewModel>();
 

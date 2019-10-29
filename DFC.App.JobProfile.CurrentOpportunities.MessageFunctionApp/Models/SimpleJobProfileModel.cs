@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
+namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Models
 {
-    public class IndexDocumentViewModel
+    public class SimpleJobProfileModel
     {
         public Guid DocumentId { get; set; }
 

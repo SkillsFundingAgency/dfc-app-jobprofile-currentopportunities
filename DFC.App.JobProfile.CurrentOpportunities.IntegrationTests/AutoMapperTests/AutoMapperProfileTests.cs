@@ -16,7 +16,35 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
         }
 
         [Fact]
-        public void AutoMapperProfileConfigurationForCareerPathSegmentModelProfileReturnSuccess()
+        public void AutoMapperProfileConfigurationForApprenticeshipProfileReturnSuccess()
+        {
+            // Arrange
+            _ = factory.CreateClient();
+            var mapper = factory.Server.Host.Services.GetRequiredService<IMapper>();
+
+            // Act
+            mapper.ConfigurationProvider.AssertConfigurationIsValid<ApprenticeshipProfile>();
+
+            // Assert
+            Assert.True(true);
+        }
+
+        [Fact]
+        public void AutoMapperProfileConfigurationForCoursesProfileReturnSuccess()
+        {
+            // Arrange
+            _ = factory.CreateClient();
+            var mapper = factory.Server.Host.Services.GetRequiredService<IMapper>();
+
+            // Act
+            mapper.ConfigurationProvider.AssertConfigurationIsValid<CoursesProfile>();
+
+            // Assert
+            Assert.True(true);
+        }
+
+        [Fact]
+        public void AutoMapperProfileConfigurationForCurrentOpportunitiesSegmentModelProfileReturnSuccess()
         {
             // Arrange
             _ = factory.CreateClient();

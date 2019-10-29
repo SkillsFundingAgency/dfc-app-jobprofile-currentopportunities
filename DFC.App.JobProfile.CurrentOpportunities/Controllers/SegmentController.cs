@@ -1,5 +1,4 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Extensions;
 using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
@@ -44,7 +43,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
                 logger.LogWarning($"{nameof(Index)} has returned with no results");
             }
 
-            return View(viewModel);
+            return this.NegotiateContentResult(viewModel, viewModel.Documents);
         }
 
         [HttpGet]
@@ -80,7 +79,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             {
                 var viewModel = mapper.Map<BodyViewModel>(currentOpportunitiesSegmentModel);
                 logger.LogInformation($"{nameof(Body)} has succeeded for: {documentId}");
-                return this.NegotiateContentResult(viewModel, currentOpportunitiesSegmentModel);
+                return this.NegotiateContentResult(viewModel, currentOpportunitiesSegmentModel.Data);
             }
 
             logger.LogWarning($"{nameof(Body)} has returned no content for: {documentId}");
