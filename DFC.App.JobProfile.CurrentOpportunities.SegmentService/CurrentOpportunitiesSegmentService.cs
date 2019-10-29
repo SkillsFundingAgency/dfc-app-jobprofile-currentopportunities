@@ -1,27 +1,51 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
 {
-    public class CurrentOpportunitiesSegmentService : ICurrentOpportunitiesSegmentService
+    public class CurrentOpportunitiesSegmentService : ICurrentOpportunitiesSegmentService, IHealthCheck
     {
         private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
         private readonly IDraftCurrentOpportunitiesSegmentService draftCurrentOpportunitiesSegmentService;
+        private readonly ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh;
+        private readonly IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh;
+        private readonly ILogger<CurrentOpportunitiesSegmentService> logger;
 
-        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, IDraftCurrentOpportunitiesSegmentService draftCurrentOpportunitiesSegmentService)
+        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, IDraftCurrentOpportunitiesSegmentService draftCurrentOpportunitiesSegmentService, ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh, IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh, ILogger<CurrentOpportunitiesSegmentService> logger)
         {
             this.repository = repository;
             this.draftCurrentOpportunitiesSegmentService = draftCurrentOpportunitiesSegmentService;
+            this.aVCurrentOpportunatiesRefresh = aVCurrentOpportunatiesRefresh;
+            this.courseCurrentOpportuntiesRefresh = courseCurrentOpportuntiesRefresh;
+            this.logger = logger;
         }
 
         public async Task<bool> PingAsync()
         {
             return await repository.PingAsync().ConfigureAwait(false);
+        }
+
+        public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+        {
+            var description = $"{typeof(CurrentOpportunitiesSegmentService).Namespace} - Cosmos Document Store";
+
+            var isHealthy = await PingAsync().ConfigureAwait(false);
+            if (isHealthy)
+            {
+                return HealthCheckResult.Healthy(description);
+            }
+            else
+            {
+                return HealthCheckResult.Degraded(description);
+            }
         }
 
         public async Task<IEnumerable<CurrentOpportunitiesSegmentModel>> GetAllAsync()
@@ -60,6 +84,20 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
 
             var result = await repository.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
+            if (result == HttpStatusCode.Created || result == HttpStatusCode.OK)
+            {
+                try
+                {
+                    var avResult = await aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false);
+                    var avCourse = await courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false);
+                }
+                catch (HttpRequestException httpRequestException)
+                {
+                    logger.LogError($"{nameof(CurrentOpportunitiesSegmentService)} had exception when getting courses and apprenticeships for document {currentOpportunitiesSegmentModel.DocumentId}, Exception - {httpRequestException.Message}");
+                    return HttpStatusCode.Accepted;
+                }
+            }
+
             return result;
         }
 
@@ -68,37 +106,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             var result = await repository.DeleteAsync(documentId).ConfigureAwait(false);
 
             return result == HttpStatusCode.NoContent;
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "We want to catch any type of error for this health check and report it")]
-        public async Task<ServiceHealthStatus> GetCurrentHealthStatusAsync()
-        {
-            var serviceHealthStatus = new ServiceHealthStatus();
-            serviceHealthStatus.Service = typeof(CurrentOpportunitiesSegmentService).Namespace;
-            serviceHealthStatus.SubService = "Cosmos Document Store";
-            serviceHealthStatus.HealthServiceState = HealthServiceState.Red;
-            serviceHealthStatus.CheckParametersUsed = string.Empty;
-
-            try
-            {
-                var isHealthy = await PingAsync().ConfigureAwait(false);
-
-                if (isHealthy)
-                {
-                    serviceHealthStatus.Message = "Document store is available";
-                    serviceHealthStatus.HealthServiceState = HealthServiceState.Green;
-                }
-                else
-                {
-                    serviceHealthStatus.Message = "Ping has failed";
-                }
-            }
-            catch (Exception ex)
-            {
-                serviceHealthStatus.Message = $"Exception: {ex.Message}";
-            }
-
-            return serviceHealthStatus;
         }
     }
 }

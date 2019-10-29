@@ -24,17 +24,17 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         [Route("AVFeed/RefreshApprenticeships/{documentId}")]
         public async Task<IActionResult> RefreshApprenticeships(Guid documentId)
         {
-            var feedRefreshResponseModel = new FeedRefreshResponseModel();
+            var feedRefreshResponseViewModel = new FeedRefreshResponseViewModel();
             try
             {
                 //catch any exception that the outgoing request may throw.
-                feedRefreshResponseModel.NumberPulled = await aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(documentId).ConfigureAwait(false);
-                return Ok(feedRefreshResponseModel);
+                feedRefreshResponseViewModel.NumberPulled = await aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(documentId).ConfigureAwait(false);
+                return Ok(feedRefreshResponseViewModel);
             }
             catch (HttpRequestException httpRequestException)
             {
-                feedRefreshResponseModel.RequestErrorMessage = httpRequestException.Message;
-                return BadRequest(feedRefreshResponseModel);
+                feedRefreshResponseViewModel.RequestErrorMessage = httpRequestException.Message;
+                return BadRequest(feedRefreshResponseViewModel);
             }
         }
     }

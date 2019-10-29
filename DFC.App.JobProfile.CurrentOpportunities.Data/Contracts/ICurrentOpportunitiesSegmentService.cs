@@ -10,8 +10,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Contracts
     {
         Task<bool> PingAsync();
 
-        Task<ServiceHealthStatus> GetCurrentHealthStatusAsync();
-
         Task<IEnumerable<CurrentOpportunitiesSegmentModel>> GetAllAsync();
 
         Task<CurrentOpportunitiesSegmentModel> GetByIdAsync(Guid documentId);

@@ -12,14 +12,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
     public class AVCurrentOpportuntiesRefresh : IAVCurrentOpportuntiesRefresh
     {
         private readonly ILogger<AVCurrentOpportuntiesRefresh> logger;
-        private readonly ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService;
+        private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
         private readonly IAVAPIService aVAPIService;
         private readonly AutoMapper.IMapper mapper;
 
-        public AVCurrentOpportuntiesRefresh(ILogger<AVCurrentOpportuntiesRefresh> logger, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService, IAVAPIService aVAPIService, AutoMapper.IMapper mapper)
+        public AVCurrentOpportuntiesRefresh(ILogger<AVCurrentOpportuntiesRefresh> logger, ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, IAVAPIService aVAPIService, AutoMapper.IMapper mapper)
         {
             this.logger = logger;
-            this.currentOpportunitiesSegmentService = currentOpportunitiesSegmentService;
+            this.repository = repository;
             this.aVAPIService = aVAPIService;
             this.mapper = mapper;
         }
@@ -28,8 +28,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
         {
             logger.LogInformation($"{nameof(RefreshApprenticeshipVacanciesAsync)} has been called for document {documentId}");
 
-            CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByIdAsync(documentId).ConfigureAwait(false);
-
+            CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel = await repository.GetAsync(d => d.DocumentId == documentId).ConfigureAwait(false);
             var aVMapping = new AVMapping() { Standards = currentOpportunitiesSegmentModel.Data.Apprenticeships.Standards, Frameworks = currentOpportunitiesSegmentModel.Data.Apprenticeships.Frameworks };
             var mappedVacancies = await aVAPIService.GetAVsForMultipleProvidersAsync(aVMapping).ConfigureAwait(false);
 
@@ -45,7 +44,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
             }
 
             currentOpportunitiesSegmentModel.Data.Apprenticeships.Vacancies = vacancies;
-            await currentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
+            await repository.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
             return vacancies.Count();
         }

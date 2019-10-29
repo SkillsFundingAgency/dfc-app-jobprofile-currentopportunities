@@ -40,7 +40,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         [Theory]
         [MemberData(nameof(HtmlMediaTypes))]
-        public async void PagesControllerIndexHtmlReturnsSuccessWhenNoData(string mediaTypeName)
+        public async void SegmentControllerIndexHtmlReturnsSuccessWhenNoData(string mediaTypeName)
         {
             // Arrange
             const int resultsCount = 0;
