@@ -320,15 +320,15 @@
                                 "value": "segment/{0}"
                             },
                             {
-                                "name": "Values__RefreshApprenticeshipsCron",
+                                "name": "RefreshApprenticeshipsCron",
                                 "value": "0 0 3 * * *"
                             },
                             {
-                                "name": "Values__RefreshCoursesCron",
+                                "name": "RefreshCoursesCron",
                                 "value": "0 0 5 * * *"
                             },
                             {
-                                "name": "Values__AbortAfterErrorCount",
+                                "name": "AbortAfterErrorCount",
                                 "value": "5"
                             }
                         ]
