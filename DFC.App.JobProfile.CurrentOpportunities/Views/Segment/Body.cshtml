@@ -24,7 +24,7 @@
                 </div>
             </div>
         }
-        <div class="govuk-body-m">
+        <div class="govuk-body-m dfc-code-jp-vacancyText">
             <a href="https://www.findapprenticeship.service.gov.uk/apprenticeshipsearch">Find apprenticeships near you</a>
         </div>
     }
@@ -36,7 +36,7 @@
         </div>
     }
 </div>
-<div class="govuk-grid-row" id="appGeneric">
+<div class="govuk-grid-row dfc-code-jp-trainingCourse">
     <div class="govuk-grid-column-full">
         <h3 class="govuk-heading-m">
             Courses
@@ -66,10 +66,9 @@
     }
     else
     {
-        <div class="dfc-code-jp-novacancyText">
+        <div class="dfc-code-jp-NoTrainingCoursesText">
             <p>Are you interested in becoming @Model.Data.JobTitle?</p>
             <p>Search for <a href="@Model.Data.Courses.CourseSearchUrl/find-a-course">training courses near you</a>.</p>
-            <p>We can't find any courses in England for @Model.Data.JobTitle right now.</p>
         </div>
     }
 </div>
