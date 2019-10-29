@@ -318,6 +318,18 @@
                             {
                                 "name": "CareerPathSegmentClientOptions__DeleteEndpoint",
                                 "value": "segment/{0}"
+                            },
+                            {
+                                "name": "Values__RefreshApprenticeshipsCron",
+                                "value": "0 0 3 * * *"
+                            },
+                            {
+                                "name": "Values__RefreshCoursesCron",
+                                "value": "0 0 5 * * *"
+                            },
+                            {
+                                "name": "Values__AbortAfterErrorCount",
+                                "value": "5"
                             }
                         ]
                     }
