@@ -1,5 +1,4 @@
 using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using FakeItEasy;
 using FluentAssertions;

@@ -252,7 +252,7 @@
                                 @Html.DisplayNameFor(model => course.Location.Town)
                             </dt>
                             <dd class="col-sm-11">
-                                @course.Location.Town
+                                @course.Location?.Town
                             </dd>
                         </dl>
                         <dl class="row">
@@ -260,7 +260,7 @@
                                 @Html.DisplayNameFor(model => course.Location.PostCode)
                             </dt>
                             <dd class="col-sm-11">
-                                @course.Location.PostCode
+                                @course.Location?.PostCode
                             </dd>
                         </dl>
                         <dl class="row">

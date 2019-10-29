@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
 {
-    public class FeedRefreshResponseModel
+    public class FeedRefreshResponseViewModel
     {
         public int NumberPulled { get; set; }
 

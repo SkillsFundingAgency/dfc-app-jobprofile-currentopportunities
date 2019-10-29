@@ -16,6 +16,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 
         public Uri URL { get; set; }
 
-        public DateTime PullDate { get; set; }
+        public DateTime PullDate { get; set; } = DateTime.Now;
     }
 }

@@ -12,12 +12,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
     public class ApprenticeshipVacancyApi : IApprenticeshipVacancyApi
     {
         private readonly ILogger<ApprenticeshipVacancyApi> logger;
-        private readonly ICosmosRepository<APIAuditRecord> auditRepository;
+        private readonly ICosmosRepository<APIAuditRecordAV> auditRepository;
         private readonly AVAPIServiceSettings aVAPIServiceSettings;
         private readonly HttpClient httpClient;
         private readonly Guid correlationId;
 
-        public ApprenticeshipVacancyApi(ILogger<ApprenticeshipVacancyApi> logger, ICosmosRepository<APIAuditRecord> auditRepository,  AVAPIServiceSettings aVAPIServiceSettings, HttpClient httpClient)
+        public ApprenticeshipVacancyApi(ILogger<ApprenticeshipVacancyApi> logger, ICosmosRepository<APIAuditRecordAV> auditRepository,  AVAPIServiceSettings aVAPIServiceSettings, HttpClient httpClient)
         {
             this.logger = logger;
             this.auditRepository = auditRepository;
@@ -40,7 +40,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
 
                 //Even if there is a bad response code still read and write the resposne into the audit as it may have information about the cause.
                 string responseContent = await (response.Content?.ReadAsStringAsync()).ConfigureAwait(false);
-                var auditRecord = new APIAuditRecord() { DocumentId = Guid.NewGuid(),  CorrelationId = correlationId, Request = fullRequest, Response = responseContent };
+                var auditRecord = new APIAuditRecordAV() { DocumentId = Guid.NewGuid(),  CorrelationId = correlationId, Request = fullRequest, Response = responseContent };
                 await auditRepository.UpsertAsync(auditRecord).ConfigureAwait(false);
 
                 if (!response.IsSuccessStatusCode)
