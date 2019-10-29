@@ -80,8 +80,6 @@
         "webAppInsightsName": "[concat(variables('webAppName'), '-ai')]",
         "functionAppName": "[concat(variables('ResourcePrefix'), '-fa')]",
         "functionAppInsightsName": "[concat(variables('functionAppName'), '-ai')]",
-        "messageFunctionAppName": "[concat(variables('ResourcePrefix'), '-msg-fa')]",
-        "messageFunctionAppInsightsName": "[concat(variables('ResourcePrefix'), '-msg-ai')]",
         "urlJobProfileCurrentOpportunities": "[toLower(concat('https://', variables('webAppName'), '.', parameters('appServiceDomain')))]",
         "cmsTopicName": "cms-messages",
         "cmsSubscriptionName": "job-profile-currentopportunities",
@@ -320,102 +318,18 @@
                             {
                                 "name": "CareerPathSegmentClientOptions__DeleteEndpoint",
                                 "value": "segment/{0}"
-                            }
-                        ]
-                    }
-                }
-            },
-            "dependsOn": [
-                "[variables('functionAppInsightsName')]"
-            ]
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "[variables('messageFunctionAppInsightsName')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('buildingBlocksDfcBaseUrl'), 'application-insights.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appInsightsName": {
-                        "value": "[variables('messageFunctionAppInsightsName')]"
-                    },
-                    "attachedService": {
-                        "value": ""
-                    }
-                }
-            }
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "[variables('messageFunctionAppName')]",
-            "type": "Microsoft.Resources/deployments",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[concat(variables('buildingBlocksDfcBaseUrl'), 'app-service.json')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "appServiceName": {
-                        "value": "[variables('messageFunctionAppName')]"
-                    },
-                    "appServicePlanName": {
-                        "value": "[variables('appServicePlanName')]"
-                    },
-                    "appServicePlanResourceGroup": {
-                        "value": "[variables('appServicePlanResourceGroup')]"
-                    },
-                    "appServiceType": {
-                        "value": "functionapp"
-                    },
-                    "deployStagingSlot": {
-                        "value": false
-                    },
-                    "appServiceAppSettings": {
-                        "value": [
-                             {
-                                "name": "FUNCTIONS_EXTENSION_VERSION",
-                                "value": "~2"
                             },
                             {
-                                "name": "MSDEPLOY_RENAME_LOCKED_FILES",
-                                "value": "1"
-                            },
-                            {
-                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference(variables('messageFunctionAppInsightsName')).outputs.InstrumentationKey.value]"
-                            },
-                            {
-                                "name": "AzureWebJobsStorage",
-                                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('appSharedStorageAccountName'),';AccountKey=',listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.Storage/storageAccounts', parameters('appSharedStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
-                            },
-                            {
-                                "name": "service-bus-connection-string",
-                                "value": "[listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.ServiceBus/namespaces/authorizationRules', parameters('appSharedServiceBusName'), 'ReadWrite'), '2017-04-01').primaryConnectionString]"
-                            },
-                            {
-                                "name": "RefreshApprenticeshipsCron",
+                                "name": "Values__RefreshApprenticeshipsCron",
                                 "value": "0 0 3 * * *"
                             },
                             {
-                                "name": "RefreshCoursesCron",
+                                "name": "Values__RefreshCoursesCron",
                                 "value": "0 0 5 * * *"
                             },
                             {
-                                "name": "AbortAfterErrorCount",
+                                "name": "Values__AbortAfterErrorCount",
                                 "value": "5"
-                            },
-                            {
-                                "name": "RefreshClientOptions__BaseAddress",
-                                "value": "[variables('urlJobProfileCurrentOpportunities')]"
-                            },
-                            {
-                                "name": "CurrentOpportunitiesSegmentClientOptions__BaseAddress",
-                                "value": "[variables('urlJobProfileCurrentOpportunities')]"
                             }
                         ]
                     }
