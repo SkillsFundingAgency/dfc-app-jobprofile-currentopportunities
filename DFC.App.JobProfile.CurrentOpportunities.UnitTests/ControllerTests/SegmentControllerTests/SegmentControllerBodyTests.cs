@@ -123,22 +123,5 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
             controller.Dispose();
         }
-
-        private CurrentOpportunitiesSegmentModel GetTestCurrentOpportunitiesSegmentModel()
-        {
-            var currentOpportunitiesSegmentModel = new CurrentOpportunitiesSegmentModel
-            {
-                CanonicalName = "DummyJob",
-                Data = new CurrentOpportunitiesSegmentDataModel()
-                {
-                    Courses = new Courses()
-                    {
-                        CourseKeywords = "Test Keywords",
-                    },
-                },
-            };
-
-            return currentOpportunitiesSegmentModel;
-        }
     }
 }
