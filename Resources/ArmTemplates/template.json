@@ -330,6 +330,18 @@
                             {
                                 "name": "AbortAfterErrorCount",
                                 "value": "5"
+                            },
+                            {
+                                "name": "RefreshClientOptions__BaseAddress",
+                                "value": "[variables('urlJobProfileCurrentOpportunities')]"
+                            },
+                            {
+                                "name": "CurrentOpportunitiesSegmentClientOptions__BaseAddress",
+                                "value": "[variables('urlJobProfileCurrentOpportunities')]"
+                            },
+                            {
+                                "name": "service-bus-connection-string",
+                                "value": "[listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.ServiceBus/namespaces/authorizationRules', parameters('appSharedServiceBusName'), 'ReadWrite'), '2017-04-01').primaryConnectionString]"
                             }
                         ]
                     }
