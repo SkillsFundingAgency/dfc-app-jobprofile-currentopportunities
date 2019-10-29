@@ -18,17 +18,15 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
     public class CurrentOpportunitiesSegmentService : ICurrentOpportunitiesSegmentService, IHealthCheck
     {
         private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
-        private readonly IDraftCurrentOpportunitiesSegmentService draftCurrentOpportunitiesSegmentService;
         private readonly ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh;
         private readonly IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh;
         private readonly ILogger<CurrentOpportunitiesSegmentService> logger;
         private readonly IMapper mapper;
         private readonly IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> jobProfileSegmentRefreshService;
 
-        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, IDraftCurrentOpportunitiesSegmentService draftCurrentOpportunitiesSegmentService, ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh, IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh, ILogger<CurrentOpportunitiesSegmentService> logger)
+        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh, IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh, ILogger<CurrentOpportunitiesSegmentService> logger, IMapper mapper, IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> jobProfileSegmentRefreshService)
         {
             this.repository = repository;
-            this.draftCurrentOpportunitiesSegmentService = draftCurrentOpportunitiesSegmentService;
             this.aVCurrentOpportunatiesRefresh = aVCurrentOpportunatiesRefresh;
             this.courseCurrentOpportuntiesRefresh = courseCurrentOpportuntiesRefresh;
             this.logger = logger;
@@ -125,20 +123,20 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 return HttpStatusCode.AlreadyReported;
             }
 
-            var existingSocData = existingSegmentModel.Data.Soc;
-            if (existingSocData is null)
+            var existingApprenticeships = existingSegmentModel.Data.Apprenticeships;
+            if (existingApprenticeships is null)
             {
                 return patchModel.MessageAction == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
             }
 
             if (patchModel.MessageAction == MessageAction.Deleted) // What should this do on delete of SocData - null or new SocData?
             {
-                existingSegmentModel.Data.Soc = new SocData();
+                existingSegmentModel.Data.Apprenticeships = new Apprenticeships();
             }
             else
             {
-                var updatedSocData = mapper.Map<SocData>(patchModel);
-                existingSegmentModel.Data.Soc = updatedSocData;
+                var updatedApprenticeships = mapper.Map<Apprenticeships>(patchModel);
+                existingSegmentModel.Data.Apprenticeships = updatedApprenticeships;
             }
 
             existingSegmentModel.SequenceNumber = patchModel.SequenceNumber;

@@ -2,6 +2,7 @@
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels;
 using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
+using System.Linq;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.AutoMapperProfile
 {
@@ -17,21 +18,28 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.AutoMapperP
 
             CreateMap<JobProfileMessage, CurrentOpportunitiesSegmentDataModel>()
                 .ForMember(d => d.LastReviewed, s => s.MapFrom(a => a.LastModified))
-                .ForMember(d => d.Soc, s => s.MapFrom(a => a.SocCodeData))
-                .ForMember(d => d.Apprenticeships.Frameworks, s => s.MapFrom(a => a.SocCodeData.ApprenticeshipFramework))
-                .ForMember(d => d.Apprenticeships.Standards, s => s.MapFrom(a => a.SocCodeData.ApprenticeshipStandards))
+ //               .ForMember(d => d.Soc, s => s.MapFrom(a => a.SocCodeData))
+                .ForMember(d => d.Apprenticeships, s => s.MapFrom(a => new Apprenticeships()
+                {
+                    Frameworks = a.SocCodeData.ApprenticeshipFramework.Select(b => b.Url).ToArray(),
+                    Standards = a.SocCodeData.ApprenticeshipStandards.Select(b => b.Url).ToArray(),
+                }))
                 ;
 
             CreateMap<JobProfileMessage, Courses>()
                 ;
 
-            CreateMap<Data.ServiceBusModels.ApprenticeshipFramework, Data.Models.ApprenticeshipFramework>();
+            //CreateMap<Data.ServiceBusModels.ApprenticeshipFramework, Data.Models.ApprenticeshipFramework>();
 
-            CreateMap<Data.ServiceBusModels.ApprenticeshipStandard, Data.Models.ApprenticeshipStandard>();
+            //CreateMap<Data.ServiceBusModels.ApprenticeshipStandard, Data.Models.ApprenticeshipStandard>();
 
-            CreateMap<SocCodeData, SocData>();
+            //CreateMap<SocCodeData, SocData>();
 
-            CreateMap<PatchSocDataModel, SocData>();
+            CreateMap<PatchSocDataModel, Apprenticeships>()
+                .ForMember(d => d.Frameworks, s => s.MapFrom(a => a.ApprenticeshipFramework.Select(b => b.Url).ToArray()))
+                .ForMember(d => d.Standards, s => s.MapFrom(a => a.ApprenticeshipStandards.Select(b => b.Url).ToArray()))
+                .ForMember(d => d.Vacancies, s => s.Ignore())
+                ;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
     {
         private readonly HttpClient httpClient;
         private readonly ILogger<RefreshService> logger;
-        public readonly RefreshClientOptions refreshClientOptions;
+        private readonly RefreshClientOptions refreshClientOptions;
 
         public RefreshService(
                     HttpClient httpClient,

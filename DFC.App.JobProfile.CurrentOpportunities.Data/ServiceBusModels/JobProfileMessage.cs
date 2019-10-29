@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels

@@ -8,8 +8,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 
         public DateTime LastReviewed { get; set; }
 
-        public SocData Soc { get; set; }
-
         public string JobTitle { get; set; }
 
         public string TitlePrefix { get; set; }
