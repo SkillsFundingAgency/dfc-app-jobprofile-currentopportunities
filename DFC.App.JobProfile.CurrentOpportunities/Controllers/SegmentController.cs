@@ -43,7 +43,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
                 logger.LogWarning($"{nameof(Index)} has returned with no results");
             }
 
-            return View(viewModel);
+            return this.NegotiateContentResult(viewModel, viewModel.Documents);
         }
 
         [HttpGet]
@@ -66,30 +66,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             logger.LogWarning($"{nameof(Document)} has returned no content for: {article}");
 
             return NoContent();
-        }
-
-        [HttpGet]
-        [Route("segment/simplelist")]
-        public async Task<IActionResult> SimpleList()
-        {
-            logger.LogInformation($"{nameof(SimpleList)} has been called");
-
-            var viewModel = new SimpleListViewModel();
-            var currentOpportunitiesSegmentModels = await currentOpportunitiesSegmentService.GetAllAsync().ConfigureAwait(false);
-
-            if (currentOpportunitiesSegmentModels != null)
-            {
-                viewModel.Items = (from a in currentOpportunitiesSegmentModels.OrderBy(o => o.CanonicalName)
-                                   select mapper.Map<SimpleDocumentViewModel>(a)).ToList();
-
-                logger.LogInformation($"{nameof(SimpleList)} has succeeded");
-            }
-            else
-            {
-                logger.LogWarning($"{nameof(SimpleList)} has returned with no results");
-            }
-
-            return this.NegotiateContentResult(viewModel, viewModel.Items);
         }
 
         [HttpGet]

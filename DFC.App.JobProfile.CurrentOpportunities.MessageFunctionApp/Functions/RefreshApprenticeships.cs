@@ -24,7 +24,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
 
             _ = int.TryParse(Environment.GetEnvironmentVariable(nameof(abortAfterErrorCount)), out abortAfterErrorCount);
 
-            var simpleJobProfileModels = await refreshService.GetSimpleListAsync().ConfigureAwait(false);
+            var simpleJobProfileModels = await refreshService.GetListAsync().ConfigureAwait(false);
 
             if (simpleJobProfileModels != null)
             {

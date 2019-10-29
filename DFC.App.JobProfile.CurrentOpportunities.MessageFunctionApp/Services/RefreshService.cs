@@ -27,11 +27,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
             this.refreshClientOptions = refreshClientOptions;
         }
 
-        public async Task<IList<SimpleJobProfileModel>> GetSimpleListAsync()
+        public async Task<IList<SimpleJobProfileModel>> GetListAsync()
         {
-            var url = $"{refreshClientOptions.BaseAddress}segment/simplelist";
+            var url = $"{refreshClientOptions.BaseAddress}segment";
 
-            logger.LogInformation($"{nameof(GetSimpleListAsync)}: Loading simple list from {url}");
+            logger.LogInformation($"{nameof(GetListAsync)}: Loading list from {url}");
 
             var request = new HttpRequestMessage(HttpMethod.Get, url);
 
@@ -45,12 +45,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
                 var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var result = JsonConvert.DeserializeObject<List<SimpleJobProfileModel>>(responseString);
 
-                logger.LogInformation($"{nameof(GetSimpleListAsync)}: Loaded simple list from {url}");
+                logger.LogInformation($"{nameof(GetListAsync)}: Loaded list from {url}");
 
                 return result;
             }
 
-            logger.LogError($"{nameof(GetSimpleListAsync)}: Error Loading simple list from {url}, status: {response.StatusCode}");
+            logger.LogError($"{nameof(GetListAsync)}: Error Loading list from {url}, status: {response.StatusCode}");
 
             return null;
         }
