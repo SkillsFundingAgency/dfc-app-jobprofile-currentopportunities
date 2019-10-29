@@ -1,13 +1,14 @@
-﻿namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels
+﻿using System;
+using System.Collections.Generic;
+
+namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels
 {
     public class PatchSocDataModel : BasePatchModel
     {
         public string SocCode { get; set; }
 
-        public string Description { get; set; }
+        public IEnumerable<ApprenticeshipFramework> ApprenticeshipFramework { get; set; }
 
-        public string ONetOccupationalCode { get; set; }
-
-        public string UrlName { get; set; }
+        public IEnumerable<ApprenticeshipStandard> ApprenticeshipStandards { get; set; }
     }
 }
