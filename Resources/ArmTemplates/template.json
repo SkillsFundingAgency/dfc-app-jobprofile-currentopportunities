@@ -276,48 +276,16 @@
                                 "value": "1"
                             },
                             {
+                                "name": "FUNCTIONS_WORKER_RUNTIME",
+                                "value": "dotnet"
+                            },
+                            {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                                 "value": "[reference(variables('functionAppInsightsName')).outputs.InstrumentationKey.value]"
                             },
                             {
                                 "name": "AzureWebJobsStorage",
                                 "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('appSharedStorageAccountName'),';AccountKey=',listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.Storage/storageAccounts', parameters('appSharedStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
-                            },
-                            {
-                                "name": "Values__service-bus-connection-string",
-                                "value": "[listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.ServiceBus/namespaces/authorizationRules', parameters('appSharedServiceBusName'), 'ReadWrite'), '2017-04-01').primaryConnectionString]"
-                            },
-                            {
-                                "name": "Values__cms-messages-topic",
-                                "value": "[variables('cmsTopicName')]"
-                            },
-                            {
-                                "name": "Values__cms-messages-subscription",
-                                "value": "[variables('cmsSubscriptionName')]"
-                            },
-                            {
-                                "name": "CareerPathSegmentClientOptions__Timeout",
-                                "value": "00:00:10"
-                            },
-                            {
-                                "name": "CareerPathSegmentClientOptions__BaseAddress",
-                                "value": "[variables('urlJobProfileCurrentOpportunities')]"
-                            },
-                            {
-                                "name": "CareerPathSegmentClientOptions__GetEndpoint",
-                                "value": "segment/{0}/contents"
-                            },
-                            {
-                                "name": "CareerPathSegmentClientOptions__PatchEndpoint",
-                                "value": "segment/{0}/content-type/markup"
-                            },
-                            {
-                                "name": "CareerPathSegmentClientOptions__PostEndpoint",
-                                "value": "segment"
-                            },
-                            {
-                                "name": "CareerPathSegmentClientOptions__DeleteEndpoint",
-                                "value": "segment/{0}"
                             },
                             {
                                 "name": "RefreshApprenticeshipsCron",
@@ -332,8 +300,16 @@
                                 "value": "5"
                             },
                             {
+                                "name": "RefreshClientOptions__Timeout",
+                                "value": "00:00:30"
+                            },
+                            {
                                 "name": "RefreshClientOptions__BaseAddress",
                                 "value": "[variables('urlJobProfileCurrentOpportunities')]"
+                            },
+                            {
+                                "name": "CurrentOpportunitiesSegmentClientOptions__Timeout",
+                                "value": "00:00:30"
                             },
                             {
                                 "name": "CurrentOpportunitiesSegmentClientOptions__BaseAddress",
@@ -342,7 +318,23 @@
                             {
                                 "name": "service-bus-connection-string",
                                 "value": "[listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.ServiceBus/namespaces/authorizationRules', parameters('appSharedServiceBusName'), 'ReadWrite'), '2017-04-01').primaryConnectionString]"
-                            }
+                            },
+                            {
+                                "name": "Policies__HttpCircuitBreaker__DurationOfBreak",
+                                "value": "00:01:00"
+                            },
+                            {
+                                "name": "Policies__HttpCircuitBreaker__ExceptionsAllowedBeforeBreaking",
+                                "value": "3"
+                            },
+                            {
+                                "name": "Policies__HttpRetry__BackoffPower",
+                                "value": "2"
+                            },
+                            {
+                                "name": "Policies__HttpRetry__Count",
+                                "value": "3"
+                            }                            
                         ]
                     }
                 }
