@@ -45,7 +45,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
                 logger.LogWarning($"{nameof(Index)} has returned with no results");
             }
 
-            return View(viewModel);
+            return this.NegotiateContentResult(viewModel, viewModel.Documents);
         }
 
         [HttpGet]

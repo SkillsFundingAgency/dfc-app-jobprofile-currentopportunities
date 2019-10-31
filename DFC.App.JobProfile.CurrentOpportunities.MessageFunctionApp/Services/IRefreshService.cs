@@ -8,7 +8,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
 {
     public interface IRefreshService
     {
-        Task<IList<SimpleJobProfileModel>> GetSimpleListAsync();
+        Task<IList<SimpleJobProfileModel>> GetListAsync();
 
         Task<HttpStatusCode> RefreshApprenticeshipsAsync(Guid documentId);
 
