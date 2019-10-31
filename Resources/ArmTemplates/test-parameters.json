@@ -34,6 +34,27 @@
         },
         "cosmosDbCollectionName": {
             "value": "a-test-collection"
+        },
+        "apprenticeshipServiceUrl": {
+            "value": "https://apprenticeship.example.net"
+        },
+        "apprenticeshipServiceKey": {
+            "value": "not-a-real-key"
+        },
+        "avfeedCosmosDbEndpoint": {
+            "value": "https://avfeed.cosmos.endpoint/"
+        },
+        "avfeedCosmosDbKey": {
+            "value": "not-a-real-key"
+        },
+        "avfeedCosmosDbDatabaseName": {
+            "value": "someDatabase"
+        },
+        "courseProviderServiceEndpoint": {
+            "value": "https://course-provider-service.example.net/"
+        },
+        "courseProviderServiceApiKey": {
+            "value": "not-a-real-key"
         }
     }
 }
