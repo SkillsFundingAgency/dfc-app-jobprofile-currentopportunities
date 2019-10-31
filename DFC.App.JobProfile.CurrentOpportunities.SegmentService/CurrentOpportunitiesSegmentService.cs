@@ -126,10 +126,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             var existingApprenticeships = existingSegmentModel.Data.Apprenticeships;
             if (existingApprenticeships is null)
             {
-                return patchModel.MessageAction == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
+                return patchModel.ActionType == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
             }
 
-            if (patchModel.MessageAction == MessageAction.Deleted) // What should this do on delete of SocData - null or new SocData?
+            if (patchModel.ActionType == MessageAction.Deleted) // What should this do on delete of SocData - null or new SocData?
             {
                 existingSegmentModel.Data.Apprenticeships = new Apprenticeships();
             }

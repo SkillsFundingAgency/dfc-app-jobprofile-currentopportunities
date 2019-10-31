@@ -22,7 +22,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
             this.mappingService = mappingService;
         }
 
-        public async Task<HttpStatusCode> ProcessAsync(string message, long sequenceNumber, MessageContentType messageContentType, MessageAction messageAction)
+        public async Task<HttpStatusCode> ProcessAsync(string message, long sequenceNumber, MessageContentType messageContentType, MessageAction actionType)
         {
             switch (messageContentType)
             {
@@ -30,14 +30,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
                     {
                         var serviceBusMessage = JsonConvert.DeserializeObject<PatchSocDataServiceBusModel>(message);
                         var patchSocDataModel = mapper.Map<PatchSocDataModel>(serviceBusMessage);
-                        patchSocDataModel.MessageAction = messageAction;
+                        patchSocDataModel.ActionType = actionType;
                         patchSocDataModel.SequenceNumber = sequenceNumber;
 
                         return await httpClientService.PatchAsync(patchSocDataModel, "socCodeData").ConfigureAwait(false);
                     }
 
                 case MessageContentType.JobProfile:
-                    return await ProcessJobProfileMessageAsync(message, messageAction, sequenceNumber).ConfigureAwait(false);
+                    return await ProcessJobProfileMessageAsync(message, actionType, sequenceNumber).ConfigureAwait(false);
 
                 default:
                     break;
@@ -46,11 +46,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
             return await Task.FromResult(HttpStatusCode.InternalServerError).ConfigureAwait(false);
         }
 
-        private async Task<HttpStatusCode> ProcessJobProfileMessageAsync(string message, MessageAction messageAction, long sequenceNumber)
+        private async Task<HttpStatusCode> ProcessJobProfileMessageAsync(string message, MessageAction actionType, long sequenceNumber)
         {
             var jobProfile = mappingService.MapToSegmentModel(message, sequenceNumber);
 
-            switch (messageAction)
+            switch (actionType)
             {
                 case MessageAction.Draft:
                 case MessageAction.Published:
@@ -66,7 +66,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
                     return await httpClientService.DeleteAsync(jobProfile.DocumentId).ConfigureAwait(false);
 
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(messageAction), $"Invalid message action '{messageAction}' received, should be one of '{string.Join(",", Enum.GetNames(typeof(MessageAction)))}'");
+                    throw new ArgumentOutOfRangeException(nameof(actionType), $"Invalid message action '{actionType}' received, should be one of '{string.Join(",", Enum.GetNames(typeof(MessageAction)))}'");
             }
         }
     }

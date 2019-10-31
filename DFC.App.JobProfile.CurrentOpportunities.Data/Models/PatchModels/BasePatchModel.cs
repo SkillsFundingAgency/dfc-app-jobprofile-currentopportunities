@@ -13,7 +13,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels
         public Guid JobProfileId { get; set; }
 
         [Required]
-        public MessageAction MessageAction { get; set; }
+        public MessageAction ActionType { get; set; }
 
         [Required]
         public long SequenceNumber { get; set; }
