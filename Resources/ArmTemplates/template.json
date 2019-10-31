@@ -320,6 +320,14 @@
                                 "value": "[listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.ServiceBus/namespaces/authorizationRules', parameters('appSharedServiceBusName'), 'ReadWrite'), '2017-04-01').primaryConnectionString]"
                             },
                             {
+                                "name": "cms-messages-topic",
+                                "value": "cms-messages"
+                            },
+                            {
+                                "name": "cms-messages-subscription",
+                                "value": "job-profile-currentopportunities"
+                            },
+                            {
                                 "name": "Policies__HttpCircuitBreaker__DurationOfBreak",
                                 "value": "00:01:00"
                             },
