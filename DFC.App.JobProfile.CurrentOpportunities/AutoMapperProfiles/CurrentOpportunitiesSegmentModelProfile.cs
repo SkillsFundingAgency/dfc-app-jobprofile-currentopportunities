@@ -9,7 +9,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles
     {
         public CurrentOpportunitiesSegmentModelProfile()
         {
-            CreateMap<CurrentOpportunitiesSegmentModel, SimpleDocumentViewModel>();
             CreateMap<CurrentOpportunitiesSegmentModel, DocumentViewModel>();
             CreateMap<CurrentOpportunitiesSegmentDataModel, DocumentDataViewModel>();
             CreateMap<Apprenticeships, DocumentApprenticeshipsViewModel>();

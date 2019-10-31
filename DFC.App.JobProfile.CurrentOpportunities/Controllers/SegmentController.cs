@@ -71,30 +71,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         }
 
         [HttpGet]
-        [Route("segment/simplelist")]
-        public async Task<IActionResult> SimpleList()
-        {
-            logger.LogInformation($"{nameof(SimpleList)} has been called");
-
-            var viewModel = new SimpleListViewModel();
-            var currentOpportunitiesSegmentModels = await currentOpportunitiesSegmentService.GetAllAsync().ConfigureAwait(false);
-
-            if (currentOpportunitiesSegmentModels != null)
-            {
-                viewModel.Items = (from a in currentOpportunitiesSegmentModels.OrderBy(o => o.CanonicalName)
-                                   select mapper.Map<SimpleDocumentViewModel>(a)).ToList();
-
-                logger.LogInformation($"{nameof(SimpleList)} has succeeded");
-            }
-            else
-            {
-                logger.LogWarning($"{nameof(SimpleList)} has returned with no results");
-            }
-
-            return this.NegotiateContentResult(viewModel, viewModel.Items);
-        }
-
-        [HttpGet]
         [Route("segment/{documentId}/contents")]
         public async Task<IActionResult> Body(Guid documentId)
         {
