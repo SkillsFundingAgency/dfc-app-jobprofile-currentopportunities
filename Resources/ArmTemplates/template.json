@@ -66,6 +66,48 @@
             "metadata": {
                 "description": "Filter to apply to subscription (no filter applied if left blank)"
             }
+        },
+        "apprenticeshipServiceUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "Url to the apprenticeship service"
+            }
+        },
+        "apprenticeshipServiceKey": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Access token for the apprenticeship service"
+            }
+        },
+        "avfeedCosmosDbEndpoint": {
+            "type": "string",
+            "metadata": {
+                "description": "Endpoint for av feed cosmosdb instance"
+            }
+        },
+        "avfeedCosmosDbKey": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Access token for av feed cosmosdb instance"
+            }
+        },
+        "avfeedCosmosDbDatabaseName": {
+            "type": "string",
+            "metadata": {
+                "description": "AV Feed database name in cosmosdb"
+            }
+        },
+        "courseProviderServiceEndpoint": {
+            "type": "string",
+            "metadata": {
+                "description": "Url for course provider service"
+            }
+        },
+        "courseProviderServiceApiKey": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Access token for course provider service"
+            }
         }
     },
     "variables": {
@@ -204,12 +246,104 @@
                                 "value": "[parameters('CourseSearchUrl')]"
                             },
                             {
+                                "name": "Configuration__CourseSearch__HealthCheckKeyWords",
+                                "value": "maths"
+                            },
+                            {
                                 "name": "ServiceBusOptions__ServiceBusConnectionString",
                                 "value": "[listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.ServiceBus/namespaces/authorizationRules', parameters('appSharedServiceBusName'), 'ReadWrite'), '2017-04-01').primaryConnectionString]"
                             },
                             {
                                 "name": "ServiceBusOptions__topicName",
                                 "value": "[variables('refreshTopicName')]"
+                            },
+                            {
+                                "name": "Configuration__AVAPIService__FAAEndPoint",
+                                "value": "[parameters('apprenticeshipServiceUrl')]"
+                            },
+                            {
+                                "name": "Configuration__AVAPIService__FAASubscriptionKey",
+                                "value": "[parameters('apprenticeshipServiceKey')]"
+                            },
+                            {
+                                "name": "Configuration__AVAPIService__FAAPageSize",
+                                "value": "10"
+                            },
+                            {
+                                "name": "Configuration__AVAPIService__FAAMaxPagesToTryPerMapping",
+                                "value": "100"
+                            },
+                            {
+                                "name": "Configuration__AVAPIService__FAASortBy",
+                                "value": "Age"
+                            },
+                            {
+                                "name": "Configuration__AVAPIService__RequestTimeOutSeconds",
+                                "value": "10"
+                            },
+                            {
+                                "name": "Configuration__AVAPIService__StandardsForHealthCheck",
+                                "value": "26,30"
+                            },
+                            {
+                                "name":  "Configuration__CosmosDbConnections__AVFeedAudit__EndpointUrl",
+                                "value": "[parameters('avfeedCosmosDbEndpoint')]"
+                            },
+                            {
+                                "name": "Configuration__CosmosDbConnections__AVFeedAudit__AccessKey",
+                                "value": "[parameters('avfeedCosmosDbKey')]"
+                            },
+                            {
+                                "name": "Configuration__CosmosDbConnections__AVFeedAudit__DatabaseId",
+                                "value": "[parameters('avfeedCosmosDbDatabaseName')]"
+                            },
+                            {
+                                "name": "Configuration__CosmosDbConnections__AVFeedAudit__CollectionId",
+                                "value": "AVFeedAuditRecords"
+                            },
+                            {
+                                "name": "Configuration__CosmosDbConnections__AVFeedAudit__PartitionKey",
+                                "value": "/PartitionKey"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CosmosAuditConnection__AccessKey",
+                                "value": "[parameters('avfeedCosmosDbKey')]"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CosmosAuditConnection__EndpointUrl",
+                                "value": "[parameters('avfeedCosmosDbEndpoint')]"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CosmosAuditConnection__DatabaseId",
+                                "value": "[parameters('avfeedCosmosDbDatabaseName')]"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CosmosAuditConnection__CollectionId",
+                                "value": "CourseSearchAuditRecords"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CosmosAuditConnection__PartitionKey",
+                                "value": "/PartitionKey"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CourseSearchSvc__ServiceEndpoint",
+                                "value": "[Parameters('courseProviderServiceEndpoint')]"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CourseSearchSvc__APIKey",
+                                "value": "[Parameters('courseProviderServiceApiKey')]"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CourseSearchSvc__SearchPageSize",
+                                "value": "20"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CourseSearchSvc__AttendanceModes",
+                                "value": "AM1,AM2,AM3,AM4,AM5,AM6,AM7,AM8,AM9"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CourseSearchSvc__RequestTimeOutSeconds",
+                                "value": "10"
                             }
                         ]
                     }

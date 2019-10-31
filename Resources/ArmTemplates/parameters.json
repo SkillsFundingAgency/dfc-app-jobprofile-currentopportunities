@@ -49,6 +49,27 @@
         },
         "cmsSubscriptionSqlFilter": {
             "value": "__cmsSubscriptionSqlFilter__"
+        },
+        "apprenticeshipServiceUrl": {
+            "value": "__apprenticeshipServiceUrl__"
+        },
+        "apprenticeshipServiceKey": {
+            "value": "__apprenticeshipServiceKey__"
+        },
+        "avfeedCosmosDbEndpoint": {
+            "value": "__avfeedCosmosDbEndpoint__"
+        },
+        "avfeedCosmosDbKey": {
+            "value": "__avfeedCosmosDbKey__"
+        },
+        "avfeedCosmosDbDatabaseName": {
+            "value": "__avfeedCosmosDbDatabaseName__"
+        },
+        "courseProviderServiceEndpoint": {
+            "value": "__courseProviderServiceEndpoint__"
+        },
+        "courseProviderServiceApiKey": {
+            "value": "__courseProviderServiceApiKey__"
         }
     }
 }
