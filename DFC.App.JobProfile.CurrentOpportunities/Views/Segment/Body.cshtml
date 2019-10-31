@@ -1,80 +1,80 @@
 ﻿@model BodyViewModel
-<h2 class="heading-large">Current opportunities</h2>
-<div class="grid-row" id="appGeneric">
-    <div class="column-full">
-        <h3 class="heading-medium">
+<section id="current-opportunities">
+<h2 class="job-profile-headings">Current opportunities</h2>
+<div class="govuk-grid-row" id="appGeneric">
+    <div class="govuk-grid-column-full">
+        <h3 class="govuk-heading-m">
             Apprenticeships
-            <span class="heading-secondary">In England</span>
+            <span class="govuk-caption-m">In England</span>
         </h3>
     </div>
     @if (Model.Data.Apprenticeships.Vacancies.Count() > 0)
     {
         foreach (var apprenticeVacancy in Model.Data.Apprenticeships.Vacancies)
         {
-            <div class="column-half">
-                <div class="panel panel-border-narrow opportunity-item">
-                    <h4 class="heading-small">
+            <div class="govuk-grid-column-one-half">
+                <div class="opportunity-item">
+                    <h4 class="govuk-heading-s">
                         <a href="@apprenticeVacancy.URL">@apprenticeVacancy.Title</a>
                     </h4>
-                    <ul class="list">
-                        <li><span class="bold-small">Wage : </span> @apprenticeVacancy.WageUnit <span class="grey font-xsmall">@apprenticeVacancy.WageText</span></li>
-                        <li><span class="bold-small">Location:</span> @apprenticeVacancy.Location.Town @apprenticeVacancy.Location.PostCode</li>
+                    <ul class="govuk-list">
+                        <li><span class="govuk-body govuk-!-font-weight-bold">Wage : </span> @apprenticeVacancy.WageUnit <span class="govuk-body-s govuk-secondary-colour">@apprenticeVacancy.WageText</span></li>
+                        <li><span class="govuk-body govuk-!-font-weight-bold">Location:</span> @apprenticeVacancy.Location.Town @apprenticeVacancy.Location.PostCode</li>
                     </ul>
                 </div>
             </div>
         }
-        <div class="dfc-code-jp-vacancyText">
+        <div class="govuk-body-m dfc-code-jp-vacancyText">
             <a href="https://www.findapprenticeship.service.gov.uk/apprenticeshipsearch">Find apprenticeships near you</a>
         </div>
     }
     else
     {
-        <div class="dfc-code-jp-novacancyText">
+        <div class="govuk-body dfc-code-jp-novacancyText">
             <p>We can't find any apprenticeship vacancies in England for @Model.Data.JobTitle right now.</p>
             <p>The <a href="https://www.gov.uk/apply-apprenticeship">Find an apprenticeship service</a> can help you with your search, send alerts when new apprenticeships become available and has advice on how to apply.</p>
         </div>
     }
 </div>
-<div class="grid-row" id="appGeneric">
-    <div class="column-full">
-        <h3 class="heading-medium">
+<div class="govuk-grid-row dfc-code-jp-trainingCourse">
+    <div class="govuk-grid-column-full">
+        <h3 class="govuk-heading-m">
             Courses
-            <span class="heading-secondary">In England</span>
+            <span class="govuk-caption-m">In England</span>
         </h3>
     </div>
     @if (Model.Data.Courses.Opportunities.Count() > 0)
     {
         foreach (var course in Model.Data.Courses.Opportunities)
         {
-            <div class="column-half">
-                <div class="panel panel-border-narrow opportunity-item">
-                    <h3 class="heading-small">
+            <div class="govuk-grid-column-one-half">
+                <div class="opportunity-item">
+                    <h4 class="govuk-heading-s">
                         <a href="@Model.Data.Courses.CourseSearchUrl/find-a-course/course-details?courseid=55122438">@course.Title</a>
-                    </h3>
-                    <ul class="list">
-                        <li><span class="bold-small">Provider:</span> @course.Provider</li>
-                        <li><span class="bold-small">Start date:</span> @course.StartDate.ToString("dd MMMM yyyy")</li>
-                        <li><span class="bold-small">Location:</span> @course.Location.Town @course.Location.PostCode</li>
+                    </h4>
+                    <ul class="govuk-list">
+                        <li><span class="govuk-body govuk-!-font-weight-bold">Provider:</span> @course.Provider</li>
+                        <li><span class="govuk-body govuk-!-font-weight-bold">Start date:</span> @course.StartDate.ToString("dd MMMM yyyy")</li>
+                        <li><span class="govuk-body govuk-!-font-weight-bold">Location:</span> @course.Location.Town @course.Location.PostCode</li>
                     </ul>
                 </div>
             </div>
         }
-        <div class="dfc-code-jp-vacancyText">
+        <div class="govuk-body dfc-code-jp-vacancyText">
             <a href="@Model.Data.Courses.CourseSearchUrl/find-a-course">Find courses near you</a>
         </div>
     }
     else
     {
-        <div class="dfc-code-jp-novacancyText">
+        <div class="dfc-code-jp-NoTrainingCoursesText">
             <p>Are you interested in becoming @Model.Data.JobTitle?</p>
             <p>Search for <a href="@Model.Data.Courses.CourseSearchUrl/find-a-course">training courses near you</a>.</p>
-            <p>We can't find any courses in England for @Model.Data.JobTitle right now.</p>
         </div>
     }
 </div>
 <div>
-    <div class="sf-Long-text">
-        <h3 class="heading-medium">Jobs<span class="heading-secondary"> In the United Kingdom</span></h3>
+        <h3 class="govuk-heading-m">Jobs
+            <span class="govuk-caption-m">In the United Kingdom</span></h3>
         <p>The <a href="https://findajob.dwp.gov.uk">Find a job service</a> can help you with your search for jobs and send alerts when new jobs become available.</p>
-    </div>
 </div>
+</section>
