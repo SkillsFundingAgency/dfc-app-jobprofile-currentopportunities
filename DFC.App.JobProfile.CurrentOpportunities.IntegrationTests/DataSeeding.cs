@@ -47,10 +47,20 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests
             {
                 LastReviewed = DateTime.UtcNow,
                 JobTitle = $"JobProfile{index}",
-                Apprenticeships = new Apprenticeships()
+                Apprenticeships = new Apprenticeships()//Standards and frameworks should be valid or integration tests will fail
                 {
-                    Standards = new string[] { "25", "36" },   //Standards and frameworks should be valid or integration tests will fail
-                    Frameworks = new string[] { string.Empty },
+                    Standards = new List<ApprenticeshipStandard>()
+                    {
+                        new ApprenticeshipStandard
+                        {
+                            Url = "25",
+                        },
+                        new ApprenticeshipStandard
+                        {
+                            Url = "36",
+                        },
+                    },
+                    Frameworks = new List<ApprenticeshipFramework>(),
                     Vacancies = new List<Vacancy>()
                     {
                         new Vacancy { ApprenticeshipId = $"1{index}", Location = new Location() { PostCode = $"PC1{index}", Town = $"Location1{index}" }, Title = $"Title1{index}", WageUnit = $"£10{index}", WageText = $"Per 1{index} days" },

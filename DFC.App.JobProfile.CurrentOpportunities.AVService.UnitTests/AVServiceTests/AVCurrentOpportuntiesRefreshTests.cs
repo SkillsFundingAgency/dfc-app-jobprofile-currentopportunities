@@ -1,6 +1,5 @@
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
-using DFC.App.JobProfile.CurrentOpportunities.SegmentService;
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -34,7 +33,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
             //arrange
             var fakeLogger = A.Fake<ILogger<AVCurrentOpportuntiesRefresh>>();
             var fakeRepository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
-            var fakeCurrentOpportunitiesSegmentService = A.Fake<CurrentOpportunitiesSegmentService>();
             var fakeAVAPIService = A.Fake<AVAPIService>();
             var fakeMapper = A.Fake<AutoMapper.IMapper>();
 
@@ -65,8 +63,20 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
                 {
                     Apprenticeships = new Apprenticeships()
                     {
-                        Standards = new string[] { "S1" },
-                        Frameworks = new string[] { "F1" },
+                        Standards = new List<ApprenticeshipStandard>()
+                        {
+                            new ApprenticeshipStandard
+                            {
+                                Url = "S1",
+                            },
+                        },
+                        Frameworks = new List<ApprenticeshipFramework>()
+                        {
+                            new ApprenticeshipFramework
+                            {
+                                Url = "F1",
+                            },
+                        },
                     },
                 },
             };

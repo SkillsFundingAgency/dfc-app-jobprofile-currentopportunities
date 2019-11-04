@@ -6,15 +6,7 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Functions\RefreshApprenticeships.cs" />
-    <Compile Remove="Functions\RefreshCourses.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <AdditionalFiles Include="..\stylecop.json" Link="../stylecop.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Functions\RefreshApprenticeships.cs" />
-    <None Include="Functions\RefreshCourses.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />

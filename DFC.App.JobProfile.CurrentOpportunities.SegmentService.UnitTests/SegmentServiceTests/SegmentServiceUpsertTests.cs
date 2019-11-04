@@ -29,7 +29,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             fakeCourseCurrentOpportuntiesRefresh = A.Fake<ICourseCurrentOpportuntiesRefresh>();
             fakeAVCurrentOpportunatiesRefresh = A.Fake<IAVCurrentOpportuntiesRefresh>();
             fakeLogger = A.Fake<ILogger<CurrentOpportunitiesSegmentService>>();
-
+            fakeMapper = A.Fake<IMapper>();
+            fakeJobProfileSegmentRefreshService = A.Fake<IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>>();
             currentOpportunitiesSegmentService = new CurrentOpportunitiesSegmentService(repository, fakeCourseCurrentOpportuntiesRefresh, fakeAVCurrentOpportunatiesRefresh, fakeLogger, fakeMapper, fakeJobProfileSegmentRefreshService);
         }
 
@@ -99,7 +100,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         }
 
         [Theory]
-        [InlineData (HttpStatusCode.Created, true)]
+        [InlineData(HttpStatusCode.Created, true)]
         [InlineData(HttpStatusCode.OK, true)]
         [InlineData(HttpStatusCode.FailedDependency, false)]
         public void CurrentOpportunitiesSegmentServiceUpdateCoursesAndAppreticeshipsWhenUpserted(HttpStatusCode upsertReturnCode, bool shouldRefresh)
