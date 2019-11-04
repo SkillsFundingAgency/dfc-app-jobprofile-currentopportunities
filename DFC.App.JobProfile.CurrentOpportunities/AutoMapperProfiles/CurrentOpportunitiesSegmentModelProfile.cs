@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels;
 using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
 using Microsoft.AspNetCore.Html;
 
@@ -27,6 +28,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles
             CreateMap<Location, LocationViewModel>();
 
             CreateMap<CurrentOpportunitiesSegmentModel, IndexDocumentViewModel>();
+
+            CreateMap<PatchApprenticeshipStandardsModel, ApprenticeshipStandard>();
+
+            CreateMap<PatchApprenticeshipFrameworksModel, ApprenticeshipFramework>();
 
             CreateMap<Data.Models.CurrentOpportunitiesSegmentModel, Data.ServiceBusModels.RefreshJobProfileSegmentServiceBusModel>()
                 .ForMember(d => d.JobProfileId, s => s.MapFrom(a => a.DocumentId))

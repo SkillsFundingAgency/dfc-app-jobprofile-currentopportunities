@@ -74,15 +74,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
                     break;
 
                 case HttpStatusCode.Accepted:
-                    log.LogInformation($"{ClassFullName}: JobProfile Id: {messageContentId}: Upserted segment, but Apprenticeship/Course refresh failed");
+                    log.LogWarning($"{ClassFullName}: JobProfile Id: {messageContentId}: Upserted segment, but Apprenticeship/Course refresh failed");
                     break;
 
                 default:
                     log.LogWarning($"{ClassFullName}: JobProfile Id: {messageContentId}: Segment not Posted: Status: {result}");
                     break;
             }
-
-            throw new Exception("BOOM!");
         }
     }
 }

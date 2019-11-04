@@ -8,6 +8,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
@@ -86,23 +87,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 currentOpportunitiesSegmentModel.Data = new CurrentOpportunitiesSegmentDataModel();
             }
 
-            var result = await repository.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
-
-            if (result == HttpStatusCode.Created || result == HttpStatusCode.OK)
-            {
-                try
-                {
-                    var avResult = await aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false);
-                    var avCourse = await courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false);
-                }
-                catch (HttpRequestException httpRequestException)
-                {
-                    logger.LogError($"{nameof(CurrentOpportunitiesSegmentService)} had exception when getting courses and apprenticeships for document {currentOpportunitiesSegmentModel.DocumentId}, Exception - {httpRequestException.Message}");
-                    return HttpStatusCode.Accepted;
-                }
-            }
-
-            return result;
+            return await UpsertAndRefreshSegmentModel(currentOpportunitiesSegmentModel).ConfigureAwait(false);
         }
 
         public async Task<HttpStatusCode> PatchJobProfileSocAsync(PatchJobProfileSocModel patchModel, Guid documentId)
@@ -129,7 +114,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 return patchModel.ActionType == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
             }
 
-            if (patchModel.ActionType == MessageAction.Deleted) // What should this do on delete - null or new?
+            if (patchModel.ActionType == MessageAction.Deleted)
             {
                 existingSegmentModel.Data.Apprenticeships = new Apprenticeships();
             }
@@ -137,8 +122,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             {
                 var updatedApprenticeships = new Data.Models.Apprenticeships()
                 {
-                    Frameworks = mapper.Map<IEnumerable<Data.Models.ApprenticeshipFramework>>(patchModel.ApprenticeshipFramework),
-                    Standards = mapper.Map<IEnumerable<Data.Models.ApprenticeshipStandard>>(patchModel.ApprenticeshipStandards),
+                    Frameworks = mapper.Map<IList<Data.Models.ApprenticeshipFramework>>(patchModel.ApprenticeshipFramework),
+                    Standards = mapper.Map<IList<Data.Models.ApprenticeshipStandard>>(patchModel.ApprenticeshipStandards),
                     Vacancies = new List<Data.Models.Vacancy>(),
                 };
 
@@ -168,22 +153,31 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 return HttpStatusCode.AlreadyReported;
             }
 
-            //TODO: ian: what should this do?
-            //var existingApprenticeships = existingSegmentModel.Data.Apprenticeships;
-            //if (existingApprenticeships is null)
-            //{
-            //    return patchModel.ActionType == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
-            //}
+            if (existingSegmentModel.Data.Apprenticeships == null)
+            {
+                existingSegmentModel.Data.Apprenticeships = new Apprenticeships();
+            }
 
-            //if (patchModel.ActionType == MessageAction.Deleted) // What should this do on delete of SocData - null or new SocData?
-            //{
-            //    existingSegmentModel.Data.Apprenticeships = new Apprenticeships();
-            //}
-            //else
-            //{
-            //    var updatedApprenticeships = mapper.Map<Apprenticeships>(patchModel);
-            //    existingSegmentModel.Data.Apprenticeships = updatedApprenticeships;
-            //}
+            if (existingSegmentModel.Data.Apprenticeships.Frameworks == null)
+            {
+                existingSegmentModel.Data.Apprenticeships.Frameworks = new List<Data.Models.ApprenticeshipFramework>();
+            }
+
+            var existingApprenticeshipFrameworks = existingSegmentModel.Data.Apprenticeships.Frameworks.FirstOrDefault(f => f.Id == patchModel.Id);
+
+            if (existingApprenticeshipFrameworks is null)
+            {
+                return patchModel.ActionType == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
+            }
+
+            if (patchModel.ActionType == MessageAction.Deleted)
+            {
+                existingSegmentModel.Data.Apprenticeships.Frameworks.Remove(existingApprenticeshipFrameworks);
+            }
+            else
+            {
+                mapper.Map(patchModel, existingApprenticeshipFrameworks);
+            }
 
             existingSegmentModel.SequenceNumber = patchModel.SequenceNumber;
 
@@ -208,22 +202,31 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 return HttpStatusCode.AlreadyReported;
             }
 
-            //TODO: ian: what should this do?
-            //var existingApprenticeships = existingSegmentModel.Data.Apprenticeships;
-            //if (existingApprenticeships is null)
-            //{
-            //    return patchModel.ActionType == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
-            //}
+            if (existingSegmentModel.Data.Apprenticeships == null)
+            {
+                existingSegmentModel.Data.Apprenticeships = new Apprenticeships();
+            }
 
-            //if (patchModel.ActionType == MessageAction.Deleted) // What should this do on delete of SocData - null or new SocData?
-            //{
-            //    existingSegmentModel.Data.Apprenticeships = new Apprenticeships();
-            //}
-            //else
-            //{
-            //    var updatedApprenticeships = mapper.Map<Apprenticeships>(patchModel);
-            //    existingSegmentModel.Data.Apprenticeships = updatedApprenticeships;
-            //}
+            if (existingSegmentModel.Data.Apprenticeships.Standards == null)
+            {
+                existingSegmentModel.Data.Apprenticeships.Standards = new List<Data.Models.ApprenticeshipStandard>();
+            }
+
+            var existingApprenticeshipStandards = existingSegmentModel.Data.Apprenticeships.Standards.FirstOrDefault(f => f.Id == patchModel.Id);
+
+            if (existingApprenticeshipStandards is null)
+            {
+                return patchModel.ActionType == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
+            }
+
+            if (patchModel.ActionType == MessageAction.Deleted)
+            {
+                existingSegmentModel.Data.Apprenticeships.Standards.Remove(existingApprenticeshipStandards);
+            }
+            else
+            {
+                mapper.Map(patchModel, existingApprenticeshipStandards);
+            }
 
             existingSegmentModel.SequenceNumber = patchModel.SequenceNumber;
 
@@ -241,8 +244,19 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
         {
             var result = await repository.UpsertAsync(existingSegmentModel).ConfigureAwait(false);
 
-            if (result == HttpStatusCode.OK || result == HttpStatusCode.Created)
+            if (result == HttpStatusCode.Created || result == HttpStatusCode.OK)
             {
+                try
+                {
+                    var avResult = await aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(existingSegmentModel.DocumentId).ConfigureAwait(false);
+                    var avCourse = await courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(existingSegmentModel.DocumentId).ConfigureAwait(false);
+                }
+                catch (HttpRequestException httpRequestException)
+                {
+                    logger.LogError($"{nameof(UpsertAndRefreshSegmentModel)} had exception when getting courses and apprenticeships for document {existingSegmentModel.DocumentId}, Exception - {httpRequestException.Message}");
+                    return HttpStatusCode.Accepted;
+                }
+
                 var refreshJobProfileSegmentServiceBusModel = mapper.Map<RefreshJobProfileSegmentServiceBusModel>(existingSegmentModel);
 
                 await jobProfileSegmentRefreshService.SendMessageAsync(refreshJobProfileSegmentServiceBusModel).ConfigureAwait(false);

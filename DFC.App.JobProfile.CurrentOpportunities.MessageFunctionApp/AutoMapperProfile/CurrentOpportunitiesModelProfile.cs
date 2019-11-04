@@ -45,6 +45,16 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.AutoMapperP
                 .ForMember(d => d.ActionType, s => s.Ignore())
                 .ForMember(d => d.SequenceNumber, s => s.Ignore())
                 ;
+
+            CreateMap<Data.ServiceBusModels.PatchModels.PatchApprenticeshipFrameworksServiceBusModel, Data.Models.PatchModels.PatchApprenticeshipFrameworksModel>()
+                .ForMember(d => d.ActionType, s => s.Ignore())
+                .ForMember(d => d.SequenceNumber, s => s.Ignore())
+                ;
+
+            CreateMap<Data.ServiceBusModels.PatchModels.PatchApprenticeshipStandardsServiceBusModel, Data.Models.PatchModels.PatchApprenticeshipStandardsModel>()
+                .ForMember(d => d.ActionType, s => s.Ignore())
+                .ForMember(d => d.SequenceNumber, s => s.Ignore())
+                ;
         }
     }
 }
