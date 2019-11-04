@@ -5,6 +5,7 @@ using DFC.App.JobProfile.CurrentOpportunities.CourseService;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
 using DFC.App.JobProfile.CurrentOpportunities.DraftSegmentService;
 using DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb;
 using DFC.App.JobProfile.CurrentOpportunities.SegmentService;
@@ -29,6 +30,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
     public class Startup
     {
         public const string CosmosDbConfigAppSettings = "Configuration:CosmosDbConnections:JobProfileSegment";
+        public const string ServiceBusOptionsAppSettings = "ServiceBusOptions";
         public const string AVAPIServiceAppSettings = "Configuration:AVAPIService";
         public const string AVFeedAuditSettings = "Configuration:CosmosDbConnections:AVFeedAudit";
         public const string CourseSearchAppSettings = "Configuration:CourseSearch";
@@ -67,6 +69,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             services.AddSingleton<ICourseSearchClient, CourseSearchClient>();
             services.AddFindACourseServices(courseSearchClientSettings);
 
+            var serviceBusOptions = configuration.GetSection(ServiceBusOptionsAppSettings).Get<ServiceBusOptions>();
+            services.AddSingleton(serviceBusOptions ?? new ServiceBusOptions());
+
             services.AddSingleton<ICosmosRepository<CurrentOpportunitiesSegmentModel>, CosmosRepository<CurrentOpportunitiesSegmentModel>>(s =>
             {
                 var cosmosDbConnection = configuration.GetSection(CosmosDbConfigAppSettings).Get<CosmosDbConnection>();
@@ -87,6 +92,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             services.AddScoped<IAVCurrentOpportuntiesRefresh, AVCurrentOpportuntiesRefresh>();
             services.AddScoped<ICurrentOpportunitiesSegmentService, CurrentOpportunitiesSegmentService>();
             services.AddScoped<IDraftCurrentOpportunitiesSegmentService, DraftCurrentOpportunitiesSegmentService>();
+            services.AddSingleton<IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>, JobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>>();
             services.AddAutoMapper(typeof(Startup).Assembly);
 
             services.AddHttpClient<IApprenticeshipVacancyApi, ApprenticeshipVacancyApi>();

@@ -1,7 +1,8 @@
-﻿using System;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models.ServiceBusModels
+namespace DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels
 {
     public class CurrentOpportunitiesPatchMarkupServiceBusModel
     {

@@ -36,14 +36,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Functions
             var expectedModels = A.CollectionOfFake<SimpleJobProfileModel>(2);
             const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
 
-            A.CallTo(() => fakeRefreshService.GetSimpleListAsync()).Returns(expectedModels);
+            A.CallTo(() => fakeRefreshService.GetListAsync()).Returns(expectedModels);
             A.CallTo(() => fakeRefreshService.RefreshApprenticeshipsAsync(A<Guid>.Ignored)).Returns(expectedStatusCode);
 
             // Act
             await RefreshApprenticeships.RunAsync(timer, fakeLogger, fakeRefreshService).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeRefreshService.GetSimpleListAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeRefreshService.GetListAsync()).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeRefreshService.RefreshApprenticeshipsAsync(A<Guid>.Ignored)).MustHaveHappened(expectedModels.Count, Times.Exactly);
         }
 
@@ -54,14 +54,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Functions
             var expectedModels = A.CollectionOfFake<SimpleJobProfileModel>(0);
             const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
 
-            A.CallTo(() => fakeRefreshService.GetSimpleListAsync()).Returns(expectedModels);
+            A.CallTo(() => fakeRefreshService.GetListAsync()).Returns(expectedModels);
             A.CallTo(() => fakeRefreshService.RefreshApprenticeshipsAsync(A<Guid>.Ignored)).Returns(expectedStatusCode);
 
             // Act
             await RefreshApprenticeships.RunAsync(timer, fakeLogger, fakeRefreshService).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeRefreshService.GetSimpleListAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeRefreshService.GetListAsync()).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeRefreshService.RefreshApprenticeshipsAsync(A<Guid>.Ignored)).MustHaveHappened(expectedModels.Count, Times.Exactly);
         }
 
@@ -72,14 +72,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Functions
             var expectedModels = A.CollectionOfFake<SimpleJobProfileModel>(AbortAfterErrorCount * 2);
             const HttpStatusCode expectedStatusCode = HttpStatusCode.BadRequest;
 
-            A.CallTo(() => fakeRefreshService.GetSimpleListAsync()).Returns(expectedModels);
+            A.CallTo(() => fakeRefreshService.GetListAsync()).Returns(expectedModels);
             A.CallTo(() => fakeRefreshService.RefreshApprenticeshipsAsync(A<Guid>.Ignored)).Returns(expectedStatusCode);
 
             // Act
             await RefreshApprenticeships.RunAsync(timer, fakeLogger, fakeRefreshService).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => fakeRefreshService.GetSimpleListAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeRefreshService.GetListAsync()).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeRefreshService.RefreshApprenticeshipsAsync(A<Guid>.Ignored)).MustHaveHappened(AbortAfterErrorCount, Times.Exactly);
         }
     }

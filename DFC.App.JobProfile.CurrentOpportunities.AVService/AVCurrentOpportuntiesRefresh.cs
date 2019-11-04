@@ -29,7 +29,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
             logger.LogInformation($"{nameof(RefreshApprenticeshipVacanciesAsync)} has been called for document {documentId}");
 
             CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel = await repository.GetAsync(d => d.DocumentId == documentId).ConfigureAwait(false);
-            var aVMapping = new AVMapping() { Standards = currentOpportunitiesSegmentModel.Data.Apprenticeships.Standards, Frameworks = currentOpportunitiesSegmentModel.Data.Apprenticeships.Frameworks };
+            var aVMapping = new AVMapping() { 
+                Standards = currentOpportunitiesSegmentModel.Data.Apprenticeships?.Standards?.Where(w => !string.IsNullOrWhiteSpace(w.Url)).Select(b => b.Url).ToArray(),
+                Frameworks = currentOpportunitiesSegmentModel.Data.Apprenticeships?.Frameworks?.Where(w => !string.IsNullOrWhiteSpace(w.Url)).Select(b => b.Url).ToArray(),
+            };
             var mappedVacancies = await aVAPIService.GetAVsForMultipleProvidersAsync(aVMapping).ConfigureAwait(false);
 
             var projectedVacancies = ProjectVacanciesForProfile(mappedVacancies);

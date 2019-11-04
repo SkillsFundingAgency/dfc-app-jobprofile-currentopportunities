@@ -1,4 +1,5 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -19,5 +20,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Contracts
         Task<HttpStatusCode> UpsertAsync(CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel);
 
         Task<bool> DeleteAsync(Guid documentId);
+
+        Task<HttpStatusCode> PatchJobProfileSocAsync(PatchJobProfileSocModel patchModel, Guid documentId);
+
+        Task<HttpStatusCode> PatchApprenticeshipFrameworksAsync(PatchApprenticeshipFrameworksModel patchModel, Guid documentId);
+
+        Task<HttpStatusCode> PatchApprenticeshipStandardsAsync(PatchApprenticeshipStandardsModel patchModel, Guid documentId);
     }
 }

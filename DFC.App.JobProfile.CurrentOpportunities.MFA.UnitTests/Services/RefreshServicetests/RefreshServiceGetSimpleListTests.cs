@@ -38,7 +38,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
             var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
 
             // act
-            var results = await refreshService.GetSimpleListAsync().ConfigureAwait(false);
+            var results = await refreshService.GetListAsync().ConfigureAwait(false);
 
             // assert
             A.Equals(results, expectedResults);
@@ -54,7 +54,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
             var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
 
             // act
-            var results = await refreshService.GetSimpleListAsync().ConfigureAwait(false);
+            var results = await refreshService.GetListAsync().ConfigureAwait(false);
 
             // assert
             A.Equals(results, expectedResults);

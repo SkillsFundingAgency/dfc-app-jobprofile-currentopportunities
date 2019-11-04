@@ -13,9 +13,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
         [Display(Name = "Canonical Name")]
         public string CanonicalName { get; set; }
 
-        [Display(Name = "Last Reviewed")]
-        public DateTime? LastReviewed { get; set; }
-
         [Display(Name = "SOC Level two")]
         public string SocLevelTwo { get; set; }
 

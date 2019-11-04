@@ -1,5 +1,7 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+﻿using AutoMapper;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
 using DFC.App.JobProfile.CurrentOpportunities.SegmentService;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
@@ -14,6 +16,8 @@ namespace DFC.App.CareerPath.SegmentService.UnitTests.SegmentServiceTests
         private readonly ICourseCurrentOpportuntiesRefresh fakeCourseCurrentOpportuntiesRefresh;
         private readonly IAVCurrentOpportuntiesRefresh fakeAVCurrentOpportunatiesRefresh;
         private readonly ILogger<CurrentOpportunitiesSegmentService> fakeLogger;
+        private readonly IMapper fakeMapper;
+        private readonly IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> fakeJobProfileSegmentRefreshService;
 
         public SegmentServicePingTests()
         {
@@ -30,7 +34,7 @@ namespace DFC.App.CareerPath.SegmentService.UnitTests.SegmentServiceTests
             var repository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
             var expectedResult = true;
             A.CallTo(() => repository.PingAsync()).Returns(expectedResult);
-            var currentOpportunitiesSegmentService = new CurrentOpportunitiesSegmentService(repository, draftCurrentOpportunitiesSegmentService, fakeCourseCurrentOpportuntiesRefresh, fakeAVCurrentOpportunatiesRefresh, fakeLogger);
+            var currentOpportunitiesSegmentService = new CurrentOpportunitiesSegmentService(repository, fakeCourseCurrentOpportuntiesRefresh, fakeAVCurrentOpportunatiesRefresh, fakeLogger, fakeMapper, fakeJobProfileSegmentRefreshService);
 
             // act
             var result = currentOpportunitiesSegmentService.PingAsync().Result;
@@ -48,7 +52,7 @@ namespace DFC.App.CareerPath.SegmentService.UnitTests.SegmentServiceTests
             var expectedResult = false;
 
             A.CallTo(() => repository.PingAsync()).Returns(expectedResult);
-            var currentOpportunitiesSegmentService = new CurrentOpportunitiesSegmentService(repository, draftCurrentOpportunitiesSegmentService, fakeCourseCurrentOpportuntiesRefresh, fakeAVCurrentOpportunatiesRefresh, fakeLogger);
+            var currentOpportunitiesSegmentService = new CurrentOpportunitiesSegmentService(repository, fakeCourseCurrentOpportuntiesRefresh, fakeAVCurrentOpportunatiesRefresh, fakeLogger, fakeMapper, fakeJobProfileSegmentRefreshService);
 
             // act
             var result = currentOpportunitiesSegmentService.PingAsync().Result;
