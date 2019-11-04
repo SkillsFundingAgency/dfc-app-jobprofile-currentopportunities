@@ -18,7 +18,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
         {
             var fullJobProfileMessage = JsonConvert.DeserializeObject<JobProfileMessage>(message);
             var fullJobProfile = mapper.Map<CurrentOpportunitiesSegmentModel>(fullJobProfileMessage);
+
             fullJobProfile.SequenceNumber = sequenceNumber;
+            fullJobProfile.Data.Apprenticeships = mapper.Map<Apprenticeships>(fullJobProfileMessage.SocCodeData);
             fullJobProfile.Data.Courses = mapper.Map<Courses>(fullJobProfileMessage);
 
             return fullJobProfile;

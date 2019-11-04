@@ -5,6 +5,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels
 {
     public class JobProfileMessage : BaseJobProfileMessage
     {
+        public string Title { get; set; }
+
         [Required]
         public string CanonicalName { get; set; }
 

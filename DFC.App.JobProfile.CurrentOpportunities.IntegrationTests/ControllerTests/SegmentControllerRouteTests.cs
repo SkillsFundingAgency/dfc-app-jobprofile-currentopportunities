@@ -88,11 +88,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
         }
 
         [Fact]
-        public async Task PostSegmentEndpointsForDefaultArticleRefreshAllReturnOk()
+        public async Task PostSegmentEndpointsForDefaultArticleRefreshAllReturnCreated()
         {
             // Arrange
             const string url = "/segment";
-            var currentOpportunitiesSegmentModel = DataSeeding.GetDummyCurrentOpportunitiesSegmentModel(DataSeeding.DefaultArticleGuid, DataSeeding.DefaultArticleName, 1);
+            var documentId = Guid.NewGuid();
+            var currentOpportunitiesSegmentModel = DataSeeding.GetDummyCurrentOpportunitiesSegmentModel(documentId, documentId.ToString().ToLowerInvariant(), 1);
             var client = factory.CreateClient();
             client.DefaultRequestHeaders.Accept.Clear();
 
@@ -101,7 +102,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
 
             // Assert
             response.EnsureSuccessStatusCode();
-            response.StatusCode.Should().Be(HttpStatusCode.OK);
+            response.StatusCode.Should().Be(HttpStatusCode.Created);
         }
 
         [Fact]
@@ -115,6 +116,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
             client.DefaultRequestHeaders.Accept.Clear();
             _ = await client.PostAsync(url, currentOpportunitiesSegmentModel, new JsonMediaTypeFormatter()).ConfigureAwait(false);
 
+            currentOpportunitiesSegmentModel.SequenceNumber++;
             // Act
             var response = await client.PutAsync(url, currentOpportunitiesSegmentModel, new JsonMediaTypeFormatter()).ConfigureAwait(false);
 

@@ -37,10 +37,15 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Startup
             builder.Services
                 .AddPolicies(policyRegistry, nameof(RefreshClientOptions), policyOptions)
                 .AddHttpClient<IRefreshService, RefreshService, RefreshClientOptions>(configuration, nameof(RefreshClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker))
-            .AddSingleton<IHttpClientService, HttpClientService>()
-            .AddSingleton<IMessageProcessor, MessageProcessor>()
-            .AddSingleton<IMappingService, MappingService>()
-            .AddSingleton<ILogger, Logger<WebJobsExtensionStartup>>();
+                .AddSingleton<IHttpClientService, HttpClientService>()
+                .AddSingleton<IMessageProcessor, MessageProcessor>()
+                .AddSingleton<IMappingService, MappingService>()
+                .AddSingleton<ILogger, Logger<WebJobsExtensionStartup>>();
+
+            var sp = builder.Services.BuildServiceProvider();
+            var mapper = sp.GetService<IMapper>();
+
+            mapper?.ConfigurationProvider.AssertConfigurationIsValid();
         }
     }
 }

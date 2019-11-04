@@ -27,6 +27,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles
             CreateMap<Location, LocationViewModel>();
 
             CreateMap<CurrentOpportunitiesSegmentModel, IndexDocumentViewModel>();
+
+            CreateMap<Data.Models.CurrentOpportunitiesSegmentModel, Data.ServiceBusModels.RefreshJobProfileSegmentServiceBusModel>()
+                .ForMember(d => d.JobProfileId, s => s.MapFrom(a => a.DocumentId))
+                .ForMember(d => d.Segment, s => s.MapFrom(a => Data.Models.CurrentOpportunitiesSegmentDataModel.SegmentName))
+                ;
         }
     }
 }

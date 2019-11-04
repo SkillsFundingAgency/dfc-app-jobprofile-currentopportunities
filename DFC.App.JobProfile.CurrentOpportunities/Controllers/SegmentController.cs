@@ -1,4 +1,5 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels;
 using DFC.App.JobProfile.CurrentOpportunities.Extensions;
@@ -89,12 +90,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             return NoContent();
         }
 
-        [HttpPut]
         [HttpPost]
         [Route("segment")]
-        public async Task<IActionResult> CreateOrUpdate([FromBody]CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel)
+        public async Task<IActionResult> Post([FromBody]CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel)
         {
-            logger.LogInformation($"{nameof(CreateOrUpdate)} has been called");
+            logger.LogInformation($"{nameof(Post)} has been called");
 
             if (currentOpportunitiesSegmentModel == null)
             {
@@ -106,20 +106,26 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
                 return BadRequest(ModelState);
             }
 
+            var existingDocument = await currentOpportunitiesSegmentService.GetByIdAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false);
+            if (existingDocument != null)
+            {
+                return new StatusCodeResult((int)HttpStatusCode.AlreadyReported);
+            }
+
             var response = await currentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
-            logger.LogInformation($"{nameof(CreateOrUpdate)} has upserted content for: {currentOpportunitiesSegmentModel.CanonicalName}");
+            logger.LogInformation($"{nameof(Post)} has upserted content for: {currentOpportunitiesSegmentModel.CanonicalName}");
 
             return new StatusCodeResult((int)response);
         }
 
-        [HttpPatch]
-        [Route("segment/{documentId}/socCodeData")]
-        public async Task<IActionResult> PatchSocCodeData([FromBody]PatchSocDataModel patchSocDataModel, Guid documentId)
+        [HttpPut]
+        [Route("segment")]
+        public async Task<IActionResult> Put([FromBody]CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel)
         {
-            logger.LogInformation($"{nameof(PatchSocCodeData)} has been called");
+            logger.LogInformation($"{nameof(Put)} has been called");
 
-            if (patchSocDataModel == null)
+            if (currentOpportunitiesSegmentModel == null)
             {
                 return BadRequest();
             }
@@ -129,10 +135,97 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
                 return BadRequest(ModelState);
             }
 
-            var response = await currentOpportunitiesSegmentService.PatchSocCodeDataAsync(patchSocDataModel, documentId).ConfigureAwait(false);
+            var existingDocument = await currentOpportunitiesSegmentService.GetByIdAsync(currentOpportunitiesSegmentModel.DocumentId).ConfigureAwait(false);
+            if (existingDocument == null)
+            {
+                return new StatusCodeResult((int)HttpStatusCode.NotFound);
+            }
+
+            if (currentOpportunitiesSegmentModel.SequenceNumber <= existingDocument.SequenceNumber)
+            {
+                return new StatusCodeResult((int)HttpStatusCode.AlreadyReported);
+            }
+
+            currentOpportunitiesSegmentModel.Etag = existingDocument.Etag;
+            currentOpportunitiesSegmentModel.SocLevelTwo = existingDocument.SocLevelTwo;
+
+            var response = await currentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
+
+            logger.LogInformation($"{nameof(Put)} has upserted content for: {currentOpportunitiesSegmentModel.CanonicalName}");
+
+            return new StatusCodeResult((int)response);
+        }
+
+        [HttpPatch]
+        [Route("segment/{documentId}/JobProfileSoc")]
+        public async Task<IActionResult> PatchJobProfileSoc([FromBody]PatchJobProfileSocModel patchJobProfileSocModel, Guid documentId)
+        {
+            logger.LogInformation($"{nameof(PatchJobProfileSoc)} has been called");
+
+            if (patchJobProfileSocModel == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await currentOpportunitiesSegmentService.PatchJobProfileSocAsync(patchJobProfileSocModel, documentId).ConfigureAwait(false);
             if (response != HttpStatusCode.OK && response != HttpStatusCode.Created)
             {
-                logger.LogError($"{nameof(PatchSocCodeData)}: Error while patching Soc Data content for Job Profile with Id: {patchSocDataModel.JobProfileId} for the {patchSocDataModel.SocCode} soc code");
+                logger.LogError($"{nameof(PatchJobProfileSoc)}: Error while patching Soc Data content for Job Profile with Id: {patchJobProfileSocModel.JobProfileId} for the {patchJobProfileSocModel.SocCode} soc code");
+            }
+
+            return new StatusCodeResult((int)response);
+        }
+
+        [HttpPatch]
+        [Route("segment/{documentId}/ApprenticeshipFrameworks")]
+        public async Task<IActionResult> PatchApprenticeshipFrameworks([FromBody]PatchApprenticeshipFrameworksModel patchApprenticeshipFrameworksModel, Guid documentId)
+        {
+            logger.LogInformation($"{nameof(PatchApprenticeshipFrameworks)} has been called");
+
+            if (patchApprenticeshipFrameworksModel == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await currentOpportunitiesSegmentService.PatchApprenticeshipFrameworksAsync(patchApprenticeshipFrameworksModel, documentId).ConfigureAwait(false);
+            if (response != HttpStatusCode.OK && response != HttpStatusCode.Created)
+            {
+                logger.LogError($"{nameof(PatchApprenticeshipFrameworks)}: Error while patching Apprenticeship Frameworks content for Job Profile with Id: {patchApprenticeshipFrameworksModel.JobProfileId} for the {patchApprenticeshipFrameworksModel.SocCode} soc code");
+            }
+
+            return new StatusCodeResult((int)response);
+        }
+
+        [HttpPatch]
+        [Route("segment/{documentId}/ApprenticeshipStandards")]
+        public async Task<IActionResult> PatchApprenticeshipStandards([FromBody]PatchApprenticeshipStandardsModel patchApprenticeshipStandardsModel, Guid documentId)
+        {
+            logger.LogInformation($"{nameof(PatchApprenticeshipStandards)} has been called");
+
+            if (patchApprenticeshipStandardsModel == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var response = await currentOpportunitiesSegmentService.PatchApprenticeshipStandardsAsync(patchApprenticeshipStandardsModel, documentId).ConfigureAwait(false);
+            if (response != HttpStatusCode.OK && response != HttpStatusCode.Created)
+            {
+                logger.LogError($"{nameof(PatchApprenticeshipStandards)}: Error while patching Apprenticeship Standards content for Job Profile with Id: {patchApprenticeshipStandardsModel.JobProfileId} for the {patchApprenticeshipStandardsModel.SocCode} soc code");
             }
 
             return new StatusCodeResult((int)response);

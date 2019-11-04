@@ -105,7 +105,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             return result;
         }
 
-        public async Task<HttpStatusCode> PatchSocCodeDataAsync(PatchSocDataModel patchModel, Guid documentId)
+        public async Task<HttpStatusCode> PatchJobProfileSocAsync(PatchJobProfileSocModel patchModel, Guid documentId)
         {
             if (patchModel is null)
             {
@@ -129,15 +129,101 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 return patchModel.ActionType == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
             }
 
-            if (patchModel.ActionType == MessageAction.Deleted) // What should this do on delete of SocData - null or new SocData?
+            if (patchModel.ActionType == MessageAction.Deleted) // What should this do on delete - null or new?
             {
                 existingSegmentModel.Data.Apprenticeships = new Apprenticeships();
             }
             else
             {
-                var updatedApprenticeships = mapper.Map<Apprenticeships>(patchModel);
+                var updatedApprenticeships = new Data.Models.Apprenticeships()
+                {
+                    Frameworks = mapper.Map<IEnumerable<Data.Models.ApprenticeshipFramework>>(patchModel.ApprenticeshipFramework),
+                    Standards = mapper.Map<IEnumerable<Data.Models.ApprenticeshipStandard>>(patchModel.ApprenticeshipStandards),
+                    Vacancies = new List<Data.Models.Vacancy>(),
+                };
+
                 existingSegmentModel.Data.Apprenticeships = updatedApprenticeships;
             }
+
+            existingSegmentModel.SequenceNumber = patchModel.SequenceNumber;
+
+            return await UpsertAndRefreshSegmentModel(existingSegmentModel).ConfigureAwait(false);
+        }
+
+        public async Task<HttpStatusCode> PatchApprenticeshipFrameworksAsync(PatchApprenticeshipFrameworksModel patchModel, Guid documentId)
+        {
+            if (patchModel is null)
+            {
+                throw new ArgumentNullException(nameof(patchModel));
+            }
+
+            var existingSegmentModel = await GetByIdAsync(documentId).ConfigureAwait(false);
+            if (existingSegmentModel is null)
+            {
+                return HttpStatusCode.NotFound;
+            }
+
+            if (patchModel.SequenceNumber <= existingSegmentModel.SequenceNumber)
+            {
+                return HttpStatusCode.AlreadyReported;
+            }
+
+            //TODO: ian: what should this do?
+            //var existingApprenticeships = existingSegmentModel.Data.Apprenticeships;
+            //if (existingApprenticeships is null)
+            //{
+            //    return patchModel.ActionType == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
+            //}
+
+            //if (patchModel.ActionType == MessageAction.Deleted) // What should this do on delete of SocData - null or new SocData?
+            //{
+            //    existingSegmentModel.Data.Apprenticeships = new Apprenticeships();
+            //}
+            //else
+            //{
+            //    var updatedApprenticeships = mapper.Map<Apprenticeships>(patchModel);
+            //    existingSegmentModel.Data.Apprenticeships = updatedApprenticeships;
+            //}
+
+            existingSegmentModel.SequenceNumber = patchModel.SequenceNumber;
+
+            return await UpsertAndRefreshSegmentModel(existingSegmentModel).ConfigureAwait(false);
+        }
+
+        public async Task<HttpStatusCode> PatchApprenticeshipStandardsAsync(PatchApprenticeshipStandardsModel patchModel, Guid documentId)
+        {
+            if (patchModel is null)
+            {
+                throw new ArgumentNullException(nameof(patchModel));
+            }
+
+            var existingSegmentModel = await GetByIdAsync(documentId).ConfigureAwait(false);
+            if (existingSegmentModel is null)
+            {
+                return HttpStatusCode.NotFound;
+            }
+
+            if (patchModel.SequenceNumber <= existingSegmentModel.SequenceNumber)
+            {
+                return HttpStatusCode.AlreadyReported;
+            }
+
+            //TODO: ian: what should this do?
+            //var existingApprenticeships = existingSegmentModel.Data.Apprenticeships;
+            //if (existingApprenticeships is null)
+            //{
+            //    return patchModel.ActionType == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
+            //}
+
+            //if (patchModel.ActionType == MessageAction.Deleted) // What should this do on delete of SocData - null or new SocData?
+            //{
+            //    existingSegmentModel.Data.Apprenticeships = new Apprenticeships();
+            //}
+            //else
+            //{
+            //    var updatedApprenticeships = mapper.Map<Apprenticeships>(patchModel);
+            //    existingSegmentModel.Data.Apprenticeships = updatedApprenticeships;
+            //}
 
             existingSegmentModel.SequenceNumber = patchModel.SequenceNumber;
 

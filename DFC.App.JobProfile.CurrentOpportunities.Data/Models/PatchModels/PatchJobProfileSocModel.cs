@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels
 {
-    public class PatchSocDataModel : BasePatchModel
+    public class PatchJobProfileSocModel : BasePatchModel
     {
         public string SocCode { get; set; }
 

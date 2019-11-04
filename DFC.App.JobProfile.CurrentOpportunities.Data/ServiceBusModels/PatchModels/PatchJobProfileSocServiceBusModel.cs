@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels.PatchModels
 {
-    public class PatchSocDataServiceBusModel : BaseJobProfileMessage
+    public class PatchJobProfileSocServiceBusModel : BaseJobProfileMessage
     {
         public Guid Id { get; set; }
 
@@ -15,5 +14,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels.PatchMod
         public string ONetOccupationalCode { get; set; }
 
         public string UrlName { get; set; }
+
+        public string Title { get; set; }
+
+        public string JobProfileTitle { get; set; }
+
+        public IEnumerable<ApprenticeshipFramework> ApprenticeshipFramework { get; set; }
+
+        public IEnumerable<ApprenticeshipStandard> ApprenticeshipStandards { get; set; }
     }
 }

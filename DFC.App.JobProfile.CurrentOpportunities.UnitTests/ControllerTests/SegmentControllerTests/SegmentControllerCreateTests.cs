@@ -7,23 +7,25 @@ using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.SegmentControllerTests
 {
-    [Trait("Segment Controller", "Create or Update Tests")]
-    public class SegmentControllerCreateOrUpdateTests : BaseSegmentController
+    [Trait("Segment Controller", "Create Tests")]
+    public class SegmentControllerCreateTests : BaseSegmentController
     {
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerCreateOrUpdateReturnsSuccessForCreate(string mediaTypeName)
+        public async void SegmentControllerCreateReturnsSuccessForNewItem(string mediaTypeName)
         {
             // Arrange
             var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
             var controller = BuildSegmentController(mediaTypeName);
 
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).Returns((CurrentOpportunitiesSegmentModel)null);
             A.CallTo(() => FakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.Created);
 
             // Act
-            var result = await controller.CreateOrUpdate(currentOpportunitiesSegmentModel).ConfigureAwait(false);
+            var result = await controller.Post(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
             // Assert
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => FakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
 
             var statusCodeResult = Assert.IsType<StatusCodeResult>(result);
@@ -35,37 +37,37 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerCreateOrUpdateReturnsSuccessForUpdate(string mediaTypeName)
+        public async void SegmentControllerCreateReturnsAlreadyReportedForExisting(string mediaTypeName)
         {
             // Arrange
             var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
             var controller = BuildSegmentController(mediaTypeName);
 
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.OK);
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).Returns(A.Fake<CurrentOpportunitiesSegmentModel>());
 
             // Act
-            var result = await controller.CreateOrUpdate(currentOpportunitiesSegmentModel).ConfigureAwait(false);
+            var result = await controller.Post(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
 
             var statusCodeResult = Assert.IsType<StatusCodeResult>(result);
 
-            A.Equals((int)HttpStatusCode.OK, statusCodeResult.StatusCode);
+            A.Equals((int)HttpStatusCode.AlreadyReported, statusCodeResult.StatusCode);
 
             controller.Dispose();
         }
 
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerCreateOrUpdateReturnsBadResultWhenModelIsNull(string mediaTypeName)
+        public async void SegmentControllerCreateReturnsBadRequestWhenModelIsNull(string mediaTypeName)
         {
             // Arrange
             CurrentOpportunitiesSegmentModel careerPathSegmentModel = null;
             var controller = BuildSegmentController(mediaTypeName);
 
             // Act
-            var result = await controller.CreateOrUpdate(careerPathSegmentModel).ConfigureAwait(false);
+            var result = await controller.Post(careerPathSegmentModel).ConfigureAwait(false);
 
             // Assert
             var statusResult = Assert.IsType<BadRequestResult>(result);
@@ -77,7 +79,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerCreateOrUpdateReturnsBadResultWhenModelIsInvalid(string mediaTypeName)
+        public async void SegmentControllerCreateReturnsBadRequestWhenModelIsInvalid(string mediaTypeName)
         {
             // Arrange
             var careerPathSegmentModel = new CurrentOpportunitiesSegmentModel();
@@ -86,7 +88,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             controller.ModelState.AddModelError(string.Empty, "Model is not valid");
 
             // Act
-            var result = await controller.CreateOrUpdate(careerPathSegmentModel).ConfigureAwait(false);
+            var result = await controller.Post(careerPathSegmentModel).ConfigureAwait(false);
 
             // Assert
             var statusResult = Assert.IsType<BadRequestObjectResult>(result);

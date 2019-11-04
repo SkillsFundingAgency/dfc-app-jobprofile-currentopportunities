@@ -3,6 +3,8 @@
     public enum MessageContentType
     {
         JobProfile,
-        SocCodes,
+        JobProfileSoc,
+        ApprenticeshipStandards,
+        ApprenticeshipFrameworks,
     }
 }

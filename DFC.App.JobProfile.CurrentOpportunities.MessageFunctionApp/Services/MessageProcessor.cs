@@ -26,15 +26,29 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
         {
             switch (messageContentType)
             {
-                case MessageContentType.SocCodes:
-                    {
-                        var serviceBusMessage = JsonConvert.DeserializeObject<PatchSocDataServiceBusModel>(message);
-                        var patchSocDataModel = mapper.Map<PatchSocDataModel>(serviceBusMessage);
-                        patchSocDataModel.ActionType = actionType;
-                        patchSocDataModel.SequenceNumber = sequenceNumber;
+                case MessageContentType.JobProfileSoc:
+                    var serviceBusJobProfileSocMessage = JsonConvert.DeserializeObject<PatchJobProfileSocServiceBusModel>(message);
+                    var patchSocDataModel = mapper.Map<PatchJobProfileSocModel>(serviceBusJobProfileSocMessage);
+                    patchSocDataModel.ActionType = actionType;
+                    patchSocDataModel.SequenceNumber = sequenceNumber;
 
-                        return await httpClientService.PatchAsync(patchSocDataModel, "socCodeData").ConfigureAwait(false);
-                    }
+                    return await httpClientService.PatchAsync(patchSocDataModel, $"{messageContentType}").ConfigureAwait(false);
+
+                case MessageContentType.ApprenticeshipFrameworks:
+                    var serviceBusApprenticeshipFrameworksMessage = JsonConvert.DeserializeObject<PatchApprenticeshipFrameworksServiceBusModel>(message);
+                    var patchApprenticeshipFrameworksModel = mapper.Map<PatchApprenticeshipFrameworksModel>(serviceBusApprenticeshipFrameworksMessage);
+                    patchApprenticeshipFrameworksModel.ActionType = actionType;
+                    patchApprenticeshipFrameworksModel.SequenceNumber = sequenceNumber;
+
+                    return await httpClientService.PatchAsync(patchApprenticeshipFrameworksModel, $"{messageContentType}").ConfigureAwait(false);
+
+                case MessageContentType.ApprenticeshipStandards:
+                    var serviceBusApprenticeshipStandardsMessage = JsonConvert.DeserializeObject<PatchApprenticeshipStandardsServiceBusModel>(message);
+                    var patchApprenticeshipStandardsModel = mapper.Map<PatchApprenticeshipStandardsModel>(serviceBusApprenticeshipStandardsMessage);
+                    patchApprenticeshipStandardsModel.ActionType = actionType;
+                    patchApprenticeshipStandardsModel.SequenceNumber = sequenceNumber;
+
+                    return await httpClientService.PatchAsync(patchApprenticeshipStandardsModel, $"{messageContentType}").ConfigureAwait(false);
 
                 case MessageContentType.JobProfile:
                     return await ProcessJobProfileMessageAsync(message, actionType, sequenceNumber).ConfigureAwait(false);

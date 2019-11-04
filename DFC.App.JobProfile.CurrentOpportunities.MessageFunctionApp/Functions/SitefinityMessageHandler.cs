@@ -5,6 +5,7 @@ using Microsoft.Azure.ServiceBus;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Globalization;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,12 +43,18 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
 
             if (!Enum.TryParse<MessageAction>(actionType?.ToString(), out var messageAction))
             {
-                throw new ArgumentOutOfRangeException(nameof(actionType), $"Invalid message action '{messageAction}' received, should be one of '{string.Join(",", Enum.GetNames(typeof(MessageAction)))}'");
+                throw new ArgumentOutOfRangeException(nameof(actionType), $"Invalid message action '{actionType}' received, should be one of '{string.Join(",", Enum.GetNames(typeof(MessageAction)))}'");
+            }
+
+            if (contentType.ToString().Contains("-"))
+            {
+                var contentTypeString = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(contentType.ToString());
+                contentType = contentTypeString.Replace("-", string.Empty, true, CultureInfo.InvariantCulture);
             }
 
             if (!Enum.TryParse<MessageContentType>(contentType?.ToString(), out var messageContentType))
             {
-                throw new ArgumentOutOfRangeException(nameof(contentType), $"Invalid message content type '{messageContentType}' received, should be one of '{string.Join(",", Enum.GetNames(typeof(MessageContentType)))}'");
+                throw new ArgumentOutOfRangeException(nameof(contentType), $"Invalid message content type '{contentType}' received, should be one of '{string.Join(",", Enum.GetNames(typeof(MessageContentType)))}'");
             }
 
             var result = await messageProcessor.ProcessAsync(message, sitefinityMessage.SystemProperties.SequenceNumber, messageContentType, messageAction).ConfigureAwait(false);
@@ -60,6 +67,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
 
                 case HttpStatusCode.Created:
                     log.LogInformation($"{ClassFullName}: JobProfile Id: {messageContentId}: Created segment");
+                    break;
+
+                case HttpStatusCode.AlreadyReported:
+                    log.LogInformation($"{ClassFullName}: JobProfile Id: {messageContentId}: Segment previously updated");
                     break;
 
                 case HttpStatusCode.Accepted:
