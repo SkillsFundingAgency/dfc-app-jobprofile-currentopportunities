@@ -344,6 +344,10 @@
                             {
                                 "name": "Configuration__CourseSearchClient__CourseSearchSvc__RequestTimeOutSeconds",
                                 "value": "10"
+                            },
+                            {
+                                "name": "Logging__ApplicationInsights__LogLevel__Default",
+                                "value": "Information"
                             }
                         ]
                     }
