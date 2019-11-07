@@ -344,6 +344,10 @@
                             {
                                 "name": "Configuration__CourseSearchClient__CourseSearchSvc__RequestTimeOutSeconds",
                                 "value": "10"
+                            },
+                            {
+                                "name": "Logging__ApplicationInsights__LogLevel__Default",
+                                "value": "Information"
                             }
                         ]
                     }
@@ -476,6 +480,10 @@
                             {
                                 "name": "Policies__HttpRetry__Count",
                                 "value": "3"
+                            },
+                            {
+                                "name": "Logging__ApplicationInsights__LogLevel__Default",
+                                "value": "Information"
                             }                            
                         ]
                     }
