@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Models
 {
-    public class FeedRefreshResponsModel
+    public class FeedRefreshResponseModel
     {
         public int NumberPulled { get; set; }
 
