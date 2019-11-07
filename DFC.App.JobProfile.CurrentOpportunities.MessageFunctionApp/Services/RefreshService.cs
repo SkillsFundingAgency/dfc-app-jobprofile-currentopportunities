@@ -78,7 +78,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
                 else
                 {
                     var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    var result = JsonConvert.DeserializeObject<FeedRefreshResponsModel>(responseString);
+                    var result = JsonConvert.DeserializeObject<FeedRefreshResponseModel>(responseString);
 
                     logger.LogError($"{nameof(RefreshApprenticeshipsAsync)}: Error refreshing Job Profile Apprenticeships from {url}, status: {response.StatusCode}, response message: {result.RequestErrorMessage}");
                 }
@@ -114,7 +114,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
                 else
                 {
                     var responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    var result = JsonConvert.DeserializeObject<FeedRefreshResponsModel>(responseString);
+                    var result = JsonConvert.DeserializeObject<FeedRefreshResponseModel>(responseString);
 
                     logger.LogError($"{nameof(RefreshCoursesAsync)}: Error refreshing Job Profile Courses from {url}, status: {response.StatusCode}, response message: {result.RequestErrorMessage}");
                 }
