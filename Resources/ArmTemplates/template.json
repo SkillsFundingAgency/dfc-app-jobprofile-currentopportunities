@@ -60,11 +60,25 @@
         "cosmosDbCollectionName": {
             "type": "string"
         },
+        "cmsTopicName": {
+            "type": "string",
+            "defaultValue": "cms-messages",
+            "metadata": {
+                "description": "Name of CMS messages topic"
+            }
+        },
         "cmsSubscriptionSqlFilter": {
             "type": "string",
             "defaultValue": "",
             "metadata": {
                 "description": "Filter to apply to subscription (no filter applied if left blank)"
+            }
+        },
+        "refreshTopicName": {
+            "type": "string",
+            "defaultValue": "job-profile-refresh",
+            "metadata": {
+                "description": "Name of job profile refresh topic"
             }
         },
         "apprenticeshipServiceUrl": {
@@ -123,9 +137,7 @@
         "functionAppName": "[concat(variables('ResourcePrefix'), '-fa')]",
         "functionAppInsightsName": "[concat(variables('functionAppName'), '-ai')]",
         "urlJobProfileCurrentOpportunities": "[toLower(concat('https://', variables('webAppName'), '.', parameters('appServiceDomain')))]",
-        "cmsTopicName": "cms-messages",
-        "cmsSubscriptionName": "job-profile-currentopportunities",
-        "refreshTopicName": "job-profile-refresh"
+        "cmsSubscriptionName": "job-profile-currentopportunities"
     },
     "resources": [
         {
@@ -255,7 +267,7 @@
                             },
                             {
                                 "name": "ServiceBusOptions__topicName",
-                                "value": "[variables('refreshTopicName')]"
+                                "value": "[parameters('refreshTopicName')]"
                             },
                             {
                                 "name": "Configuration__AVAPIService__FAAEndPoint",
@@ -467,11 +479,11 @@
                             },
                             {
                                 "name": "cms-messages-topic",
-                                "value": "cms-messages"
+                                "value": "[parameters('cmsTopicName')]"
                             },
                             {
                                 "name": "cms-messages-subscription",
-                                "value": "job-profile-currentopportunities"
+                                "value": "[variables('cmsSubscriptionName')]"
                             },
                             {
                                 "name": "Policies__HttpCircuitBreaker__DurationOfBreak",
@@ -547,7 +559,7 @@
                         "value": "[parameters('appSharedServiceBusName')]"
                     },
                     "serviceBusTopicName": {
-                        "value": "[variables('cmsTopicName')]"
+                        "value": "[parameters('cmsTopicName')]"
                     },
                     "serviceBusTopicSubscriptionName": {
                         "value": "[variables('cmsSubscriptionName')]"
