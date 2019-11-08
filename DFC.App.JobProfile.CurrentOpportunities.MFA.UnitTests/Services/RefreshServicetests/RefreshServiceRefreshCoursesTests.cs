@@ -50,7 +50,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
             // arrange
             var documentId = Guid.NewGuid();
             var expectedStatusCode = HttpStatusCode.BadRequest;
-            var expectedResults = A.Fake<FeedRefreshResponsModel>();
+            var expectedResults = A.Fake<FeedRefreshResponseModel>();
             using var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(JsonConvert.SerializeObject(expectedResults), expectedStatusCode);
             using var httpClient = new HttpClient(messageHandler);
             var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);

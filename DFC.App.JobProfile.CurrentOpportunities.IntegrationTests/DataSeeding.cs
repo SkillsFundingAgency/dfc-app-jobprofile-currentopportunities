@@ -47,7 +47,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests
             {
                 LastReviewed = DateTime.UtcNow,
                 JobTitle = $"JobProfile{index}",
-                Apprenticeships = new Apprenticeships()//Standards and frameworks should be valid or integration tests will fail
+                Apprenticeships = new Apprenticeships() //Standards and frameworks should be valid or integration tests will fail
                 {
                     Standards = new List<ApprenticeshipStandard>()
                     {

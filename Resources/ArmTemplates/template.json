@@ -344,6 +344,18 @@
                             {
                                 "name": "Configuration__CourseSearchClient__CourseSearchSvc__RequestTimeOutSeconds",
                                 "value": "10"
+                            },
+                            {
+                              "name": "Configuration__CourseSearchClient__CourseSearchSvc__MaxReceivedMessageSize",
+                              "value": "2147483647"
+                            },
+                            {
+                              "name": "Configuration__CourseSearchClient__CourseSearchSvc__MaxBufferSize",
+                              "value": "2147483647"
+                            },
+                            {
+                                "name": "Logging__ApplicationInsights__LogLevel__Default",
+                                "value": "Information"
                             }
                         ]
                     }
@@ -476,6 +488,10 @@
                             {
                                 "name": "Policies__HttpRetry__Count",
                                 "value": "3"
+                            },
+                            {
+                                "name": "Logging__ApplicationInsights__LogLevel__Default",
+                                "value": "Information"
                             }                            
                         ]
                     }
