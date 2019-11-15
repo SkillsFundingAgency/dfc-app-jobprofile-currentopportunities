@@ -246,23 +246,27 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
 
             if (result == HttpStatusCode.Created || result == HttpStatusCode.OK)
             {
-                try
-                {
-                    var avResult = await aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(existingSegmentModel.DocumentId).ConfigureAwait(false);
-                    var avCourse = await courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(existingSegmentModel.DocumentId).ConfigureAwait(false);
-                }
-                catch (HttpRequestException httpRequestException)
-                {
-                    logger.LogError($"{nameof(UpsertAndRefreshSegmentModel)} had exception when getting courses and apprenticeships for document {existingSegmentModel.DocumentId}, Exception - {httpRequestException.Message}");
-                    return HttpStatusCode.Accepted;
-                }
-
                 var refreshJobProfileSegmentServiceBusModel = mapper.Map<RefreshJobProfileSegmentServiceBusModel>(existingSegmentModel);
 
-                await jobProfileSegmentRefreshService.SendMessageAsync(refreshJobProfileSegmentServiceBusModel).ConfigureAwait(false);
+                var aVCurrentOpportunatiesRefreshTask = Task.Run(() => aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(existingSegmentModel.DocumentId));
+                var courseRefreshTask = Task.Run(() => courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(existingSegmentModel.DocumentId));
+                var jobProfileSegmentRefreshTask = Task.Run(() => jobProfileSegmentRefreshService.SendMessageAsync(refreshJobProfileSegmentServiceBusModel).ConfigureAwait(false));
+
+                await Task.WhenAll(aVCurrentOpportunatiesRefreshTask, courseRefreshTask, jobProfileSegmentRefreshTask).ContinueWith((x) =>
+                {
+                    LogTaskException(x.Exception);
+                }).ConfigureAwait(false);
             }
 
             return result;
+        }
+
+        private void LogTaskException(AggregateException exception)
+        {
+            if (exception != null && exception.InnerExceptions != null)
+            {
+                exception.InnerExceptions.ToList().ForEach(x => logger.LogError(x.Message));
+            }
         }
     }
 }
