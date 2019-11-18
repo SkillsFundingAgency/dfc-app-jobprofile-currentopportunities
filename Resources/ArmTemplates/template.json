@@ -1,0 +1,575 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "appServiceDomain": {
+            "type": "string"
+        },
+        "appSharedResourceGroup": {
+            "type": "string"
+        },
+        "appSharedStorageAccountName": {
+            "type": "string"
+        },
+        "aseHostingEnvironmentName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "aseResourceGroup": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "aspInstances": {
+            "type": "int",
+            "defaultValue": 2
+        },
+        "aspSize": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "aspTier": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "cosmosDbName": {
+            "type": "string"
+        },
+        "cosmosDbKey": {
+            "type": "securestring"
+        },
+        "CourseSearchUrl": {
+            "type": "string"
+        },
+        "environment": {
+            "type": "string"
+        },
+        "sharedAppServicePlanName": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "sharedAppServicePlanResourceGroup": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "appSharedServiceBusName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the shared service bus to attach to"
+            }
+        },
+        "cosmosDbCollectionName": {
+            "type": "string"
+        },
+        "cmsTopicName": {
+            "type": "string",
+            "defaultValue": "cms-messages",
+            "metadata": {
+                "description": "Name of CMS messages topic"
+            }
+        },
+        "cmsSubscriptionSqlFilter": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Filter to apply to subscription (no filter applied if left blank)"
+            }
+        },
+        "refreshTopicName": {
+            "type": "string",
+            "defaultValue": "job-profile-refresh",
+            "metadata": {
+                "description": "Name of job profile refresh topic"
+            }
+        },
+        "apprenticeshipServiceUrl": {
+            "type": "string",
+            "metadata": {
+                "description": "Url to the apprenticeship service"
+            }
+        },
+        "apprenticeshipServiceKey": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Access token for the apprenticeship service"
+            }
+        },
+        "avfeedCosmosDbEndpoint": {
+            "type": "string",
+            "metadata": {
+                "description": "Endpoint for av feed cosmosdb instance"
+            }
+        },
+        "avfeedCosmosDbKey": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Access token for av feed cosmosdb instance"
+            }
+        },
+        "avfeedCosmosDbDatabaseName": {
+            "type": "string",
+            "metadata": {
+                "description": "AV Feed database name in cosmosdb"
+            }
+        },
+        "courseProviderServiceEndpoint": {
+            "type": "string",
+            "metadata": {
+                "description": "Url for course provider service"
+            }
+        },
+        "courseProviderServiceApiKey": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Access token for course provider service"
+            }
+        }
+    },
+    "variables": {
+        "appServicePlanName": "[if(greater(length(parameters('sharedAppServicePlanName')), 0), parameters('sharedAppServicePlanName'), concat(variables('resourcePrefix'), '-asp'))]",
+        "appServicePlanResourceGroup": "[if(greater(length(parameters('SharedAppServicePlanResourceGroup')), 0), parameters('SharedAppServicePlanResourceGroup'), resourceGroup().name)]",
+        "buildingBlocksDfcBaseUrl": "https://raw.githubusercontent.com/SkillsFundingAgency/dfc-devops/master/ArmTemplates/",
+        "cosmosDbCollectionPartitionKey": "/PartitionKey",
+        "cosmosDbDatabaseName": "dfc-app-jobprofiles",
+        "cosmosDbEndpoint": "[concat('https://', parameters('cosmosDbName'), '.documents.azure.com:443/')]",
+        "resourcePrefix": "[tolower(concat('dfc-', parameters('Environment'), '-app-jobprofcops'))]",
+        "webAppName": "[concat(variables('ResourcePrefix'), '-as')]",
+        "webAppInsightsName": "[concat(variables('webAppName'), '-ai')]",
+        "functionAppName": "[concat(variables('ResourcePrefix'), '-fa')]",
+        "functionAppInsightsName": "[concat(variables('functionAppName'), '-ai')]",
+        "urlJobProfileCurrentOpportunities": "[toLower(concat('https://', variables('webAppName'), '.', parameters('appServiceDomain')))]",
+        "cmsSubscriptionName": "job-profile-currentopportunities"
+    },
+    "resources": [
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[variables('webAppInsightsName')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('buildingBlocksDfcBaseUrl'), 'application-insights.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appInsightsName": {
+                        "value": "[variables('webAppInsightsName')]"
+                    },
+                    "attachedService": {
+                        "value": ""
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[variables('appServicePlanName')]",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[not(equals(parameters('sharedAppServicePlanName'), variables('appServicePlanName')))]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('buildingBlocksDfcBaseUrl'), 'app-service-plan.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appServicePlanName": {
+                        "value": "[variables('appServicePlanName')]"
+                    },
+                    "aseHostingEnvironmentName": {
+                        "value": "[parameters('aseHostingEnvironmentName')]"
+                    },
+                    "aseResourceGroup": {
+                        "value": "[parameters('aseResourceGroup')]"
+                    },
+                    "aspSize": {
+                        "value": "[parameters('aspSize')]"
+                    },
+                    "aspInstances": {
+                        "value": "[parameters('aspInstances')]"
+                    },
+                    "nonASETier": {
+                        "value": "[parameters('aspTier')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[variables('WebAppName')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('buildingBlocksDfcBaseUrl'), 'app-service.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appServiceName": {
+                        "value": "[variables('webAppName')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[variables('appServicePlanName')]"
+                    },
+                    "appServicePlanResourceGroup": {
+                        "value": "[variables('appServicePlanResourceGroup')]"
+                    },
+                    "appServiceType": {
+                        "value": "app"
+                    },
+                    "deployStagingSlot": {
+                        "value": false
+                    },
+                    "appServiceAppSettings": {
+                        "value": [
+                            {
+                                "name": "MSDEPLOY_RENAME_LOCKED_FILES",
+                                "value": "1"
+                            },
+                            {
+                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                "value": "[reference(variables('webAppInsightsName')).outputs.InstrumentationKey.value]"
+                            },
+                            {
+                                "name": "AzureWebJobsStorage",
+                                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('appSharedStorageAccountName'),';AccountKey=',listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.Storage/storageAccounts', parameters('appSharedStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
+                            },
+                            {
+                                "name": "Configuration__CosmosDbConnections__JobProfileSegment__AccessKey",
+                                "value": "[parameters('cosmosDbKey')]"
+                            },
+                            {
+                                "name": "Configuration__CosmosDbConnections__JobProfileSegment__EndpointUrl",
+                                "value": "[variables('cosmosDbEndpoint')]"
+                            },
+                            {
+                                "name": "Configuration__CosmosDbConnections__JobProfileSegment__DatabaseId",
+                                "value": "[variables('cosmosDbDatabaseName')]"
+                            },
+                            {
+                                "name": "Configuration__CosmosDbConnections__JobProfileSegment__CollectionId",
+                                "value": "[parameters('cosmosDbCollectionName')]"
+                            },
+                            {
+                                "name": "Configuration__CosmosDbConnections__JobProfileSegment__PartitionKey",
+                                "value": "[variables('cosmosDbCollectionPartitionKey')]"
+                            },
+                            {
+                                "name": "Configuration__CourseSearch__CourseSearchUrl",
+                                "value": "[parameters('CourseSearchUrl')]"
+                            },
+                            {
+                                "name": "Configuration__CourseSearch__HealthCheckKeyWords",
+                                "value": "maths"
+                            },
+                            {
+                                "name": "ServiceBusOptions__ServiceBusConnectionString",
+                                "value": "[listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.ServiceBus/namespaces/authorizationRules', parameters('appSharedServiceBusName'), 'ReadWrite'), '2017-04-01').primaryConnectionString]"
+                            },
+                            {
+                                "name": "ServiceBusOptions__topicName",
+                                "value": "[parameters('refreshTopicName')]"
+                            },
+                            {
+                                "name": "Configuration__AVAPIService__FAAEndPoint",
+                                "value": "[parameters('apprenticeshipServiceUrl')]"
+                            },
+                            {
+                                "name": "Configuration__AVAPIService__FAASubscriptionKey",
+                                "value": "[parameters('apprenticeshipServiceKey')]"
+                            },
+                            {
+                                "name": "Configuration__AVAPIService__FAAPageSize",
+                                "value": "10"
+                            },
+                            {
+                                "name": "Configuration__AVAPIService__FAAMaxPagesToTryPerMapping",
+                                "value": "100"
+                            },
+                            {
+                                "name": "Configuration__AVAPIService__FAASortBy",
+                                "value": "Age"
+                            },
+                            {
+                                "name": "Configuration__AVAPIService__RequestTimeOutSeconds",
+                                "value": "10"
+                            },
+                            {
+                                "name": "Configuration__AVAPIService__StandardsForHealthCheck",
+                                "value": "26,30"
+                            },
+                            {
+                                "name":  "Configuration__CosmosDbConnections__AVFeedAudit__EndpointUrl",
+                                "value": "[parameters('avfeedCosmosDbEndpoint')]"
+                            },
+                            {
+                                "name": "Configuration__CosmosDbConnections__AVFeedAudit__AccessKey",
+                                "value": "[parameters('avfeedCosmosDbKey')]"
+                            },
+                            {
+                                "name": "Configuration__CosmosDbConnections__AVFeedAudit__DatabaseId",
+                                "value": "[parameters('avfeedCosmosDbDatabaseName')]"
+                            },
+                            {
+                                "name": "Configuration__CosmosDbConnections__AVFeedAudit__CollectionId",
+                                "value": "AVFeedAuditRecords"
+                            },
+                            {
+                                "name": "Configuration__CosmosDbConnections__AVFeedAudit__PartitionKey",
+                                "value": "/PartitionKey"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CosmosAuditConnection__AccessKey",
+                                "value": "[parameters('avfeedCosmosDbKey')]"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CosmosAuditConnection__EndpointUrl",
+                                "value": "[parameters('avfeedCosmosDbEndpoint')]"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CosmosAuditConnection__DatabaseId",
+                                "value": "[parameters('avfeedCosmosDbDatabaseName')]"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CosmosAuditConnection__CollectionId",
+                                "value": "CourseSearchAuditRecords"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CosmosAuditConnection__PartitionKey",
+                                "value": "/PartitionKey"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CourseSearchSvc__ServiceEndpoint",
+                                "value": "[Parameters('courseProviderServiceEndpoint')]"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CourseSearchSvc__APIKey",
+                                "value": "[Parameters('courseProviderServiceApiKey')]"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CourseSearchSvc__SearchPageSize",
+                                "value": "20"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CourseSearchSvc__AttendanceModes",
+                                "value": "AM1,AM2,AM3,AM4,AM5,AM6,AM7,AM8,AM9"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__CourseSearchSvc__RequestTimeOutSeconds",
+                                "value": "10"
+                            },
+                            {
+                              "name": "Configuration__CourseSearchClient__CourseSearchSvc__MaxReceivedMessageSize",
+                              "value": "2147483647"
+                            },
+                            {
+                              "name": "Configuration__CourseSearchClient__CourseSearchSvc__MaxBufferSize",
+                              "value": "2147483647"
+                            },
+                            {
+                                "name": "Logging__ApplicationInsights__LogLevel__Default",
+                                "value": "Information"
+                            }
+                        ]
+                    }
+                }
+            },
+            "dependsOn": [
+                "[variables('webAppInsightsName')]"
+            ]
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[variables('functionAppInsightsName')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('buildingBlocksDfcBaseUrl'), 'application-insights.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appInsightsName": {
+                        "value": "[variables('functionAppInsightsName')]"
+                    },
+                    "attachedService": {
+                        "value": ""
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[variables('functionAppName')]",
+            "type": "Microsoft.Resources/deployments",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('buildingBlocksDfcBaseUrl'), 'app-service.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "appServiceName": {
+                        "value": "[variables('functionAppName')]"
+                    },
+                    "appServicePlanName": {
+                        "value": "[variables('appServicePlanName')]"
+                    },
+                    "appServicePlanResourceGroup": {
+                        "value": "[variables('appServicePlanResourceGroup')]"
+                    },
+                    "appServiceType": {
+                        "value": "functionapp"
+                    },
+                    "deployStagingSlot": {
+                        "value": false
+                    },
+                    "appServiceAppSettings": {
+                        "value": [
+                             {
+                                "name": "FUNCTIONS_EXTENSION_VERSION",
+                                "value": "~2"
+                            },
+                            {
+                                "name": "MSDEPLOY_RENAME_LOCKED_FILES",
+                                "value": "1"
+                            },
+                            {
+                                "name": "FUNCTIONS_WORKER_RUNTIME",
+                                "value": "dotnet"
+                            },
+                            {
+                                "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+                                "value": "[reference(variables('functionAppInsightsName')).outputs.InstrumentationKey.value]"
+                            },
+                            {
+                                "name": "AzureWebJobsStorage",
+                                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',parameters('appSharedStorageAccountName'),';AccountKey=',listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.Storage/storageAccounts', parameters('appSharedStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
+                            },
+                            {
+                                "name": "RefreshApprenticeshipsCron",
+                                "value": "0 0 3 * * *"
+                            },
+                            {
+                                "name": "RefreshCoursesCron",
+                                "value": "0 0 5 * * *"
+                            },
+                            {
+                                "name": "AbortAfterErrorCount",
+                                "value": "5"
+                            },
+                            {
+                                "name": "RefreshClientOptions__Timeout",
+                                "value": "00:00:30"
+                            },
+                            {
+                                "name": "RefreshClientOptions__BaseAddress",
+                                "value": "[variables('urlJobProfileCurrentOpportunities')]"
+                            },
+                            {
+                                "name": "CurrentOpportunitiesSegmentClientOptions__Timeout",
+                                "value": "00:00:30"
+                            },
+                            {
+                                "name": "CurrentOpportunitiesSegmentClientOptions__BaseAddress",
+                                "value": "[variables('urlJobProfileCurrentOpportunities')]"
+                            },
+                            {
+                                "name": "service-bus-connection-string",
+                                "value": "[listKeys(resourceId(parameters('appSharedResourceGroup'), 'Microsoft.ServiceBus/namespaces/authorizationRules', parameters('appSharedServiceBusName'), 'ReadWrite'), '2017-04-01').primaryConnectionString]"
+                            },
+                            {
+                                "name": "cms-messages-topic",
+                                "value": "[parameters('cmsTopicName')]"
+                            },
+                            {
+                                "name": "cms-messages-subscription",
+                                "value": "[variables('cmsSubscriptionName')]"
+                            },
+                            {
+                                "name": "Policies__HttpCircuitBreaker__DurationOfBreak",
+                                "value": "00:01:00"
+                            },
+                            {
+                                "name": "Policies__HttpCircuitBreaker__ExceptionsAllowedBeforeBreaking",
+                                "value": "3"
+                            },
+                            {
+                                "name": "Policies__HttpRetry__BackoffPower",
+                                "value": "2"
+                            },
+                            {
+                                "name": "Policies__HttpRetry__Count",
+                                "value": "3"
+                            },
+                            {
+                                "name": "Logging__ApplicationInsights__LogLevel__Default",
+                                "value": "Information"
+                            }                            
+                        ]
+                    }
+                }
+            },
+            "dependsOn": [
+                "[variables('functionAppInsightsName')]"
+            ]
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[parameters('cosmosDbCollectionName')]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('appSharedResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'CosmosDb/cosmos-collection.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "accountName": {
+                        "value": "[parameters('cosmosDbName')]"
+                    },
+                    "databaseName": {
+                        "value": "[variables('cosmosDbDatabaseName')]"
+                    },
+                    "collectionName": {
+                        "value": "[parameters('cosmosDbCollectionName')]"
+                    },
+                    "provisionRequestUnits": {
+                        "value": false
+                    },
+                    "partitionKey": {
+                        "value": "[variables('cosmosDbCollectionPartitionKey')]"
+                    }
+                }
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[variables('cmsSubscriptionName')]",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[parameters('appSharedResourceGroup')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[concat(variables('BuildingBlocksDfcBaseUrl'), 'ServiceBus/servicebus-topic-subscription.json')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "serviceBusNamespaceName": {
+                        "value": "[parameters('appSharedServiceBusName')]"
+                    },
+                    "serviceBusTopicName": {
+                        "value": "[parameters('cmsTopicName')]"
+                    },
+                    "serviceBusTopicSubscriptionName": {
+                        "value": "[variables('cmsSubscriptionName')]"
+                    },
+                    "subscriptionSqlFilter": {
+                        "value": "[parameters('cmsSubscriptionSqlFilter')]"
+                    }
+                }
+            }
+        }
+    ],
+        "outputs": {}
+    }
