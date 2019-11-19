@@ -6,7 +6,6 @@ using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
-using DFC.App.JobProfile.CurrentOpportunities.DraftSegmentService;
 using DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb;
 using DFC.App.JobProfile.CurrentOpportunities.SegmentService;
 using DFC.FindACourseClient;
@@ -91,7 +90,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             services.AddScoped<ICourseCurrentOpportuntiesRefresh, CourseCurrentOpportuntiesRefresh>();
             services.AddScoped<IAVCurrentOpportuntiesRefresh, AVCurrentOpportuntiesRefresh>();
             services.AddScoped<ICurrentOpportunitiesSegmentService, CurrentOpportunitiesSegmentService>();
-            services.AddScoped<IDraftCurrentOpportunitiesSegmentService, DraftCurrentOpportunitiesSegmentService>();
             services.AddSingleton<IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>, JobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>>();
             services.AddAutoMapper(typeof(Startup).Assembly);
 

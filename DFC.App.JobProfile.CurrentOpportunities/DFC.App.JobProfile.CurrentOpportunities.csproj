@@ -16,7 +16,7 @@
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.4">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -33,7 +33,6 @@
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.AVService\DFC.App.JobProfile.CurrentOpportunities.AVService.csproj" />
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.CourseService\DFC.App.JobProfile.CurrentOpportunities.CourseService.csproj" />
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Data\DFC.App.JobProfile.CurrentOpportunities.Data.csproj" />
-    <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.DraftSegmentService\DFC.App.JobProfile.CurrentOpportunities.DraftSegmentService.csproj" />
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb\DFC.App.CurrentOpportunities.Repository.CosmosDb.csproj" />
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Repository.SitefinityApi\DFC.App.CurrentOpportunities.Repository.SitefinityApi.csproj" />
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.SegmentService\DFC.App.JobProfile.CurrentOpportunities.SegmentService.csproj" />
