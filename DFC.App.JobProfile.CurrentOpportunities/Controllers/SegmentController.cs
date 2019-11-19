@@ -55,7 +55,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         {
             logger.LogInformation($"{nameof(Document)} has been called with: {article}");
 
-            var currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByNameAsync(article, Request.IsDraftRequest()).ConfigureAwait(false);
+            var currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByNameAsync(article).ConfigureAwait(false);
 
             if (currentOpportunitiesSegmentModel != null)
             {

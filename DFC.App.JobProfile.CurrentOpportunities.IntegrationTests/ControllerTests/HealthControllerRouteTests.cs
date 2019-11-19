@@ -22,7 +22,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
 
         public static IEnumerable<object[]> HealthOkRouteData => new List<object[]>
         {
-            new object[] { "/health" },
+            //new object[] { "/health" },
             new object[] { "/health/ping" },
         };
 
