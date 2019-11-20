@@ -1,5 +1,3 @@
-using System;
-
 namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
 {
     public class ErrorViewModel
