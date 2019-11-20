@@ -2,7 +2,6 @@
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
-using DFC.App.JobProfile.CurrentOpportunities.DraftSegmentService;
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;

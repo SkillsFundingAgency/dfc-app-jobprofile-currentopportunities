@@ -1,9 +1,4 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DFC.App.JobProfile.CurrentOpportunities.Data.Configuration
+﻿namespace DFC.App.JobProfile.CurrentOpportunities.Data.Configuration
 {
     public class AVAPIServiceSettings
     {
