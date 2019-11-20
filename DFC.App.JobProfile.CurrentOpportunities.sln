@@ -11,7 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Solution Items", "_Solutio
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		DFC.Digital.CodeAnalysis.ruleset = DFC.Digital.CodeAnalysis.ruleset
-		DFC.FindACourseClient.1.0.0.nupkg = DFC.FindACourseClient.1.0.0.nupkg
 		LICENSE = LICENSE
 		README.md = README.md
 		stylecop.json = stylecop.json
