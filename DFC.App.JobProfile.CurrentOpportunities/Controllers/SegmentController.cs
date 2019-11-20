@@ -60,6 +60,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         private static bool IsStartsWithVowel(string title) => new[] { 'a', 'e', 'i', 'o', 'u' }.Contains(title.ToLower(new CultureInfo("en-GB")).First());
 
         [HttpGet]
+        [Route("/")]
+        [Route("/Segment")]
         public async Task<IActionResult> Index()
         {
             logger.LogInformation($"{nameof(Index)} has been called");

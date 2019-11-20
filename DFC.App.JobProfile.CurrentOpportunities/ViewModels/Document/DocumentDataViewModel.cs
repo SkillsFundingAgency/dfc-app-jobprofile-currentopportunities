@@ -11,6 +11,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
         [Display(Name = "Title Prefix")]
         public string TitlePrefix { get; set; }
 
+        [Display(Name = "Content Title")]
+        public string ContentTitle { get; set; }
+
         [Display(Name = "Last Reviewed")]
         public DateTime LastReviewed { get; set; }
 
