@@ -1,4 +1,5 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Data;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels;
 using DFC.App.JobProfile.CurrentOpportunities.Extensions;
@@ -6,6 +7,7 @@ using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -24,6 +26,38 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             this.currentOpportunitiesSegmentService = currentOpportunitiesSegmentService;
             this.mapper = mapper;
         }
+
+        private static string GetJobTitleWithPrefix(string titlePrefix, string title, string contentTitle)
+        {
+            var changedTitle = string.IsNullOrEmpty(contentTitle) ? title?.ToLower(new CultureInfo("en-GB")) : contentTitle;
+
+            if (string.IsNullOrEmpty(changedTitle))
+            {
+                return string.Empty;
+            }
+
+            switch (titlePrefix)
+            {
+                case Constants.TitleNoPrefix:
+                    return $"{changedTitle}";
+
+                case Constants.TitlePrefixWithA:
+                    return $"a {changedTitle}";
+
+                case Constants.TitlePrefixWithAn:
+                    return $"an {changedTitle}";
+
+                case Constants.TitleNoTitle:
+                    return string.Empty;
+
+                default:
+                    return GetDefaultDynamicTitle(changedTitle);
+            }
+        }
+
+        private static string GetDefaultDynamicTitle(string title) => IsStartsWithVowel(title) ? $"an {title}" : $"a {title}";
+
+        private static bool IsStartsWithVowel(string title) => new[] { 'a', 'e', 'i', 'o', 'u' }.Contains(title.ToLower(new CultureInfo("en-GB")).First());
 
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -80,6 +114,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             if (currentOpportunitiesSegmentModel != null)
             {
                 var viewModel = mapper.Map<BodyViewModel>(currentOpportunitiesSegmentModel);
+                viewModel.Data.JobTitleWithPrefix = GetJobTitleWithPrefix(currentOpportunitiesSegmentModel.Data?.TitlePrefix, currentOpportunitiesSegmentModel.Data?.JobTitle, currentOpportunitiesSegmentModel.Data?.ContentTitle);
                 logger.LogInformation($"{nameof(Body)} has succeeded for: {documentId}");
                 return this.NegotiateContentResult(viewModel, currentOpportunitiesSegmentModel.Data);
             }

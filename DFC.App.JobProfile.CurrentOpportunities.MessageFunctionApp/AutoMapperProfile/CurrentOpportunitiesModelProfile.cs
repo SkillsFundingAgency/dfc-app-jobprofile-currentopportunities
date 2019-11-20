@@ -16,7 +16,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.AutoMapperP
 
             CreateMap<Data.ServiceBusModels.JobProfileMessage, Data.Models.CurrentOpportunitiesSegmentDataModel>()
                 .ForMember(d => d.JobTitle, s => s.MapFrom(a => a.Title))
-                .ForMember(d => d.TitlePrefix, s => s.MapFrom(a => a.Title))
+                .ForMember(d => d.TitlePrefix, s => s.MapFrom(a => a.DynamicTitlePrefix))
+                .ForMember(d => d.ContentTitle, s => s.MapFrom(a => a.WidgetContentTitle))
                 .ForMember(d => d.LastReviewed, s => s.MapFrom(a => a.LastModified))
                 .ForMember(d => d.Apprenticeships, s => s.MapFrom(a => a.SocCodeData))
                 .ForMember(d => d.Courses, s => s.MapFrom(a => new Data.Models.Courses()
