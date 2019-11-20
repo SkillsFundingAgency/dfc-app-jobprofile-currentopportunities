@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.AutoMapperProfile
 {

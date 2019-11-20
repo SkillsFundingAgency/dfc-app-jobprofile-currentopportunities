@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Models
+﻿namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Models
 {
     public class FeedRefreshResponseModel
     {

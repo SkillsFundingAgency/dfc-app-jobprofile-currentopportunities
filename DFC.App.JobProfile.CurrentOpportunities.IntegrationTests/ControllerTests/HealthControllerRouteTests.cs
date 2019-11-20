@@ -1,5 +1,4 @@
-﻿using Microsoft.Net.Http.Headers;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Net.Mime;
@@ -22,7 +21,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests.ControllerTes
 
         public static IEnumerable<object[]> HealthOkRouteData => new List<object[]>
         {
-            //new object[] { "/health" },
+            new object[] { "/health" },
             new object[] { "/health/ping" },
         };
 
