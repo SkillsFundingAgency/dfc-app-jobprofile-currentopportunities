@@ -1,7 +1,6 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models

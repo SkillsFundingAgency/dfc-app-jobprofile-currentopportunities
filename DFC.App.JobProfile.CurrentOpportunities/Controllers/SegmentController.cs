@@ -1,5 +1,4 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels;
 using DFC.App.JobProfile.CurrentOpportunities.Extensions;

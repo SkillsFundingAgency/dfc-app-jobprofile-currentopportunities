@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
+﻿namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 {
-     public class ApprenticeshipLocation
+    public class ApprenticeshipLocation
     {
         public double Longitude { get; set; }
 
