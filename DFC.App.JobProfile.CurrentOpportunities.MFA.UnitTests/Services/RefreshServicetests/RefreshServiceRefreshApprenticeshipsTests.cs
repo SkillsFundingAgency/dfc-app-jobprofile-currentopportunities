@@ -33,15 +33,19 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
             // arrange
             var documentId = Guid.NewGuid();
             const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
-            using var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(null, expectedStatusCode);
-            using var httpClient = new HttpClient(messageHandler);
-            var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
+            using (var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(null, expectedStatusCode))
+            {
+                using (var httpClient = new HttpClient(messageHandler))
+                {
+                    var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
 
-            // act
-            var result = await refreshService.RefreshApprenticeshipsAsync(documentId).ConfigureAwait(false);
+                    // act
+                    var result = await refreshService.RefreshApprenticeshipsAsync(documentId).ConfigureAwait(false);
 
-            // assert
-            A.Equals(result, expectedStatusCode);
+                    // assert
+                    A.Equals(result, expectedStatusCode);
+                }
+            }
         }
 
         [Fact]
@@ -51,15 +55,19 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
             var documentId = Guid.NewGuid();
             var expectedStatusCode = HttpStatusCode.BadRequest;
             var expectedResults = A.Fake<FeedRefreshResponseModel>();
-            using var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(JsonConvert.SerializeObject(expectedResults), expectedStatusCode);
-            using var httpClient = new HttpClient(messageHandler);
-            var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
+            using (var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(JsonConvert.SerializeObject(expectedResults), expectedStatusCode))
+            {
+                using (var httpClient = new HttpClient(messageHandler))
+                {
+                    var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
 
-            // act
-            var result = await refreshService.RefreshApprenticeshipsAsync(documentId).ConfigureAwait(false);
+                    // act
+                    var result = await refreshService.RefreshApprenticeshipsAsync(documentId).ConfigureAwait(false);
 
-            // assert
-            A.Equals(result, expectedStatusCode);
+                    // assert
+                    A.Equals(result, expectedStatusCode);
+                }
+            }
         }
 
         [Fact]
@@ -68,15 +76,19 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
             // arrange
             var documentId = Guid.NewGuid();
             var expectedStatusCode = HttpStatusCode.InternalServerError;
-            using var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(null, expectedStatusCode);
-            using var httpClient = new HttpClient(messageHandler);
-            var refreshService = new RefreshService(null, fakeLogger, fakeRefreshClientOptions);
+            using (var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(null, expectedStatusCode))
+            {
+                using (var httpClient = new HttpClient(messageHandler))
+                {
+                    var refreshService = new RefreshService(null, fakeLogger, fakeRefreshClientOptions);
 
-            // act
-            var result = await refreshService.RefreshApprenticeshipsAsync(documentId).ConfigureAwait(false);
+                    // act
+                    var result = await refreshService.RefreshApprenticeshipsAsync(documentId).ConfigureAwait(false);
 
-            // assert
-            A.Equals(result, expectedStatusCode);
+                    // assert
+                    A.Equals(result, expectedStatusCode);
+                }
+            }
         }
     }
 }

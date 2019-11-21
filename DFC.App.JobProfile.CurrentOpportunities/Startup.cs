@@ -6,24 +6,18 @@ using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
-using DFC.App.JobProfile.CurrentOpportunities.DraftSegmentService;
 using DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb;
 using DFC.App.JobProfile.CurrentOpportunities.SegmentService;
 using DFC.FindACourseClient;
 using DFC.FindACourseClient.Contracts;
 using DFC.FindACourseClient.Models.Configuration;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Newtonsoft.Json;
-using System.Linq;
-using System.Net.Mime;
 
 namespace DFC.App.JobProfile.CurrentOpportunities
 {
@@ -91,7 +85,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             services.AddScoped<ICourseCurrentOpportuntiesRefresh, CourseCurrentOpportuntiesRefresh>();
             services.AddScoped<IAVCurrentOpportuntiesRefresh, AVCurrentOpportuntiesRefresh>();
             services.AddScoped<ICurrentOpportunitiesSegmentService, CurrentOpportunitiesSegmentService>();
-            services.AddScoped<IDraftCurrentOpportunitiesSegmentService, DraftCurrentOpportunitiesSegmentService>();
             services.AddSingleton<IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>, JobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>>();
             services.AddAutoMapper(typeof(Startup).Assembly);
 
@@ -124,41 +117,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
-            var healthCheckOptions = new HealthCheckOptions
-            {
-                ResponseWriter = async (c, r) =>
-                {
-                    c.Response.ContentType = MediaTypeNames.Application.Json;
-                    var result = JsonConvert.SerializeObject(
-                       new
-                       {
-                          checks = r.Entries.Select(e =>
-                          new
-                          {
-                            description = e.Value.Description,
-                            status = e.Value.Status.ToString(),
-                            responseTime = e.Value.Duration.TotalMilliseconds,
-                          }),
-                          totalResponseTime = r.TotalDuration.TotalMilliseconds,
-                       });
-                    await c.Response.WriteAsync(result).ConfigureAwait(false);
-                },
-                ResultStatusCodes =
-                {
-                    [HealthStatus.Healthy] = StatusCodes.Status200OK,
-                    [HealthStatus.Degraded] = StatusCodes.Status200OK,
-                    [HealthStatus.Unhealthy] = StatusCodes.Status502BadGateway,
-                },
-            };
-            app.UseHealthChecks("/health", healthCheckOptions);
-
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Segment}/{action=Index}");
-            });
+            app.UseMvcWithDefaultRoute();
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Controllers;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
