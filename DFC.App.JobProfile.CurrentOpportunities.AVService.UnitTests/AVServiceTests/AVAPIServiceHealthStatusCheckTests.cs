@@ -12,10 +12,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
     [Trait("AVAPIService", "Health Status Tests")]
     public class AVAPIServiceHealthStatusCheckTests
     {
-        private ILogger<AVAPIService> fakeLogger;
-        private AVAPIServiceSettings aVAPIServiceSettings;
-        private IApprenticeshipVacancyApi fakeApprenticeshipVacancyApi;
-        private HealthCheckContext dummyHealthCheckContext;
+        private readonly ILogger<AVAPIService> fakeLogger;
+        private readonly AVAPIServiceSettings aVAPIServiceSettings;
+        private readonly IApprenticeshipVacancyApi fakeApprenticeshipVacancyApi;
+        private readonly HealthCheckContext dummyHealthCheckContext;
 
         public AVAPIServiceHealthStatusCheckTests()
         {
