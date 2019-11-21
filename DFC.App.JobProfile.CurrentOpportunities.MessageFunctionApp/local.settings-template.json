@@ -1,0 +1,31 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+    "service-bus-connection-string": "[service bus connection string]",
+    "cms-messages-topic": "cms-messages",
+    "cms-messages-subscription": "job-profile-currentopportunities",
+    "RefreshApprenticeshipsCron": "0 0 3 * * *",
+    "RefreshCoursesCron": "0 0 5 * * *",
+    "AbortAfterErrorCount": "5"
+  },
+  "Policies": {
+    "HttpCircuitBreaker": {
+      "DurationOfBreak": "00:01:00",
+      "ExceptionsAllowedBeforeBreaking": 3
+    },
+    "HttpRetry": {
+      "BackoffPower": 2,
+      "Count": 3
+    }
+  },
+  "RefreshClientOptions": {
+    "Timeout": "00:00:30",
+    "BaseAddress": "[base address of DFC.App.JobProfile.CurrentOpportunities web app]"
+  },
+  "CurrentOpportunitiesSegmentClientOptions": {
+    "Timeout": "00:00:30",
+    "BaseAddress": "[base address of DFC.App.JobProfile.CurrentOpportunities web app]"
+  }
+}

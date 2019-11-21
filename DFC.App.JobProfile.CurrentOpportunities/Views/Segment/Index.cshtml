@@ -1,0 +1,16 @@
+﻿@model IndexViewModel
+<html>
+<body>
+    @if (Model.Documents?.Count() > 0)
+    {
+        <ul>
+            @foreach (var document in Model.Documents)
+            {
+                <li>
+                    <a href="/segment/@document.CanonicalName">@document.CanonicalName</a>
+                </li>
+            }
+        </ul>
+    }
+</body>
+</html>
