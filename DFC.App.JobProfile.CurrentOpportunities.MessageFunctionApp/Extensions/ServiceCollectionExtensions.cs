@@ -21,6 +21,16 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Extensions
             string keyPrefix,
             PolicyOptions policyOptions)
         {
+            if (policyOptions == null)
+            {
+                throw new ArgumentException("policyOptions cannot be null", nameof(policyOptions));
+            }
+
+            if (policyRegistry == null)
+            {
+                throw new ArgumentException("policyRegistry cannot be null", nameof(policyRegistry));
+            }
+
             policyRegistry.Add(
                 $"{keyPrefix}_{nameof(PolicyOptions.HttpRetry)}",
                 HttpPolicyExtensions
@@ -46,6 +56,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Extensions
                     string configurationSectionName,
                     string retryPolicyName,
                     string circuitBreakerPolicyName)
+
                     where TClient : class
                     where TImplementation : class, TClient
                     where TClientOptions : SegmentClientOptions, new() =>
