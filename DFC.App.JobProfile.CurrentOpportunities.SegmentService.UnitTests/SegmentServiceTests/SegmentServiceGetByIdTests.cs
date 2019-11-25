@@ -12,26 +12,10 @@ using Xunit;
 namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.SegmentServiceTests
 {
     [Trait("Segment Service", "GetById Tests")]
-    public class SegmentServiceGetByIdTests
+    public class SegmentServiceGetByIdTests : SegmentServiceBaseTests
     {
-        private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
-        private readonly ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService;
-        private readonly ICourseCurrentOpportuntiesRefresh fakeCourseCurrentOpportuntiesRefresh;
-        private readonly IAVCurrentOpportuntiesRefresh fakeAVCurrentOpportunatiesRefresh;
-        private readonly ILogger<CurrentOpportunitiesSegmentService> fakeLogger;
-        private readonly IMapper fakeMapper;
-        private readonly IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> fakeJobProfileSegmentRefreshService;
-
-        public SegmentServiceGetByIdTests()
+        public SegmentServiceGetByIdTests() : base()
         {
-            repository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
-            fakeCourseCurrentOpportuntiesRefresh = A.Fake<ICourseCurrentOpportuntiesRefresh>();
-            fakeAVCurrentOpportunatiesRefresh = A.Fake<IAVCurrentOpportuntiesRefresh>();
-            fakeLogger = A.Fake<ILogger<CurrentOpportunitiesSegmentService>>();
-            fakeMapper = A.Fake<IMapper>();
-            fakeJobProfileSegmentRefreshService = A.Fake<IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>>();
-
-            currentOpportunitiesSegmentService = new CurrentOpportunitiesSegmentService(repository, fakeCourseCurrentOpportuntiesRefresh, fakeAVCurrentOpportunatiesRefresh, fakeLogger, fakeMapper, fakeJobProfileSegmentRefreshService);
         }
 
         [Fact]

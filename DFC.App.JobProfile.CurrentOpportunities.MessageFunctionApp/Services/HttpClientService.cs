@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "Do not use C#8.0 features for now as they are not supported on the build servers")]
     public class HttpClientService : IHttpClientService
     {
         private readonly SegmentClientOptions segmentClientOptions;

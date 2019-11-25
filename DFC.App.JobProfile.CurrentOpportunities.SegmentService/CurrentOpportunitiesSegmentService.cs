@@ -23,8 +23,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
         private readonly ILogger<CurrentOpportunitiesSegmentService> logger;
         private readonly IMapper mapper;
         private readonly IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> jobProfileSegmentRefreshService;
+        private readonly ICurrentOpportunitiesSegmentUtilities currentOpportunitiesSegmentUtilities;
 
-        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh, IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh, ILogger<CurrentOpportunitiesSegmentService> logger, IMapper mapper, IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> jobProfileSegmentRefreshService)
+        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh, IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh, ILogger<CurrentOpportunitiesSegmentService> logger, IMapper mapper, IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> jobProfileSegmentRefreshService, ICurrentOpportunitiesSegmentUtilities currentOpportunitiesSegmentUtilities)
         {
             this.repository = repository;
             this.aVCurrentOpportunatiesRefresh = aVCurrentOpportunatiesRefresh;
@@ -32,6 +33,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             this.logger = logger;
             this.mapper = mapper;
             this.jobProfileSegmentRefreshService = jobProfileSegmentRefreshService;
+            this.currentOpportunitiesSegmentUtilities = currentOpportunitiesSegmentUtilities;
         }
 
         public async Task<bool> PingAsync()
@@ -97,20 +99,17 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             }
 
             var existingSegmentModel = await GetByIdAsync(documentId).ConfigureAwait(false);
-            if (existingSegmentModel is null)
-            {
-                return HttpStatusCode.NotFound;
-            }
 
-            if (patchModel.SequenceNumber <= existingSegmentModel.SequenceNumber)
+            var currentOpportunitiesSegmentPatchStatus = currentOpportunitiesSegmentUtilities.IsSegementOkToPatch(existingSegmentModel, patchModel.SequenceNumber);
+            if (!currentOpportunitiesSegmentPatchStatus.OkToPatch)
             {
-                return HttpStatusCode.AlreadyReported;
+                return currentOpportunitiesSegmentPatchStatus.ReturnStatusCode;
             }
 
             var existingApprenticeships = existingSegmentModel.Data.Apprenticeships;
             if (existingApprenticeships is null)
             {
-                return patchModel.ActionType == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
+                return currentOpportunitiesSegmentUtilities.GetReturnStatusForNullElementPatchRequest(patchModel.ActionType);
             }
 
             if (patchModel.ActionType == MessageAction.Deleted)
@@ -142,14 +141,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             }
 
             var existingSegmentModel = await GetByIdAsync(documentId).ConfigureAwait(false);
-            if (existingSegmentModel is null)
+            var currentOpportunitiesSegmentPatchStatus = currentOpportunitiesSegmentUtilities.IsSegementOkToPatch(existingSegmentModel, patchModel.SequenceNumber);
+            if (!currentOpportunitiesSegmentPatchStatus.OkToPatch)
             {
-                return HttpStatusCode.NotFound;
-            }
-
-            if (patchModel.SequenceNumber <= existingSegmentModel.SequenceNumber)
-            {
-                return HttpStatusCode.AlreadyReported;
+                return currentOpportunitiesSegmentPatchStatus.ReturnStatusCode;
             }
 
             if (existingSegmentModel.Data.Apprenticeships == null)
@@ -166,7 +161,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
 
             if (existingApprenticeshipFrameworks is null)
             {
-                return patchModel.ActionType == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
+                return currentOpportunitiesSegmentUtilities.GetReturnStatusForNullElementPatchRequest(patchModel.ActionType);
             }
 
             if (patchModel.ActionType == MessageAction.Deleted)
@@ -191,15 +186,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             }
 
             var existingSegmentModel = await GetByIdAsync(documentId).ConfigureAwait(false);
-            if (existingSegmentModel is null)
+            var currentOpportunitiesSegmentPatchStatus = currentOpportunitiesSegmentUtilities.IsSegementOkToPatch(existingSegmentModel, patchModel.SequenceNumber);
+            if (!currentOpportunitiesSegmentPatchStatus.OkToPatch)
             {
-                return HttpStatusCode.NotFound;
+                return currentOpportunitiesSegmentPatchStatus.ReturnStatusCode;
             }
 
-            if (patchModel.SequenceNumber <= existingSegmentModel.SequenceNumber)
-            {
-                return HttpStatusCode.AlreadyReported;
-            }
 
             if (existingSegmentModel.Data.Apprenticeships == null)
             {
@@ -215,7 +207,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
 
             if (existingApprenticeshipStandards is null)
             {
-                return patchModel.ActionType == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
+                return currentOpportunitiesSegmentUtilities.GetReturnStatusForNullElementPatchRequest(patchModel.ActionType);
             }
 
             if (patchModel.ActionType == MessageAction.Deleted)

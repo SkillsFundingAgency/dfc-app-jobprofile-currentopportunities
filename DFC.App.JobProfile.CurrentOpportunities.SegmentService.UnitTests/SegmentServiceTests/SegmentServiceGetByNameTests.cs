@@ -12,24 +12,10 @@ using Xunit;
 namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.SegmentServiceTests
 {
     [Trait("Segment Service", "GetByName Tests")]
-    public class SegmentServiceGetByNameTests
+    public class SegmentServiceGetByNameTests : SegmentServiceBaseTests
     {
-        private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
-        private readonly ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService;
-        private readonly ICourseCurrentOpportuntiesRefresh fakeCourseCurrentOpportuntiesRefresh;
-        private readonly IAVCurrentOpportuntiesRefresh fakeAVCurrentOpportunatiesRefresh;
-        private readonly ILogger<CurrentOpportunitiesSegmentService> fakeLogger;
-        private readonly IMapper fakeMapper;
-        private readonly IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> fakeJobProfileSegmentRefreshService;
-
-        public SegmentServiceGetByNameTests()
+        public SegmentServiceGetByNameTests() : base()
         {
-            repository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
-            fakeCourseCurrentOpportuntiesRefresh = A.Fake<ICourseCurrentOpportuntiesRefresh>();
-            fakeAVCurrentOpportunatiesRefresh = A.Fake<IAVCurrentOpportuntiesRefresh>();
-            fakeLogger = A.Fake<ILogger<CurrentOpportunitiesSegmentService>>();
-
-            currentOpportunitiesSegmentService = new CurrentOpportunitiesSegmentService(repository, fakeCourseCurrentOpportuntiesRefresh, fakeAVCurrentOpportunatiesRefresh, fakeLogger, fakeMapper, fakeJobProfileSegmentRefreshService);
         }
 
         [Fact]
