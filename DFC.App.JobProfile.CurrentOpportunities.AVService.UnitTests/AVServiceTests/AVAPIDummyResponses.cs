@@ -8,11 +8,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
     {
         public static string GetDummyApprenticeshipVacancySummaryResponse(int currentPage, int totalMatches, int nunmberToReturn, int pageSize, int diffrentProvidersPage)
         {
-            var r = new ApprenticeshipVacancySummaryResponse();
-            r.CurrentPage = currentPage;
-            r.TotalMatched = totalMatches;
-            r.TotalPages = totalMatches / pageSize;
-            r.TotalReturned = nunmberToReturn;
+            var r = new ApprenticeshipVacancySummaryResponse
+            {
+                CurrentPage = currentPage,
+                TotalMatched = totalMatches,
+                TotalPages = totalMatches / pageSize,
+                TotalReturned = nunmberToReturn,
+            };
 
             var recordsToReturn = new List<ApprenticeshipVacancySummary>();
 

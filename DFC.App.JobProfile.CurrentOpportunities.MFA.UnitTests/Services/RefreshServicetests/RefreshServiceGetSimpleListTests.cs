@@ -33,15 +33,19 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
         {
             // arrange
             var expectedResults = A.CollectionOfFake<SimpleJobProfileModel>(2);
-            using var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(JsonConvert.SerializeObject(expectedResults), HttpStatusCode.OK);
-            using var httpClient = new HttpClient(messageHandler);
-            var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
+            using (var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(JsonConvert.SerializeObject(expectedResults), HttpStatusCode.OK))
+            {
+                using (var httpClient = new HttpClient(messageHandler))
+                {
+                    var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
 
-            // act
-            var results = await refreshService.GetListAsync().ConfigureAwait(false);
+                    // act
+                    var results = await refreshService.GetListAsync().ConfigureAwait(false);
 
-            // assert
-            A.Equals(results, expectedResults);
+                    // assert
+                    A.Equals(results, expectedResults);
+                }
+            }
         }
 
         [Fact]
@@ -49,15 +53,19 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
         {
             // arrange
             IEnumerable<SimpleJobProfileModel> expectedResults = null;
-            using var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(JsonConvert.SerializeObject(expectedResults), HttpStatusCode.OK);
-            using var httpClient = new HttpClient(messageHandler);
-            var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
+            using (var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(JsonConvert.SerializeObject(expectedResults), HttpStatusCode.OK))
+            {
+                using (var httpClient = new HttpClient(messageHandler))
+                {
+                    var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
 
-            // act
-            var results = await refreshService.GetListAsync().ConfigureAwait(false);
+                    // act
+                    var results = await refreshService.GetListAsync().ConfigureAwait(false);
 
-            // assert
-            A.Equals(results, expectedResults);
+                    // assert
+                    A.Equals(results, expectedResults);
+                }
+            }
         }
     }
 }
