@@ -93,7 +93,7 @@
                     @Html.DisplayNameFor(model => model.Data.Apprenticeships.Standards)
                 </dt>
 
-                @foreach (var standard in Model.Data.Apprenticeships.Standards)
+                @foreach (var standard in Model.Data.Apprenticeships?.Standards)
                 {
                     <dd class="col-sm-1">
                         @standard,
@@ -105,7 +105,7 @@
                     @Html.DisplayNameFor(model => model.Data.Apprenticeships.Frameworks)
                 </dt>
 
-                @foreach (var framework in Model.Data.Apprenticeships.Frameworks)
+                @foreach (var framework in Model.Data.Apprenticeships?.Frameworks)
                 {
                     <dd class="col-sm-1">
                         @framework,
@@ -113,7 +113,7 @@
                 }
             </dl>
 
-            @foreach (var apprenticeship in Model.Data.Apprenticeships.Vacancies)
+            @foreach (var apprenticeship in Model.Data.Apprenticeships?.Vacancies)
             {
                 <dl class="row">
                     <dt class="col-sm-12">
@@ -206,7 +206,7 @@
                 </dd>
             </dl>
 
-            @foreach (var course in Model.Data.Courses.Opportunities)
+            @foreach (var course in Model.Data.Courses?.Opportunities)
             {
                 <dl class="row">
                     <dt class="col-sm-12">
