@@ -8,7 +8,7 @@
             <span class="govuk-caption-m">In England</span>
         </h3>
     </div>
-    @if (Model.Data.Apprenticeships.Vacancies.Count() > 0)
+    @if (Model.Data.Apprenticeships?.Vacancies?.Count() > 0)
     {
         foreach (var apprenticeVacancy in Model.Data.Apprenticeships.Vacancies)
         {
@@ -43,7 +43,7 @@
             <span class="govuk-caption-m">In England</span>
         </h3>
     </div>
-    @if (Model.Data.Courses.Opportunities.Count() > 0)
+    @if (Model.Data.Courses?.Opportunities?.Count() > 0)
     {
         foreach (var course in Model.Data.Courses.Opportunities)
         {

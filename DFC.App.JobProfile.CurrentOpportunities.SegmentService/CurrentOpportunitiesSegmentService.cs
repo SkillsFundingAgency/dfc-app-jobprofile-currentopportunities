@@ -66,7 +66,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             return await repository.GetAsync(d => d.DocumentId == documentId).ConfigureAwait(false);
         }
 
-        public async Task<CurrentOpportunitiesSegmentModel> GetByNameAsync(string canonicalName, bool isDraft = false)
+        public async Task<CurrentOpportunitiesSegmentModel> GetByNameAsync(string canonicalName)
         {
             if (string.IsNullOrWhiteSpace(canonicalName))
             {
@@ -157,7 +157,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 existingSegmentModel.Data.Apprenticeships.Frameworks = new List<Data.Models.ApprenticeshipFramework>();
             }
 
-            var existingApprenticeshipFrameworks = existingSegmentModel.Data.Apprenticeships.Frameworks.FirstOrDefault(f => f.Id == patchModel.Id);
+            var existingApprenticeshipFrameworks = existingSegmentModel.Data?.Apprenticeships?.Frameworks?.FirstOrDefault(f => f.Id == patchModel.Id);
 
             if (existingApprenticeshipFrameworks is null)
             {
@@ -203,7 +203,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 existingSegmentModel.Data.Apprenticeships.Standards = new List<Data.Models.ApprenticeshipStandard>();
             }
 
-            var existingApprenticeshipStandards = existingSegmentModel.Data.Apprenticeships.Standards.FirstOrDefault(f => f.Id == patchModel.Id);
+            var existingApprenticeshipStandards = existingSegmentModel.Data?.Apprenticeships?.Standards?.FirstOrDefault(f => f.Id == patchModel.Id);
 
             if (existingApprenticeshipStandards is null)
             {
