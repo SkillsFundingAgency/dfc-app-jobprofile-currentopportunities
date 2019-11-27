@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <CodeAnalysisRuleSet>../DFC.Digital.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
+    <ProjectGuid>{741EE913-72EA-4311-967F-A3C7B2DCD00A}</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Data\DFC.App.JobProfile.CurrentOpportunities.Data.csproj" />
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb\DFC.App.CurrentOpportunities.Repository.CosmosDb.csproj" />
   </ItemGroup>
 

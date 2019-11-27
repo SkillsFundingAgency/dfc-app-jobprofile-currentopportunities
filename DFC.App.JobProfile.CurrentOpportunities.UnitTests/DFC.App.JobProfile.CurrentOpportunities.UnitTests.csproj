@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-	<ProjectGuid>{273E7F48-C6AA-4794-8CFC-F4C796E99A60}</ProjectGuid>
+	  <ProjectGuid>{273E7F48-C6AA-4794-8CFC-F4C796E99A60}</ProjectGuid>
     <IsPackable>false</IsPackable>
     <CodeAnalysisRuleSet>../UnitTests.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>

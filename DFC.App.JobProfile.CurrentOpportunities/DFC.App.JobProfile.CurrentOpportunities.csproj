@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <CodeAnalysisRuleSet>../DFC.Digital.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
-	<ProjectGuid>{BFCF8910-6AFD-421F-B385-A8EC58C382D3}</ProjectGuid>
+	  <ProjectGuid>{BFCF8910-6AFD-421F-B385-A8EC58C382D3}</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,7 +33,6 @@
   <ItemGroup>
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.AVService\DFC.App.JobProfile.CurrentOpportunities.AVService.csproj" />
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.CourseService\DFC.App.JobProfile.CurrentOpportunities.CourseService.csproj" />
-    <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Data\DFC.App.JobProfile.CurrentOpportunities.Data.csproj" />
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb\DFC.App.CurrentOpportunities.Repository.CosmosDb.csproj" />
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.SegmentService\DFC.App.JobProfile.CurrentOpportunities.SegmentService.csproj" />
   </ItemGroup>
