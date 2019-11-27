@@ -1,15 +1,7 @@
-﻿using AutoMapper;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels;
-using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
-using FakeItEasy;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Linq.Expressions;
 using System.Net;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.SegmentServiceTests
@@ -22,6 +14,32 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         public CurrentOpportunitiesSegmentUtilitiesTests()
         {
             currentOpportunitiesSegmentUtilities = new CurrentOpportunitiesSegmentUtilities();
+        }
+
+        [Fact]
+        public void GetReturnStatusForNullElementPatchRequestreturnsAlreadyReportedForDeleted()
+        {
+            //Arrange
+            const MessageAction messageAction = MessageAction.Deleted;
+
+            //Act
+            var result = currentOpportunitiesSegmentUtilities.GetReturnStatusForNullElementPatchRequest(messageAction);
+
+            //Asserts
+            result.Should().Be(HttpStatusCode.AlreadyReported);
+        }
+
+        [Fact]
+        public void GetReturnStatusForNullElementPatchRequestreturnsNotFoundForPublished()
+        {
+            //Arrange
+            const MessageAction messageAction = MessageAction.Published;
+
+            //Act
+            var result = currentOpportunitiesSegmentUtilities.GetReturnStatusForNullElementPatchRequest(messageAction);
+
+            //Asserts
+            result.Should().Be(HttpStatusCode.NotFound);
         }
 
         [Fact]

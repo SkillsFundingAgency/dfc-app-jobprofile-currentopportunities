@@ -2,9 +2,11 @@
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels;
 using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles
 {
+    [ExcludeFromCodeCoverage]
     public class CurrentOpportunitiesSegmentModelProfile : Profile
     {
         public CurrentOpportunitiesSegmentModelProfile()

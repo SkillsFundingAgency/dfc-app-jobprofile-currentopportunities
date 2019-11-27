@@ -27,7 +27,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => repository.DeleteAsync(documentId)).Returns(HttpStatusCode.NoContent);
 
             // act
-            var result = currentOpportunitiesSegmentService.DeleteAsync(documentId).Result;
+            var result = CurrentOpportunitiesSegmentService.DeleteAsync(documentId).Result;
 
             // assert
             A.CallTo(() => repository.DeleteAsync(documentId)).MustHaveHappenedOnceExactly();
@@ -44,7 +44,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => repository.DeleteAsync(documentId)).Returns(HttpStatusCode.BadRequest);
 
             // act
-            var result = currentOpportunitiesSegmentService.DeleteAsync(documentId).Result;
+            var result = CurrentOpportunitiesSegmentService.DeleteAsync(documentId).Result;
 
             // assert
             A.CallTo(() => repository.DeleteAsync(documentId)).MustHaveHappenedOnceExactly();
@@ -62,7 +62,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => repository.DeleteAsync(documentId)).Returns(HttpStatusCode.FailedDependency);
 
             // act
-            var result = currentOpportunitiesSegmentService.DeleteAsync(documentId).Result;
+            var result = CurrentOpportunitiesSegmentService.DeleteAsync(documentId).Result;
 
             // assert
             A.CallTo(() => repository.DeleteAsync(documentId)).MustHaveHappenedOnceExactly();

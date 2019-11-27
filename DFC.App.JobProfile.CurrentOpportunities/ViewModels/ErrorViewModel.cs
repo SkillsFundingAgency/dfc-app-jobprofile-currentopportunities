@@ -4,6 +4,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
     {
         public string RequestId { get; set; }
 
-        public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+        public bool ShowRequestId => !string.IsNullOrWhiteSpace(RequestId);
     }
 }

@@ -19,7 +19,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests
     [Trait("MFA Tests", "Mapping Service Tests")]
     public class MappingServiceTests
     {
-
         [Fact]
         public void MapToSegmentModelTest()
         {

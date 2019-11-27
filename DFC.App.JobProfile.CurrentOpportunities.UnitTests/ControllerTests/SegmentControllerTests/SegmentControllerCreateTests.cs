@@ -15,11 +15,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
         public async void SegmentControllerCreateReturnsSuccessForNewItem(string mediaTypeName)
         {
             // Arrange
+            const HttpStatusCode expectedResponse = HttpStatusCode.Created;
             var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
             var controller = BuildSegmentController(mediaTypeName);
 
             A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).Returns((CurrentOpportunitiesSegmentModel)null);
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.Created);
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(expectedResponse);
 
             // Act
             var result = await controller.Post(currentOpportunitiesSegmentModel).ConfigureAwait(false);
@@ -30,7 +31,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
             var statusCodeResult = Assert.IsType<StatusCodeResult>(result);
 
-            A.Equals((int)HttpStatusCode.OK, statusCodeResult.StatusCode);
+            Assert.Equal((int)expectedResponse, statusCodeResult.StatusCode);
 
             controller.Dispose();
         }
@@ -53,7 +54,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
             var statusCodeResult = Assert.IsType<StatusCodeResult>(result);
 
-            A.Equals((int)HttpStatusCode.AlreadyReported, statusCodeResult.StatusCode);
+            Assert.Equal((int)HttpStatusCode.AlreadyReported, statusCodeResult.StatusCode);
 
             controller.Dispose();
         }
@@ -72,7 +73,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             // Assert
             var statusResult = Assert.IsType<BadRequestResult>(result);
 
-            A.Equals((int)HttpStatusCode.BadRequest, statusResult.StatusCode);
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusResult.StatusCode);
 
             controller.Dispose();
         }
@@ -93,7 +94,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             // Assert
             var statusResult = Assert.IsType<BadRequestObjectResult>(result);
 
-            A.Equals((int)HttpStatusCode.BadRequest, statusResult.StatusCode);
+            Assert.Equal((int)HttpStatusCode.BadRequest, statusResult.StatusCode);
 
             controller.Dispose();
         }

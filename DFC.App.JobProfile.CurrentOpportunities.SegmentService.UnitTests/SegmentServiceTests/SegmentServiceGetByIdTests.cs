@@ -28,7 +28,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => repository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(expectedResult);
 
             // act
-            var result = await currentOpportunitiesSegmentService.GetByIdAsync(documentId).ConfigureAwait(false);
+            var result = await CurrentOpportunitiesSegmentService.GetByIdAsync(documentId).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => repository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
@@ -45,7 +45,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => repository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(expectedResult);
 
             // act
-            var result = await currentOpportunitiesSegmentService.GetByIdAsync(documentId).ConfigureAwait(false);
+            var result = await CurrentOpportunitiesSegmentService.GetByIdAsync(documentId).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => repository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();

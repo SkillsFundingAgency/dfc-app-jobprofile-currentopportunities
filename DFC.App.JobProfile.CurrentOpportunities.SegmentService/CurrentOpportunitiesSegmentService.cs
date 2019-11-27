@@ -192,7 +192,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 return currentOpportunitiesSegmentPatchStatus.ReturnStatusCode;
             }
 
-
             if (existingSegmentModel.Data.Apprenticeships == null)
             {
                 existingSegmentModel.Data.Apprenticeships = new Apprenticeships();

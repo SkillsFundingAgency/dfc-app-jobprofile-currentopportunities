@@ -29,7 +29,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
             var okResult = Assert.IsType<OkResult>(result);
 
-            A.Equals((int)HttpStatusCode.OK, okResult.StatusCode);
+            Assert.Equal((int)HttpStatusCode.OK, okResult.StatusCode);
 
             controller.Dispose();
         }
@@ -53,7 +53,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
             var statusResult = Assert.IsType<NotFoundResult>(result);
 
-            A.Equals((int)HttpStatusCode.NotFound, statusResult.StatusCode);
+            Assert.Equal((int)HttpStatusCode.NotFound, statusResult.StatusCode);
 
             controller.Dispose();
         }

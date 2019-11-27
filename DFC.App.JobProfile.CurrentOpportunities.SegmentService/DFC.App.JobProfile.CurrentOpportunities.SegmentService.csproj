@@ -26,7 +26,6 @@
   <ItemGroup>
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Data\DFC.App.JobProfile.CurrentOpportunities.Data.csproj" />
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb\DFC.App.CurrentOpportunities.Repository.CosmosDb.csproj" />
-    <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Repository.SitefinityApi\DFC.App.CurrentOpportunities.Repository.SitefinityApi.csproj" />
   </ItemGroup>
 
 </Project>
