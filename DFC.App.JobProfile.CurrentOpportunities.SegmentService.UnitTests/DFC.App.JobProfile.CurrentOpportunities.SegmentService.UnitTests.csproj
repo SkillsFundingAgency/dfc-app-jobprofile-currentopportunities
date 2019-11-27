@@ -5,6 +5,7 @@
 
     <IsPackable>false</IsPackable>
     <CodeAnalysisRuleSet>../UnitTests.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
+    <ProjectGuid>{0FDAD7B6-6B19-4CC2-AE6C-C054A1AA43CC}</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,7 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Data\DFC.App.JobProfile.CurrentOpportunities.Data.csproj" />
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.SegmentService\DFC.App.JobProfile.CurrentOpportunities.SegmentService.csproj" />
   </ItemGroup>
 
