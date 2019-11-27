@@ -1,6 +1,7 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.HttpClientPolicies;
 using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Models;
 using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services;
+using DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.FakeHttpHandlers;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -32,19 +33,23 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
         public async Task GetSimpleListReturnsSuccessWhenOK()
         {
             // arrange
+            const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
             var expectedResults = A.CollectionOfFake<SimpleJobProfileModel>(2);
-            using (var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(JsonConvert.SerializeObject(expectedResults), HttpStatusCode.OK))
+            var httpResponse = new HttpResponseMessage { StatusCode = expectedStatusCode, Content = new StringContent(JsonConvert.SerializeObject(expectedResults)) };
+            var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
+            var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+
+            using (var httpClient = new HttpClient(fakeHttpMessageHandler))
             {
-                using (var httpClient = new HttpClient(messageHandler))
-                {
-                    var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
+                var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
 
-                    // act
-                    var results = await refreshService.GetListAsync().ConfigureAwait(false);
+                A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
-                    // assert
-                    A.Equals(results, expectedResults);
-                }
+                // act
+                var results = await refreshService.GetListAsync().ConfigureAwait(false);
+
+                // assert
+                A.Equals(results, expectedResults);
             }
         }
 
@@ -52,19 +57,23 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
         public async Task GetSimpleListReturnsNullWhenError()
         {
             // arrange
+            const HttpStatusCode expectedStatusCode = HttpStatusCode.NotFound;
             IEnumerable<SimpleJobProfileModel> expectedResults = null;
-            using (var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(JsonConvert.SerializeObject(expectedResults), HttpStatusCode.OK))
+            var httpResponse = new HttpResponseMessage { StatusCode = expectedStatusCode, Content = new StringContent(JsonConvert.SerializeObject(expectedResults)) };
+            var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
+            var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+
+            using (var httpClient = new HttpClient(fakeHttpMessageHandler))
             {
-                using (var httpClient = new HttpClient(messageHandler))
-                {
-                    var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
+                var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
 
-                    // act
-                    var results = await refreshService.GetListAsync().ConfigureAwait(false);
+                A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
-                    // assert
-                    A.Equals(results, expectedResults);
-                }
+                // act
+                var results = await refreshService.GetListAsync().ConfigureAwait(false);
+
+                // assert
+                A.Equals(results, expectedResults);
             }
         }
     }

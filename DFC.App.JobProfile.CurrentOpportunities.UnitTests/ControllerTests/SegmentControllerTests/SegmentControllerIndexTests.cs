@@ -33,7 +33,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsAssignableFrom<IndexViewModel>(viewResult.ViewData.Model);
 
-            A.Equals(resultsCount, model.Documents.Count());
+            Assert.Equal(resultsCount, model.Documents.Count());
 
             controller.Dispose();
         }
@@ -60,7 +60,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             var viewResult = Assert.IsType<ViewResult>(result);
             var model = Assert.IsAssignableFrom<IndexViewModel>(viewResult.ViewData.Model);
 
-            A.Equals(null, model.Documents);
+            Assert.Equal(null, model.Documents);
 
             controller.Dispose();
         }

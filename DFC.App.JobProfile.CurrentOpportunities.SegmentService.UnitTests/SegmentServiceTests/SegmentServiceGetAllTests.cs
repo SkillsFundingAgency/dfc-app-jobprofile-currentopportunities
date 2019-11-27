@@ -27,7 +27,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => repository.GetAllAsync()).Returns(expectedResults);
 
             // act
-            var results = await currentOpportunitiesSegmentService.GetAllAsync().ConfigureAwait(false);
+            var results = await CurrentOpportunitiesSegmentService.GetAllAsync().ConfigureAwait(false);
 
             // assert
             A.CallTo(() => repository.GetAllAsync()).MustHaveHappenedOnceExactly();
@@ -43,7 +43,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => repository.GetAllAsync()).Returns(expectedResults);
 
             // act
-            var results = await currentOpportunitiesSegmentService.GetAllAsync().ConfigureAwait(false);
+            var results = await CurrentOpportunitiesSegmentService.GetAllAsync().ConfigureAwait(false);
 
             // assert
             A.CallTo(() => repository.GetAllAsync()).MustHaveHappenedOnceExactly();

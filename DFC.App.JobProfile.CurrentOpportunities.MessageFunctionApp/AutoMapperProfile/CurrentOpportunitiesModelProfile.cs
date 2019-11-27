@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.AutoMapperProfile
 {
+    [ExcludeFromCodeCoverage]
     public class CurrentOpportunitiesModelProfile : Profile
     {
         public CurrentOpportunitiesModelProfile()

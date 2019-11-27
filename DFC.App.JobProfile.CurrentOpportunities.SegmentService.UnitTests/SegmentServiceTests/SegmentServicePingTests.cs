@@ -24,7 +24,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => repository.PingAsync()).Returns(expectedResult);
 
             // act
-            var result = currentOpportunitiesSegmentService.PingAsync().Result;
+            var result = CurrentOpportunitiesSegmentService.PingAsync().Result;
 
             // assert
             A.CallTo(() => repository.PingAsync()).MustHaveHappenedOnceExactly();
@@ -40,7 +40,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => repository.PingAsync()).Returns(expectedResult);
 
             // act
-            var result = currentOpportunitiesSegmentService.PingAsync().Result;
+            var result = CurrentOpportunitiesSegmentService.PingAsync().Result;
 
             // assert
             A.CallTo(() => repository.PingAsync()).MustHaveHappenedOnceExactly();

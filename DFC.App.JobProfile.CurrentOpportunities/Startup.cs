@@ -16,11 +16,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DFC.App.JobProfile.CurrentOpportunities
 {
+    [ExcludeFromCodeCoverage]
     public class Startup
     {
         public const string CosmosDbConfigAppSettings = "Configuration:CosmosDbConnections:JobProfileSegment";
@@ -64,7 +67,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             services.AddFindACourseServices(courseSearchClientSettings);
 
             var serviceBusOptions = configuration.GetSection(ServiceBusOptionsAppSettings).Get<ServiceBusOptions>();
-            services.AddSingleton(serviceBusOptions ?? new ServiceBusOptions());
+            var topicClient = new TopicClient(serviceBusOptions.ServiceBusConnectionString, serviceBusOptions.TopicName);
+            services.AddSingleton<ITopicClient>(topicClient);
 
             services.AddSingleton<ICosmosRepository<CurrentOpportunitiesSegmentModel>, CosmosRepository<CurrentOpportunitiesSegmentModel>>(s =>
             {

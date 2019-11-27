@@ -1,5 +1,4 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
-using Microsoft.Azure.ServiceBus;
+﻿using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,23 +7,19 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
 {
     public class JobProfileSegmentRefreshService<TModel> : IJobProfileSegmentRefreshService<TModel>
     {
-        private readonly ServiceBusOptions serviceBusOptions;
+        private readonly ITopicClient topicClient;
 
-        public JobProfileSegmentRefreshService(ServiceBusOptions serviceBusOptions)
+        public JobProfileSegmentRefreshService(ITopicClient topicClient)
         {
-            this.serviceBusOptions = serviceBusOptions;
+            this.topicClient = topicClient;
         }
 
         public async Task SendMessageAsync(TModel model)
         {
-            if (!string.IsNullOrWhiteSpace(serviceBusOptions.ServiceBusConnectionString) && !string.IsNullOrWhiteSpace(serviceBusOptions.TopicName))
-            {
-                var messageJson = JsonConvert.SerializeObject(model);
-                var message = new Message(Encoding.UTF8.GetBytes(messageJson));
-                var topicClient = new TopicClient(serviceBusOptions.ServiceBusConnectionString, serviceBusOptions.TopicName);
+            var messageJson = JsonConvert.SerializeObject(model);
+            var message = new Message(Encoding.UTF8.GetBytes(messageJson));
 
-                await topicClient.SendAsync(message).ConfigureAwait(false);
-            }
+            await topicClient.SendAsync(message).ConfigureAwait(false);
         }
     }
 }

@@ -95,7 +95,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
             var statusResult = Assert.IsType<StatusCodeResult>(result);
 
-            A.Equals((int)HttpStatusCode.NotAcceptable, statusResult.StatusCode);
+            Assert.Equal((int)HttpStatusCode.NotAcceptable, statusResult.StatusCode);
 
             controller.Dispose();
         }
@@ -119,7 +119,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
             var statusResult = Assert.IsType<NoContentResult>(result);
 
-            A.Equals((int)HttpStatusCode.NoContent, statusResult.StatusCode);
+            Assert.Equal((int)HttpStatusCode.NoContent, statusResult.StatusCode);
 
             controller.Dispose();
         }

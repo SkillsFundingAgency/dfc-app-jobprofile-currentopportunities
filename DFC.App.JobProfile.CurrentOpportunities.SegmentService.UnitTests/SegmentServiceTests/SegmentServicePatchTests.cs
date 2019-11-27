@@ -46,8 +46,24 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         public void PatchJobProfileSocNullTest()
         {
             //Asserts
-            Func<Task> f = async () => { await currentOpportunitiesSegmentService.PatchJobProfileSocAsync(null, testGuid).ConfigureAwait(false); };
+            Func<Task> f = async () => { await CurrentOpportunitiesSegmentService.PatchJobProfileSocAsync(null, testGuid).ConfigureAwait(false); };
             f.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public async Task JobProfileSocPatchSocReturnsNotFoundForMissingSegment()
+        {
+            //Arrange
+            var doNotPatchResult = new CurrentOpportunitiesSegmentPatchStatus() { OkToPatch = false, ReturnStatusCode = HttpStatusCode.NotFound };
+            var patchJobProfileSocModel = new PatchJobProfileSocModel() { ActionType = MessageAction.Deleted };
+            A.CallTo(() => repository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(null as CurrentOpportunitiesSegmentModel);
+            A.CallTo(() => fakeCurrentOpportunitiesSegmentUtilities.IsSegementOkToPatch(A<CurrentOpportunitiesSegmentModel>.Ignored, A<long>.Ignored)).Returns(doNotPatchResult);
+
+            //Act
+            var result = await CurrentOpportunitiesSegmentService.PatchJobProfileSocAsync(patchJobProfileSocModel, testGuid).ConfigureAwait(false);
+
+            //Asserts
+            result.Should().Be(HttpStatusCode.NotFound);
         }
 
         [Fact]
@@ -58,7 +74,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => fakeCurrentOpportunitiesSegmentUtilities.GetReturnStatusForNullElementPatchRequest(A<MessageAction>.Ignored)).Returns(HttpStatusCode.AlreadyReported);
 
             //Act
-            var result = await currentOpportunitiesSegmentService.PatchJobProfileSocAsync(patchJobProfileSocModel, testGuid).ConfigureAwait(false);
+            var result = await CurrentOpportunitiesSegmentService.PatchJobProfileSocAsync(patchJobProfileSocModel, testGuid).ConfigureAwait(false);
 
             //Asserts
             result.Should().Be(HttpStatusCode.AlreadyReported);
@@ -76,7 +92,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.OK);
 
             //Act
-            var result = await currentOpportunitiesSegmentService.PatchJobProfileSocAsync(patchJobProfileSocModel, testGuid).ConfigureAwait(false);
+            var result = await CurrentOpportunitiesSegmentService.PatchJobProfileSocAsync(patchJobProfileSocModel, testGuid).ConfigureAwait(false);
 
             //Asserts
             A.CallTo(() => fakeCurrentOpportunitiesSegmentUtilities.GetReturnStatusForNullElementPatchRequest(A<MessageAction>.Ignored)).MustNotHaveHappened();
@@ -87,7 +103,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         public void PatchApprenticeshipFrameworksNullTest()
         {
             //Asserts
-            Func<Task> f = async () => { await currentOpportunitiesSegmentService.PatchApprenticeshipFrameworksAsync(null, testGuid).ConfigureAwait(false); };
+            Func<Task> f = async () => { await CurrentOpportunitiesSegmentService.PatchApprenticeshipFrameworksAsync(null, testGuid).ConfigureAwait(false); };
             f.Should().Throw<ArgumentNullException>();
         }
 
@@ -99,10 +115,26 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => fakeCurrentOpportunitiesSegmentUtilities.GetReturnStatusForNullElementPatchRequest(A<MessageAction>.Ignored)).Returns(HttpStatusCode.AlreadyReported);
 
             //Act
-            var result = await currentOpportunitiesSegmentService.PatchApprenticeshipFrameworksAsync(patchApprenticeshipFrameworksModel, testGuid).ConfigureAwait(false);
+            var result = await CurrentOpportunitiesSegmentService.PatchApprenticeshipFrameworksAsync(patchApprenticeshipFrameworksModel, testGuid).ConfigureAwait(false);
 
             //Asserts
             result.Should().Be(HttpStatusCode.AlreadyReported);
+        }
+
+        [Fact]
+        public async Task ApprenticeshipFrameworksPatchFrameworksReturnsNotFoundForMissingSegment()
+        {
+            //Arrange
+            var doNotPatchResult = new CurrentOpportunitiesSegmentPatchStatus() { OkToPatch = false, ReturnStatusCode = HttpStatusCode.NotFound };
+            var patchApprenticeshipFrameworksModel = new PatchApprenticeshipFrameworksModel() { ActionType = MessageAction.Deleted };
+            A.CallTo(() => repository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(null as CurrentOpportunitiesSegmentModel);
+            A.CallTo(() => fakeCurrentOpportunitiesSegmentUtilities.IsSegementOkToPatch(A<CurrentOpportunitiesSegmentModel>.Ignored, A<long>.Ignored)).Returns(doNotPatchResult);
+
+            //Act
+            var result = await CurrentOpportunitiesSegmentService.PatchApprenticeshipFrameworksAsync(patchApprenticeshipFrameworksModel, testGuid).ConfigureAwait(false);
+
+            //Asserts
+            result.Should().Be(HttpStatusCode.NotFound);
         }
 
         [Theory]
@@ -122,7 +154,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.OK);
 
             //Act
-            var result = await currentOpportunitiesSegmentService.PatchApprenticeshipFrameworksAsync(patchApprenticeshipFrameworksModel, testGuid).ConfigureAwait(false);
+            var result = await CurrentOpportunitiesSegmentService.PatchApprenticeshipFrameworksAsync(patchApprenticeshipFrameworksModel, testGuid).ConfigureAwait(false);
 
             //Asserts
             A.CallTo(() => fakeCurrentOpportunitiesSegmentUtilities.GetReturnStatusForNullElementPatchRequest(A<MessageAction>.Ignored)).MustNotHaveHappened();
@@ -133,8 +165,24 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         public void PatchApprenticeshipStandardsNullTest()
         {
             //Asserts
-            Func<Task> f = async () => { await currentOpportunitiesSegmentService.PatchApprenticeshipStandardsAsync(null, testGuid).ConfigureAwait(false); };
+            Func<Task> f = async () => { await CurrentOpportunitiesSegmentService.PatchApprenticeshipStandardsAsync(null, testGuid).ConfigureAwait(false); };
             f.Should().Throw<ArgumentNullException>();
+        }
+
+        [Fact]
+        public async Task ApprenticeshipStandardsPatchStandardsReturnsNotFoundForMissingSegment()
+        {
+            //Arrange
+            var doNotPatchResult = new CurrentOpportunitiesSegmentPatchStatus() { OkToPatch = false, ReturnStatusCode = HttpStatusCode.NotFound };
+            var patchApprenticeshipStandardsModel = new PatchApprenticeshipStandardsModel() { ActionType = MessageAction.Deleted };
+            A.CallTo(() => repository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(null as CurrentOpportunitiesSegmentModel);
+            A.CallTo(() => fakeCurrentOpportunitiesSegmentUtilities.IsSegementOkToPatch(A<CurrentOpportunitiesSegmentModel>.Ignored, A<long>.Ignored)).Returns(doNotPatchResult);
+
+            //Act
+            var result = await CurrentOpportunitiesSegmentService.PatchApprenticeshipStandardsAsync(patchApprenticeshipStandardsModel, testGuid).ConfigureAwait(false);
+
+            //Asserts
+            result.Should().Be(HttpStatusCode.NotFound);
         }
 
         [Fact]
@@ -145,7 +193,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => fakeCurrentOpportunitiesSegmentUtilities.GetReturnStatusForNullElementPatchRequest(A<MessageAction>.Ignored)).Returns(HttpStatusCode.AlreadyReported);
 
             //Act
-            var result = await currentOpportunitiesSegmentService.PatchApprenticeshipStandardsAsync(patchApprenticeshipStandardsModel, testGuid).ConfigureAwait(false);
+            var result = await CurrentOpportunitiesSegmentService.PatchApprenticeshipStandardsAsync(patchApprenticeshipStandardsModel, testGuid).ConfigureAwait(false);
 
             //Asserts
             result.Should().Be(HttpStatusCode.AlreadyReported);
@@ -168,7 +216,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => repository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.OK);
 
             //Act
-            var result = await currentOpportunitiesSegmentService.PatchApprenticeshipStandardsAsync(patchApprenticeshipStandardsModel, testGuid).ConfigureAwait(false);
+            var result = await CurrentOpportunitiesSegmentService.PatchApprenticeshipStandardsAsync(patchApprenticeshipStandardsModel, testGuid).ConfigureAwait(false);
 
             //Asserts
             A.CallTo(() => fakeCurrentOpportunitiesSegmentUtilities.GetReturnStatusForNullElementPatchRequest(A<MessageAction>.Ignored)).MustNotHaveHappened();

@@ -29,9 +29,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
 
         private static string GetJobTitleWithPrefix(string titlePrefix, string title, string contentTitle)
         {
-            var changedTitle = string.IsNullOrEmpty(contentTitle) ? title?.ToLower(new CultureInfo("en-GB")) : contentTitle;
+            var changedTitle = string.IsNullOrWhiteSpace(contentTitle) ? title?.ToLower(new CultureInfo("en-GB")) : contentTitle;
 
-            if (string.IsNullOrEmpty(changedTitle))
+            if (string.IsNullOrWhiteSpace(changedTitle))
             {
                 return string.Empty;
             }

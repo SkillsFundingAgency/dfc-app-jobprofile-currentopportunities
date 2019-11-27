@@ -15,16 +15,20 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
         public async void SegmentControllerUpdateReturnsSuccessForExistingItem(string mediaTypeName)
         {
             // Arrange
-            var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
+            const HttpStatusCode expectedResponse = HttpStatusCode.OK;
             var controller = BuildSegmentController(mediaTypeName);
 
-            currentOpportunitiesSegmentModel.SequenceNumber = 1;
+            var existingModel = A.Fake<CurrentOpportunitiesSegmentModel>();
+            var modelToUpsert = A.Fake<CurrentOpportunitiesSegmentModel>();
 
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).Returns(A.Fake<CurrentOpportunitiesSegmentModel>());
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.Created);
+            existingModel.SequenceNumber = 123;
+            modelToUpsert.SequenceNumber = existingModel.SequenceNumber + 1;
+
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).Returns(existingModel);
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(expectedResponse);
 
             // Act
-            var result = await controller.Put(currentOpportunitiesSegmentModel).ConfigureAwait(false);
+            var result = await controller.Put(modelToUpsert).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
@@ -32,7 +36,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
             var statusCodeResult = Assert.IsType<StatusCodeResult>(result);
 
-            A.Equals((int)HttpStatusCode.OK, statusCodeResult.StatusCode);
+            Assert.Equal((int)expectedResponse, statusCodeResult.StatusCode);
 
             controller.Dispose();
         }
@@ -42,6 +46,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
         public async void SegmentControllerUpdateReturnsNotFoundForNonExisting(string mediaTypeName)
         {
             // Arrange
+            const HttpStatusCode expectedResponse = HttpStatusCode.NotFound;
             var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
             var controller = BuildSegmentController(mediaTypeName);
 
@@ -55,7 +60,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
             var statusCodeResult = Assert.IsType<StatusCodeResult>(result);
 
-            A.Equals((int)HttpStatusCode.NotFound, statusCodeResult.StatusCode);
+            Assert.Equal((int)expectedResponse, statusCodeResult.StatusCode);
 
             controller.Dispose();
         }
@@ -65,6 +70,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
         public async void SegmentControllerUpdateReturnsBadRequestWhenModelIsNull(string mediaTypeName)
         {
             // Arrange
+            const HttpStatusCode expectedResponse = HttpStatusCode.BadRequest;
             CurrentOpportunitiesSegmentModel careerPathSegmentModel = null;
             var controller = BuildSegmentController(mediaTypeName);
 
@@ -74,7 +80,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             // Assert
             var statusResult = Assert.IsType<BadRequestResult>(result);
 
-            A.Equals((int)HttpStatusCode.BadRequest, statusResult.StatusCode);
+            Assert.Equal((int)expectedResponse, statusResult.StatusCode);
 
             controller.Dispose();
         }
@@ -84,6 +90,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
         public async void SegmentControllerUpdateReturnsBadRequestWhenModelIsInvalid(string mediaTypeName)
         {
             // Arrange
+            const HttpStatusCode expectedResponse = HttpStatusCode.BadRequest;
             var careerPathSegmentModel = new CurrentOpportunitiesSegmentModel();
             var controller = BuildSegmentController(mediaTypeName);
 
@@ -95,7 +102,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
             // Assert
             var statusResult = Assert.IsType<BadRequestObjectResult>(result);
 
-            A.Equals((int)HttpStatusCode.BadRequest, statusResult.StatusCode);
+            Assert.Equal((int)expectedResponse, statusResult.StatusCode);
 
             controller.Dispose();
         }
@@ -105,22 +112,26 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
         public async void SegmentControllerUpdateReturnsAlreadyReportedToEarlierSequence(string mediaTypeName)
         {
             // Arrange
-            var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
+            const HttpStatusCode expectedResponse = HttpStatusCode.AlreadyReported;
+            var existingModel = A.Fake<CurrentOpportunitiesSegmentModel>();
+            var modelToUpsert = A.Fake<CurrentOpportunitiesSegmentModel>();
+
+            existingModel.SequenceNumber = 123;
+            modelToUpsert.SequenceNumber = existingModel.SequenceNumber - 1;
+
             var controller = BuildSegmentController(mediaTypeName);
 
-            currentOpportunitiesSegmentModel.SequenceNumber = -1;
-
-            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).Returns((CurrentOpportunitiesSegmentModel)null);
+            A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).Returns(existingModel);
 
             // Act
-            var result = await controller.Put(currentOpportunitiesSegmentModel).ConfigureAwait(false);
+            var result = await controller.Put(modelToUpsert).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => FakeCurrentOpportunitiesSegmentService.GetByIdAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
 
             var statusCodeResult = Assert.IsType<StatusCodeResult>(result);
 
-            A.Equals((int)HttpStatusCode.AlreadyReported, statusCodeResult.StatusCode);
+            Assert.Equal((int)expectedResponse, statusCodeResult.StatusCode);
 
             controller.Dispose();
         }

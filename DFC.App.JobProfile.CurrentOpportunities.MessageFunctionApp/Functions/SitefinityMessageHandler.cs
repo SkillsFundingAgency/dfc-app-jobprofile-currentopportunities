@@ -12,15 +12,16 @@ using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
 {
-    public class SitefinityMessageHandler
+    public static class SitefinityMessageHandler
     {
         private static readonly string ClassFullName = typeof(SitefinityMessageHandler).FullName;
 
         [FunctionName("SitefinityMessageHandler")]
-        public async Task Run(
+        public static async Task Run(
             [ServiceBusTrigger("%cms-messages-topic%", "%cms-messages-subscription%", Connection = "service-bus-connection-string")] Message sitefinityMessage,
             [Inject] IMessageProcessor messageProcessor,
-            [Inject] ILogger<SitefinityMessageHandler> log)
+            [Inject] IMessagePropertiesService messagePropertiesService,
+            ILogger log)
         {
             if (sitefinityMessage == null)
             {
@@ -41,23 +42,27 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
                 throw new ArgumentException("Message cannot be null or empty.", nameof(sitefinityMessage));
             }
 
-            if (!Enum.TryParse<MessageAction>(actionType?.ToString(), out var messageAction))
+            if (!Enum.IsDefined(typeof(MessageAction), actionType?.ToString()))
             {
                 throw new ArgumentOutOfRangeException(nameof(actionType), $"Invalid message action '{actionType}' received, should be one of '{string.Join(",", Enum.GetNames(typeof(MessageAction)))}'");
             }
 
-            if (contentType.ToString().Contains("-"))
+            if (contentType.ToString().Contains("-", StringComparison.OrdinalIgnoreCase))
             {
                 var contentTypeString = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(contentType.ToString());
                 contentType = contentTypeString.Replace("-", string.Empty, true, CultureInfo.InvariantCulture);
             }
 
-            if (!Enum.TryParse<MessageContentType>(contentType?.ToString(), out var messageContentType))
+            if (!Enum.IsDefined(typeof(MessageContentType), contentType?.ToString()))
             {
                 throw new ArgumentOutOfRangeException(nameof(contentType), $"Invalid message content type '{contentType}' received, should be one of '{string.Join(",", Enum.GetNames(typeof(MessageContentType)))}'");
             }
 
-            var result = await messageProcessor.ProcessAsync(message, sitefinityMessage.SystemProperties.SequenceNumber, messageContentType, messageAction).ConfigureAwait(false);
+            var messageAction = Enum.Parse<MessageAction>(actionType?.ToString());
+            var messageContentType = Enum.Parse<MessageContentType>(contentType?.ToString());
+            var sequenceNumber = messagePropertiesService.GetSequenceNumber(sitefinityMessage);
+
+            var result = await messageProcessor.ProcessAsync(message, sequenceNumber, messageContentType, messageAction).ConfigureAwait(false);
 
             switch (result)
             {
