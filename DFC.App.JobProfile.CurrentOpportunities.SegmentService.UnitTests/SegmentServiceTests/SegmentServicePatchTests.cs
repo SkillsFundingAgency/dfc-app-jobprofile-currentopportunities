@@ -1,12 +1,8 @@
-﻿using AutoMapper;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels;
-using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
 using FakeItEasy;
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -143,6 +139,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         public async Task ApprenticeshipFrameworksPatchTest(MessageAction messageAction)
         {
             var elementId = Guid.NewGuid();
+            
             //Arrange
             var patchApprenticeshipFrameworksModel = new PatchApprenticeshipFrameworksModel() { ActionType = messageAction, Id = elementId };
             currentOpportunitiesSegmentModel.Data.Apprenticeships = new Apprenticeships()
@@ -205,6 +202,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         public async Task ApprenticeshipStandardsPatchTest(MessageAction messageAction)
         {
             var elementId = Guid.NewGuid();
+            
             //Arrange
             var patchApprenticeshipStandardsModel = new PatchApprenticeshipStandardsModel() { ActionType = messageAction, Id = elementId };
             currentOpportunitiesSegmentModel.Data.Apprenticeships = new Apprenticeships()

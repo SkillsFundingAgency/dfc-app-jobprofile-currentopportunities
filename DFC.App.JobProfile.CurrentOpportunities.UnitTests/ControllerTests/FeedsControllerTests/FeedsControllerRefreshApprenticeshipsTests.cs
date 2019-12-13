@@ -1,10 +1,10 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Controllers;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
+using DFC.Logger.AppInsights.Contracts;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using System;
 using System.Net.Http;
@@ -17,11 +17,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Feed
     {
         public FeedsControllerRefreshApprenticeshipsTests()
         {
-            FakeLogger = A.Fake<ILogger<FeedsController>>();
+            FakeLogger = A.Fake<ILogService>();
             FakeAVCurrentOpportuntiesRefresh = A.Fake<IAVCurrentOpportuntiesRefresh>();
         }
 
-        protected ILogger<FeedsController> FakeLogger { get; }
+        protected ILogService FakeLogger { get; }
 
         protected IAVCurrentOpportuntiesRefresh FakeAVCurrentOpportuntiesRefresh { get; }
 

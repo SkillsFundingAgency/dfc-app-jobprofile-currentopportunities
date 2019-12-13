@@ -1,9 +1,5 @@
-using AutoMapper;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
-using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
 using FakeItEasy;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
@@ -13,7 +9,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
     [Trait("Segment Service", "GetAll Tests")]
     public class SegmentServiceGetAllTests : SegmentServiceBaseTests
     {
-
         public SegmentServiceGetAllTests() : base()
         {
         }

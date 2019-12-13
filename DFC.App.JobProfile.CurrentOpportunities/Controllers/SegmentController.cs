@@ -4,8 +4,8 @@ using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels;
 using DFC.App.JobProfile.CurrentOpportunities.Extensions;
 using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
+using DFC.Logger.AppInsights.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
 using System.Linq;
@@ -16,13 +16,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
 {
     public class SegmentController : Controller
     {
-        private readonly ILogger<SegmentController> logger;
+        private readonly ILogService logService;
         private readonly ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService;
         private readonly AutoMapper.IMapper mapper;
 
-        public SegmentController(ILogger<SegmentController> logger, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService, AutoMapper.IMapper mapper)
+        public SegmentController(ILogService logService, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService, AutoMapper.IMapper mapper)
         {
-            this.logger = logger;
+            this.logService = logService;
             this.currentOpportunitiesSegmentService = currentOpportunitiesSegmentService;
             this.mapper = mapper;
         }
@@ -64,7 +64,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         [Route("/Segment")]
         public async Task<IActionResult> Index()
         {
-            logger.LogInformation($"{nameof(Index)} has been called");
+            logService.LogInformation($"{nameof(Index)} has been called");
 
             var viewModel = new IndexViewModel();
             var currentOpportunitiesSegmentModels = await currentOpportunitiesSegmentService.GetAllAsync().ConfigureAwait(false);
@@ -74,11 +74,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
                 viewModel.Documents = (from a in currentOpportunitiesSegmentModels.OrderBy(o => o.CanonicalName)
                                        select mapper.Map<IndexDocumentViewModel>(a)).ToList();
 
-                logger.LogInformation($"{nameof(Index)} has succeeded");
+                logService.LogInformation($"{nameof(Index)} has succeeded");
             }
             else
             {
-                logger.LogWarning($"{nameof(Index)} has returned with no results");
+                logService.LogWarning($"{nameof(Index)} has returned with no results");
             }
 
             return this.NegotiateContentResult(viewModel, viewModel.Documents);
@@ -88,7 +88,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         [Route("segment/{article}")]
         public async Task<IActionResult> Document(string article)
         {
-            logger.LogInformation($"{nameof(Document)} has been called with: {article}");
+            logService.LogInformation($"{nameof(Document)} has been called with: {article}");
 
             var currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByNameAsync(article).ConfigureAwait(false);
 
@@ -96,12 +96,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             {
                 var viewModel = mapper.Map<DocumentViewModel>(currentOpportunitiesSegmentModel);
 
-                logger.LogInformation($"{nameof(Document)} has succeeded for: {article}");
+                logService.LogInformation($"{nameof(Document)} has succeeded for: {article}");
 
                 return View(viewModel);
             }
 
-            logger.LogWarning($"{nameof(Document)} has returned no content for: {article}");
+            logService.LogWarning($"{nameof(Document)} has returned no content for: {article}");
 
             return NoContent();
         }
@@ -110,18 +110,18 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         [Route("segment/{documentId}/contents")]
         public async Task<IActionResult> Body(Guid documentId)
         {
-            logger.LogInformation($"{nameof(Body)} has been called with: {documentId}");
+            logService.LogInformation($"{nameof(Body)} has been called with: {documentId}");
             var currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByIdAsync(documentId).ConfigureAwait(false);
 
             if (currentOpportunitiesSegmentModel != null)
             {
                 var viewModel = mapper.Map<BodyViewModel>(currentOpportunitiesSegmentModel);
                 viewModel.Data.JobTitleWithPrefix = GetJobTitleWithPrefix(currentOpportunitiesSegmentModel.Data?.TitlePrefix, currentOpportunitiesSegmentModel.Data?.JobTitle, currentOpportunitiesSegmentModel.Data?.ContentTitle);
-                logger.LogInformation($"{nameof(Body)} has succeeded for: {documentId}");
+                logService.LogInformation($"{nameof(Body)} has succeeded for: {documentId}");
                 return this.NegotiateContentResult(viewModel, currentOpportunitiesSegmentModel.Data);
             }
 
-            logger.LogWarning($"{nameof(Body)} has returned no content for: {documentId}");
+            logService.LogWarning($"{nameof(Body)} has returned no content for: {documentId}");
 
             return NoContent();
         }
@@ -130,7 +130,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         [Route("segment")]
         public async Task<IActionResult> Post([FromBody]CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel)
         {
-            logger.LogInformation($"{nameof(Post)} has been called");
+            logService.LogInformation($"{nameof(Post)} has been called");
 
             if (currentOpportunitiesSegmentModel == null)
             {
@@ -150,7 +150,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
 
             var response = await currentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
-            logger.LogInformation($"{nameof(Post)} has upserted content for: {currentOpportunitiesSegmentModel.CanonicalName}");
+            logService.LogInformation($"{nameof(Post)} has upserted content for: {currentOpportunitiesSegmentModel.CanonicalName}");
 
             return new StatusCodeResult((int)response);
         }
@@ -159,7 +159,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         [Route("segment")]
         public async Task<IActionResult> Put([FromBody]CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel)
         {
-            logger.LogInformation($"{nameof(Put)} has been called");
+            logService.LogInformation($"{nameof(Put)} has been called");
 
             if (currentOpportunitiesSegmentModel == null)
             {
@@ -187,7 +187,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
 
             var response = await currentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
-            logger.LogInformation($"{nameof(Put)} has upserted content for: {currentOpportunitiesSegmentModel.CanonicalName}");
+            logService.LogInformation($"{nameof(Put)} has upserted content for: {currentOpportunitiesSegmentModel.CanonicalName}");
 
             return new StatusCodeResult((int)response);
         }
@@ -196,7 +196,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         [Route("segment/{documentId}/JobProfileSoc")]
         public async Task<IActionResult> PatchJobProfileSoc([FromBody]PatchJobProfileSocModel patchJobProfileSocModel, Guid documentId)
         {
-            logger.LogInformation($"{nameof(PatchJobProfileSoc)} has been called");
+            logService.LogInformation($"{nameof(PatchJobProfileSoc)} has been called");
 
             if (patchJobProfileSocModel == null)
             {
@@ -211,7 +211,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             var response = await currentOpportunitiesSegmentService.PatchJobProfileSocAsync(patchJobProfileSocModel, documentId).ConfigureAwait(false);
             if (response != HttpStatusCode.OK && response != HttpStatusCode.Created)
             {
-                logger.LogError($"{nameof(PatchJobProfileSoc)}: Error while patching Soc Data content for Job Profile with Id: {patchJobProfileSocModel.JobProfileId} for the {patchJobProfileSocModel.SocCode} soc code");
+                logService.LogError($"{nameof(PatchJobProfileSoc)}: Error while patching Soc Data content for Job Profile with Id: {patchJobProfileSocModel.JobProfileId} for the {patchJobProfileSocModel.SocCode} soc code");
             }
 
             return new StatusCodeResult((int)response);
@@ -221,7 +221,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         [Route("segment/{documentId}/ApprenticeshipFrameworks")]
         public async Task<IActionResult> PatchApprenticeshipFrameworks([FromBody]PatchApprenticeshipFrameworksModel patchApprenticeshipFrameworksModel, Guid documentId)
         {
-            logger.LogInformation($"{nameof(PatchApprenticeshipFrameworks)} has been called");
+            logService.LogInformation($"{nameof(PatchApprenticeshipFrameworks)} has been called");
 
             if (patchApprenticeshipFrameworksModel == null)
             {
@@ -236,7 +236,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             var response = await currentOpportunitiesSegmentService.PatchApprenticeshipFrameworksAsync(patchApprenticeshipFrameworksModel, documentId).ConfigureAwait(false);
             if (response != HttpStatusCode.OK && response != HttpStatusCode.Created)
             {
-                logger.LogError($"{nameof(PatchApprenticeshipFrameworks)}: Error while patching Apprenticeship Frameworks content for Job Profile with Id: {patchApprenticeshipFrameworksModel.JobProfileId} for the {patchApprenticeshipFrameworksModel.SocCode} soc code");
+                logService.LogError($"{nameof(PatchApprenticeshipFrameworks)}: Error while patching Apprenticeship Frameworks content for Job Profile with Id: {patchApprenticeshipFrameworksModel.JobProfileId} for the {patchApprenticeshipFrameworksModel.SocCode} soc code");
             }
 
             return new StatusCodeResult((int)response);
@@ -246,7 +246,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         [Route("segment/{documentId}/ApprenticeshipStandards")]
         public async Task<IActionResult> PatchApprenticeshipStandards([FromBody]PatchApprenticeshipStandardsModel patchApprenticeshipStandardsModel, Guid documentId)
         {
-            logger.LogInformation($"{nameof(PatchApprenticeshipStandards)} has been called");
+            logService.LogInformation($"{nameof(PatchApprenticeshipStandards)} has been called");
 
             if (patchApprenticeshipStandardsModel == null)
             {
@@ -261,7 +261,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             var response = await currentOpportunitiesSegmentService.PatchApprenticeshipStandardsAsync(patchApprenticeshipStandardsModel, documentId).ConfigureAwait(false);
             if (response != HttpStatusCode.OK && response != HttpStatusCode.Created)
             {
-                logger.LogError($"{nameof(PatchApprenticeshipStandards)}: Error while patching Apprenticeship Standards content for Job Profile with Id: {patchApprenticeshipStandardsModel.JobProfileId} for the {patchApprenticeshipStandardsModel.SocCode} soc code");
+                logService.LogError($"{nameof(PatchApprenticeshipStandards)}: Error while patching Apprenticeship Standards content for Job Profile with Id: {patchApprenticeshipStandardsModel.JobProfileId} for the {patchApprenticeshipStandardsModel.SocCode} soc code");
             }
 
             return new StatusCodeResult((int)response);
@@ -271,20 +271,20 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         [Route("segment/{documentId}")]
         public async Task<IActionResult> Delete(Guid documentId)
         {
-            logger.LogInformation($"{nameof(Delete)} has been called");
+            logService.LogInformation($"{nameof(Delete)} has been called");
 
             var currentOpportunitiesSegmentModel = await currentOpportunitiesSegmentService.GetByIdAsync(documentId).ConfigureAwait(false);
 
             if (currentOpportunitiesSegmentModel == null)
             {
-                logger.LogWarning($"{nameof(Document)} has returned no content for: {documentId}");
+                logService.LogWarning($"{nameof(Document)} has returned no content for: {documentId}");
 
                 return NotFound();
             }
 
             await currentOpportunitiesSegmentService.DeleteAsync(documentId).ConfigureAwait(false);
 
-            logger.LogInformation($"{nameof(Delete)} has deleted content for: {currentOpportunitiesSegmentModel.CanonicalName}");
+            logService.LogInformation($"{nameof(Delete)} has deleted content for: {currentOpportunitiesSegmentModel.CanonicalName}");
 
             return Ok();
         }

@@ -8,7 +8,8 @@
     "cms-messages-subscription": "job-profile-currentopportunities",
     "RefreshApprenticeshipsCron": "0 0 3 * * *",
     "RefreshCoursesCron": "0 0 5 * * *",
-    "AbortAfterErrorCount": "5"
+    "AbortAfterErrorCount": "5",
+    "APPINSIGHTS_INSTRUMENTATIONKEY": "[instrumentation key]"
   },
   "Policies": {
     "HttpCircuitBreaker": {

@@ -9,7 +9,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
 {
     public class SegmentServiceBaseTests
     {
-
         protected readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
         protected readonly ICourseCurrentOpportuntiesRefresh fakeCourseCurrentOpportuntiesRefresh;
         protected readonly IAVCurrentOpportuntiesRefresh fakeAVCurrentOpportunatiesRefresh;
