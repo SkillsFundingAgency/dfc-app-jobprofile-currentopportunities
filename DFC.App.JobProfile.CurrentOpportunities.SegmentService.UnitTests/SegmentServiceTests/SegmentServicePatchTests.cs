@@ -139,6 +139,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         public async Task ApprenticeshipFrameworksPatchTest(MessageAction messageAction)
         {
             var elementId = Guid.NewGuid();
+            
             //Arrange
             var patchApprenticeshipFrameworksModel = new PatchApprenticeshipFrameworksModel() { ActionType = messageAction, Id = elementId };
             currentOpportunitiesSegmentModel.Data.Apprenticeships = new Apprenticeships()
@@ -201,6 +202,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         public async Task ApprenticeshipStandardsPatchTest(MessageAction messageAction)
         {
             var elementId = Guid.NewGuid();
+            
             //Arrange
             var patchApprenticeshipStandardsModel = new PatchApprenticeshipStandardsModel() { ActionType = messageAction, Id = elementId };
             currentOpportunitiesSegmentModel.Data.Apprenticeships = new Apprenticeships()

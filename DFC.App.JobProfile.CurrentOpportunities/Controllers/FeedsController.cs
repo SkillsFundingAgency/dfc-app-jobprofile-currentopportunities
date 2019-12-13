@@ -1,10 +1,10 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
+using DFC.Logger.AppInsights.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using DFC.Logger.AppInsights.Contracts;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
 {

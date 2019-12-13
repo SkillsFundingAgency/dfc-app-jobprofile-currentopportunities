@@ -9,7 +9,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
     [Trait("Segment Service", "GetAll Tests")]
     public class SegmentServiceGetAllTests : SegmentServiceBaseTests
     {
-
         public SegmentServiceGetAllTests() : base()
         {
         }
