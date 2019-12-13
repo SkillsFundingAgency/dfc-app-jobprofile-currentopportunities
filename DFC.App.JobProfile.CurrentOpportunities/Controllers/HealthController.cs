@@ -1,8 +1,8 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Extensions;
 using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
+using DFC.Logger.AppInsights.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -14,13 +14,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
     {
         private const string SuccessMessage = "Document store is available";
 
-        private readonly ILogger<HealthController> logger;
+        private readonly ILogService logService;
         private readonly ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService;
         private readonly string resourceName;
 
-        public HealthController(ILogger<HealthController> logger, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService)
+        public HealthController(ILogService logService, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService)
         {
-            this.logger = logger;
+            this.logService = logService;
             this.currentOpportunitiesSegmentService = currentOpportunitiesSegmentService;
             resourceName = typeof(Program).Namespace;
         }
@@ -29,7 +29,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         [Route("{controller}/ping")]
         public IActionResult Ping()
         {
-            logger.LogInformation($"{nameof(Ping)} has been called");
+            logService.LogInformation($"{nameof(Ping)} has been called");
 
             return Ok();
         }
@@ -38,25 +38,25 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         [Route("health")]
         public async Task<IActionResult> Health()
         {
-            logger.LogInformation($"{nameof(Health)} has been called");
+            logService.LogInformation($"{nameof(Health)} has been called");
 
             try
             {
                 var isHealthy = await currentOpportunitiesSegmentService.PingAsync().ConfigureAwait(false);
                 if (isHealthy)
                 {
-                    logger.LogInformation($"{nameof(Health)} responded with: {resourceName} - {SuccessMessage}");
+                    logService.LogInformation($"{nameof(Health)} responded with: {resourceName} - {SuccessMessage}");
 
                     var viewModel = CreateHealthViewModel();
 
                     return this.NegotiateContentResult(viewModel);
                 }
 
-                logger.LogError($"{nameof(Health)}: Ping to {resourceName} has failed");
+                logService.LogError($"{nameof(Health)}: Ping to {resourceName} has failed");
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"{nameof(Health)}: {resourceName} exception: {ex.Message}");
+                logService.LogError($"{nameof(Health)}: {resourceName} exception: {ex.Message}");
             }
 
             return StatusCode((int)HttpStatusCode.ServiceUnavailable);

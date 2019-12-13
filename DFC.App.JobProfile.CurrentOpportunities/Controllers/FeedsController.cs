@@ -1,21 +1,21 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using DFC.Logger.AppInsights.Contracts;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
 {
     public class FeedsController : Controller
     {
-        private readonly ILogger<FeedsController> logger;
+        private readonly ILogService logService;
         private readonly IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh;
 
-        public FeedsController(ILogger<FeedsController> logger, IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh)
+        public FeedsController(ILogService logService, IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh)
         {
-            this.logger = logger;
+            this.logService = logService;
             this.aVCurrentOpportunatiesRefresh = aVCurrentOpportunatiesRefresh;
         }
 

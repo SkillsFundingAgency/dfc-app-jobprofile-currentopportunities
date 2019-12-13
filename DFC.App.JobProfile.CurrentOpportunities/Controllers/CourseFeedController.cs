@@ -1,7 +1,7 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
+using DFC.Logger.AppInsights.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -10,12 +10,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
 {
     public class CourseFeedController : Controller
     {
-        private readonly ILogger<FeedsController> logger;
+        private readonly ILogService logService;
         private readonly ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh;
 
-        public CourseFeedController(ILogger<FeedsController> logger, ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh)
+        public CourseFeedController(ILogService logService, ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh)
         {
-            this.logger = logger;
+            this.logService = logService;
             this.courseCurrentOpportuntiesRefresh = courseCurrentOpportuntiesRefresh;
         }
 
@@ -23,19 +23,19 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         [Route("CourseFeed/RefreshCourses/{documentId}")]
         public async Task<IActionResult> RefreshCourses(Guid documentId)
         {
-            logger.LogInformation($"{nameof(RefreshCourses)} has been called with document Id {documentId}");
+            logService.LogInformation($"{nameof(RefreshCourses)} has been called with document Id {documentId}");
             var feedRefreshResponseViewModel = new FeedRefreshResponseViewModel();
             try
             {
                 //catch any exception that the outgoing request may throw.
                 feedRefreshResponseViewModel.NumberPulled = await courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(documentId).ConfigureAwait(false);
-                logger.LogInformation($"Get courses has succeeded for: document {documentId} - Got {feedRefreshResponseViewModel.NumberPulled} courses");
+                logService.LogInformation($"Get courses has succeeded for: document {documentId} - Got {feedRefreshResponseViewModel.NumberPulled} courses");
                 return Ok(feedRefreshResponseViewModel);
             }
             catch (HttpRequestException httpRequestException)
             {
                 feedRefreshResponseViewModel.RequestErrorMessage = httpRequestException.ToString();
-                logger.LogError($"{nameof(RefreshCourses)} had exception when getting courses for document {documentId}, Exception - {feedRefreshResponseViewModel.RequestErrorMessage}");
+                logService.LogError($"{nameof(RefreshCourses)} had exception when getting courses for document {documentId}, Exception - {feedRefreshResponseViewModel.RequestErrorMessage}");
                 return BadRequest(feedRefreshResponseViewModel);
             }
         }

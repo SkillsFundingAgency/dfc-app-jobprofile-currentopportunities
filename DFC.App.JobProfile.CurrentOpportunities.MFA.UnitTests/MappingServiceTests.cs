@@ -1,17 +1,9 @@
 ﻿using AutoMapper;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
-using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions;
-using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Models;
 using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services;
 using FakeItEasy;
 using FluentAssertions;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Timers;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Net;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests

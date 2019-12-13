@@ -11,6 +11,7 @@ using DFC.App.JobProfile.CurrentOpportunities.SegmentService;
 using DFC.FindACourseClient;
 using DFC.FindACourseClient.Contracts;
 using DFC.FindACourseClient.Models.Configuration;
+using DFC.Logger.AppInsights.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -90,8 +91,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             services.AddScoped<IAVCurrentOpportuntiesRefresh, AVCurrentOpportuntiesRefresh>();
             services.AddScoped<ICurrentOpportunitiesSegmentService, CurrentOpportunitiesSegmentService>();
             services.AddScoped<ICurrentOpportunitiesSegmentUtilities, CurrentOpportunitiesSegmentUtilities>();
-            services.AddSingleton<IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>, JobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>>();
+            services.AddScoped<IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>, JobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>>();
             services.AddAutoMapper(typeof(Startup).Assembly);
+            services.AddDFCLogging(configuration["ApplicationInsights:InstrumentationKey"]);
 
             services.AddHttpClient<IApprenticeshipVacancyApi, ApprenticeshipVacancyApi>();
             services.AddScoped<IAVAPIService, AVAPIService>();

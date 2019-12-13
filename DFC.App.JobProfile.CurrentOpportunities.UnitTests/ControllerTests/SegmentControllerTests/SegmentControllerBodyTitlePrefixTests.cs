@@ -1,5 +1,4 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.Controllers;
-using DFC.App.JobProfile.CurrentOpportunities.Data;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Data;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
 using FakeItEasy;

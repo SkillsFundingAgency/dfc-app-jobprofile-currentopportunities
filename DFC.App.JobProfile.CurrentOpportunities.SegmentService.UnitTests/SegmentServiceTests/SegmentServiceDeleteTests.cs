@@ -1,9 +1,5 @@
-﻿using AutoMapper;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
-using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using FakeItEasy;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using Xunit;
