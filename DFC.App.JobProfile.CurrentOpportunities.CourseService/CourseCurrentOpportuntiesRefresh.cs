@@ -2,7 +2,7 @@
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.FindACourseClient.Contracts;
-using DFC.FindACourseClient.Models;
+using DFC.FindACourseClient.Models.ExternalInterfaceModels;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using System;
@@ -17,11 +17,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
     {
         private readonly ILogger<CourseCurrentOpportuntiesRefresh> logger;
         private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
-        private readonly ICourseSearchClient courseSearch;
+        private readonly ICourseSearchApiService courseSearch;
         private readonly AutoMapper.IMapper mapper;
         private readonly CourseSearchSettings courseSearchSettings;
 
-        public CourseCurrentOpportuntiesRefresh(ILogger<CourseCurrentOpportuntiesRefresh> logger, ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, ICourseSearchClient courseSearch, AutoMapper.IMapper mapper, CourseSearchSettings courseSearchSettings)
+        public CourseCurrentOpportuntiesRefresh(ILogger<CourseCurrentOpportuntiesRefresh> logger, ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, ICourseSearchApiService courseSearch, AutoMapper.IMapper mapper, CourseSearchSettings courseSearchSettings)
         {
             this.logger = logger;
             this.repository = repository;
@@ -52,7 +52,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
             logger.LogInformation($"{nameof(RefreshCoursesAsync)} has been called for document {documentId}");
             CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel = await repository.GetAsync(d => d.DocumentId == documentId).ConfigureAwait(false);
 
-            IEnumerable<CourseSumary> courseSearchResults = Enumerable.Empty<CourseSumary>();
+            IEnumerable<Course> courseSearchResults = Enumerable.Empty<Course>();
             logger.LogInformation($"Getting course for {currentOpportunitiesSegmentModel.CanonicalName} - course keywords {currentOpportunitiesSegmentModel.Data.Courses.CourseKeywords}");
 
             //if the the call to the courses API fails for anyreason we should log and continue as if there are no courses available.
@@ -67,9 +67,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
                 throw;
             }
 
-            var selectedCourses = SelectCoursesForJobProfile(courseSearchResults);
+            //var selectedCourses = SelectCoursesForJobProfile(courseSearchResults);
             var opportunities = new List<Opportunity>();
-            foreach (var course in selectedCourses)
+            foreach (var course in courseSearchResults)
             {
                 var opportunity = mapper.Map<Opportunity>(course);
                 opportunity.URL = new Uri($"{courseSearchSettings.CourseSearchUrl}{opportunity.CourseId}");
@@ -79,29 +79,29 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
 
             currentOpportunitiesSegmentModel.Data.Courses.Opportunities = opportunities;
             await repository.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
-            return selectedCourses.Count();
+            return courseSearchResults.Count();
         }
 
-        public IEnumerable<CourseSumary> SelectCoursesForJobProfile(IEnumerable<CourseSumary> courses)
-        {
-            if (courses == null)
-            {
-                return Enumerable.Empty<CourseSumary>();
-            }
+        //public IEnumerable<Course> SelectCoursesForJobProfile(IEnumerable<Course> courses)
+        //{
+        //    if (courses == null)
+        //    {
+        //        return Enumerable.Empty<Course>();
+        //    }
 
-            if (courses.Count() > 2)
-            {
-                var distinctProviders = courses.Select(c => c.Provider).Distinct().Count();
-                if (distinctProviders > 1)
-                {
-                    return courses
-                            .GroupBy(c => c.Provider)
-                            .Select(g => g.First())
-                            .Take(2);
-                }
-            }
+        //    if (courses.Count() > 2)
+        //    {
+        //        var distinctProviders = courses.Select(c => c.Provider).Distinct().Count();
+        //        if (distinctProviders > 1)
+        //        {
+        //            return courses
+        //                    .GroupBy(c => c.Provider)
+        //                    .Select(g => g.First())
+        //                    .Take(2);
+        //        }
+        //    }
 
-            return courses.Take(2);
-        }
+        //    return courses.Take(2);
+        //}
     }
 }

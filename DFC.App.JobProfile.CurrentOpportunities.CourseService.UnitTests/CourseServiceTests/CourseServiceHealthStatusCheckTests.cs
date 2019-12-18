@@ -2,7 +2,7 @@
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.FindACourseClient.Contracts;
-using DFC.FindACourseClient.Models;
+using DFC.FindACourseClient.Models.ExternalInterfaceModels;
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -18,7 +18,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
     public class CourseServiceHealthStatusCheckTests
     {
         private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> fakeRepository;
-        private readonly ICourseSearchClient fakeCourseSearchClient;
+        private readonly ICourseSearchApiService fakeCourseSearchClient;
         private readonly AutoMapper.IMapper fakeMapper;
         private readonly CourseSearchSettings courseSearchSettings;
         private readonly ILogger<CourseCurrentOpportuntiesRefresh> fakeLogger;
@@ -32,7 +32,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             fakeRepository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
 
             fakeRepository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
-            fakeCourseSearchClient = A.Fake<ICourseSearchClient>();
+            fakeCourseSearchClient = A.Fake<ICourseSearchApiService>();
             fakeMapper = A.Fake<AutoMapper.IMapper>();
             courseSearchSettings = new CourseSearchSettings()
             {
@@ -71,11 +71,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             serviceHealthStatus.Should().Throw<Exception>();
         }
 
-        private static IEnumerable<CourseSumary> GetTestCourses(int numberToGet)
+        private static IEnumerable<Course> GetTestCourses(int numberToGet)
         {
             for (int ii = 0; ii < numberToGet; ii++)
             {
-                yield return new CourseSumary() { Provider = "Provider A", Title = "Displayed" };
+                yield return new Course() { ProviderName = "Provider A", Title = "Displayed" };
             }
         }
     }

@@ -1,6 +1,4 @@
-﻿using DFC.FindACourseClient.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Data.Contracts
@@ -9,6 +7,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Contracts
     {
         Task<int> RefreshCoursesAsync(Guid documentId);
 
-        IEnumerable<CourseSumary> SelectCoursesForJobProfile(IEnumerable<CourseSumary> courses);
+        //IEnumerable<Course> SelectCoursesForJobProfile(IEnumerable<Course> courses);
     }
 }

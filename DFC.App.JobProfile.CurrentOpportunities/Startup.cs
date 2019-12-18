@@ -11,6 +11,7 @@ using DFC.App.JobProfile.CurrentOpportunities.SegmentService;
 using DFC.FindACourseClient;
 using DFC.FindACourseClient.Contracts;
 using DFC.FindACourseClient.Models.Configuration;
+using DFC.FindACourseClient.Services;
 using DFC.Logger.AppInsights.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -21,6 +22,7 @@ using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
+using DFC.FindACourseClient.HttpClientPolicies;
 
 namespace DFC.App.JobProfile.CurrentOpportunities
 {
@@ -34,6 +36,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
         public const string CourseSearchAppSettings = "Configuration:CourseSearch";
         public const string CourseSearchClientSvcSettings = "Configuration:CourseSearchClient:CourseSearchSvc";
         public const string CourseSearchClientAuditSettings = "Configuration:CourseSearchClient:CosmosAuditConnection";
+        public const string CourseSearchClientPolicySettings = "Configuration:CourseSearchClient:Policies";
 
         private readonly IConfiguration configuration;
 
@@ -62,9 +65,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             {
                 CourseSearchSvcSettings = configuration.GetSection(CourseSearchClientSvcSettings).Get<CourseSearchSvcSettings>() ?? new CourseSearchSvcSettings(),
                 CourseSearchAuditCosmosDbSettings = configuration.GetSection(CourseSearchClientAuditSettings).Get<CourseSearchAuditCosmosDbSettings>() ?? new CourseSearchAuditCosmosDbSettings(),
+                PolicyOptions = configuration.GetSection(CourseSearchClientPolicySettings).Get<PolicyOptions>() ?? new PolicyOptions(),
             };
             services.AddSingleton(courseSearchClientSettings);
-            services.AddSingleton<ICourseSearchClient, CourseSearchClient>();
+            services.AddScoped<ICourseSearchApiService, CourseSearchApiService>();
             services.AddFindACourseServices(courseSearchClientSettings);
 
             var serviceBusOptions = configuration.GetSection(ServiceBusOptionsAppSettings).Get<ServiceBusOptions>();
