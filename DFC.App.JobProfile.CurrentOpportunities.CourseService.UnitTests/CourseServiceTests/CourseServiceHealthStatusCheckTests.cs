@@ -1,8 +1,6 @@
 ﻿using DFC.App.FindACourseClient.Models.Configuration;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
-using DFC.FindACourseClient.Contracts;
-using DFC.FindACourseClient.Models.ExternalInterfaceModels;
+using DFC.FindACourseClient;
 using FakeItEasy;
 using FluentAssertions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -17,7 +15,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
     [Trait("Course Current Opportunties Refresh", "Health Status Tests")]
     public class CourseServiceHealthStatusCheckTests
     {
-        private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> fakeRepository;
+        private readonly Data.Contracts.ICosmosRepository<CurrentOpportunitiesSegmentModel> fakeRepository;
         private readonly ICourseSearchApiService fakeCourseSearchClient;
         private readonly AutoMapper.IMapper fakeMapper;
         private readonly CourseSearchSettings courseSearchSettings;
@@ -29,9 +27,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             fakeLogger = A.Fake<ILogger<CourseCurrentOpportuntiesRefresh>>();
             dummyHealthCheckContext = A.Dummy<HealthCheckContext>();
             fakeLogger = A.Fake<ILogger<CourseCurrentOpportuntiesRefresh>>();
-            fakeRepository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
-
-            fakeRepository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
+            fakeRepository = A.Fake<Data.Contracts.ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
             fakeCourseSearchClient = A.Fake<ICourseSearchApiService>();
             fakeMapper = A.Fake<AutoMapper.IMapper>();
             courseSearchSettings = new CourseSearchSettings()

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DFC.App.FindACourseClient.Models.Configuration;
+using DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles;
 using DFC.App.JobProfile.CurrentOpportunities.AVService;
 using DFC.App.JobProfile.CurrentOpportunities.CourseService;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
@@ -9,9 +10,6 @@ using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
 using DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb;
 using DFC.App.JobProfile.CurrentOpportunities.SegmentService;
 using DFC.FindACourseClient;
-using DFC.FindACourseClient.Contracts;
-using DFC.FindACourseClient.Models.Configuration;
-using DFC.FindACourseClient.Services;
 using DFC.Logger.AppInsights.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -21,8 +19,8 @@ using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using DFC.FindACourseClient.HttpClientPolicies;
 
 namespace DFC.App.JobProfile.CurrentOpportunities
 {
@@ -75,7 +73,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             var topicClient = new TopicClient(serviceBusOptions.ServiceBusConnectionString, serviceBusOptions.TopicName);
             services.AddSingleton<ITopicClient>(topicClient);
 
-            services.AddSingleton<ICosmosRepository<CurrentOpportunitiesSegmentModel>, CosmosRepository<CurrentOpportunitiesSegmentModel>>(s =>
+            services.AddSingleton<Data.Contracts.ICosmosRepository<CurrentOpportunitiesSegmentModel>, CosmosRepository<CurrentOpportunitiesSegmentModel>>(s =>
             {
                 var cosmosDbConnection = configuration.GetSection(CosmosDbConfigAppSettings).Get<CosmosDbConnection>();
                 var documentClient = new DocumentClient(cosmosDbConnection.EndpointUrl, cosmosDbConnection.AccessKey);
@@ -83,7 +81,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
                 return new CosmosRepository<CurrentOpportunitiesSegmentModel>(cosmosDbConnection, documentClient, s.GetService<IHostingEnvironment>());
             });
 
-            services.AddSingleton<ICosmosRepository<APIAuditRecordAV>, CosmosRepository<APIAuditRecordAV>>(s =>
+            services.AddSingleton<Data.Contracts.ICosmosRepository<APIAuditRecordAV>, CosmosRepository<APIAuditRecordAV>>(s =>
             {
                 var cosmosDbAuditConnection = configuration.GetSection(AVFeedAuditSettings).Get<CosmosDbConnection>();
                 var documentClient = new DocumentClient(cosmosDbAuditConnection.EndpointUrl, cosmosDbAuditConnection.AccessKey);
@@ -96,9 +94,21 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             services.AddScoped<ICurrentOpportunitiesSegmentService, CurrentOpportunitiesSegmentService>();
             services.AddScoped<ICurrentOpportunitiesSegmentUtilities, CurrentOpportunitiesSegmentUtilities>();
             services.AddScoped<IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>, JobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>>();
-            services.AddAutoMapper(typeof(Startup).Assembly);
-            services.AddDFCLogging(configuration["ApplicationInsights:InstrumentationKey"]);
+            services.AddSingleton(serviceProvider =>
+             {
+                 return new MapperConfiguration(cfg =>
+                 {
+                     cfg.AddProfiles(
+                         new List<Profile>
+                         {
+                            new CurrentOpportunitiesSegmentModelProfile(),
+                            new CoursesProfile(),
+                            new ApprenticeshipProfile(),
+                         });
+                 }).CreateMapper();
+             });
 
+            services.AddDFCLogging(configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddHttpClient<IApprenticeshipVacancyApi, ApprenticeshipVacancyApi>();
             services.AddScoped<IAVAPIService, AVAPIService>();
 

@@ -63,8 +63,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests
                     Frameworks = new List<ApprenticeshipFramework>(),
                     Vacancies = new List<Vacancy>()
                     {
-                        new Vacancy { ApprenticeshipId = $"1{index}", Location = new Location() { PostCode = $"PC1{index}", Town = $"Location1{index}" }, Title = $"Title1{index}", WageUnit = $"£10{index}", WageText = $"Per 1{index} days" },
-                        new Vacancy { ApprenticeshipId = $"2{index}", Location = new Location() { PostCode = $"PC2{index}", Town = $"Location2{index}" }, Title = $"Title2{index}", WageUnit = $"£10{index}", WageText = $"Per 2{index} days" },
+                        new Vacancy { ApprenticeshipId = $"1{index}", Location = new Location { Town = $"Location1{index}" }, Title = $"Title1{index}", WageUnit = $"£10{index}", WageText = $"Per 1{index} days" },
+                        new Vacancy { ApprenticeshipId = $"2{index}", Location = new Location { Town = $"Location2{index}" }, Title = $"Title2{index}", WageUnit = $"£10{index}", WageText = $"Per 2{index} days" },
                     },
                 },
                 Courses = new Courses()
@@ -72,8 +72,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.IntegrationTests
                     CourseKeywords = $"CousreKeyword{index}",
                     Opportunities = new List<Opportunity>()
                     {
-                        new Opportunity() { CourseId = $"1{index}", Location = new Location() { PostCode = $"PC1{index}", Town = $"Location1{index}" }, Provider = $"Provider1{index}", Title = $"Title1{index}" },
-                        new Opportunity() { CourseId = $"2{index}", Location = new Location() { PostCode = $"PC1{index}", Town = $"Location1{index}" }, Provider = $"Provider2{index}", Title = $"Title2{index}" },
+                        new Opportunity() { CourseId = $"1{index}", Location = new Location { Town = $"Location1{index}" }, Provider = $"Provider1{index}", Title = $"Title1{index}" },
+                        new Opportunity() { CourseId = $"2{index}", Location = new Location { Town = $"Location1{index}" }, Provider = $"Provider2{index}", Title = $"Title2{index}" },
                     },
                 },
             };
