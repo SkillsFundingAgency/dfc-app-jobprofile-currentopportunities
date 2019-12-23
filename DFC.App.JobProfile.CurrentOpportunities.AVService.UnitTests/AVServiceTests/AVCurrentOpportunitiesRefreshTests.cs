@@ -20,8 +20,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
         NoneAvailable,
     }
 
-    [Trait("AVCurrentOpportuntiesRefresh", "Tests")]
-    public class AVCurrentOpportuntiesRefreshTests
+    [Trait("AVCurrentOpportunitiesRefresh", "Tests")]
+    public class AVCurrentOpportunitiesRefreshTests
     {
         [Theory]
         [InlineData(Scenario.OnlySingleProviderMoreThanTwo, 2)]
@@ -36,10 +36,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
             var fakeAVAPIService = A.Fake<AVAPIService>();
             var fakeMapper = A.Fake<AutoMapper.IMapper>();
 
-            var aVCurrentOpportuntiesRefresh = new AVCurrentOpportuntiesRefresh(fakeLogger, fakeRepository, fakeAVAPIService, fakeMapper);
+            var aVCurrentOpportunitiesRefresh = new AVCurrentOpportuntiesRefresh(fakeLogger, fakeRepository, fakeAVAPIService, fakeMapper);
 
             //Act
-            var projectedVacancies = aVCurrentOpportuntiesRefresh.ProjectVacanciesForProfile(GetTestMappedVacancySummary(scenario));
+            var projectedVacancies = aVCurrentOpportunitiesRefresh.ProjectVacanciesForProfile(GetTestMappedVacancySummary(scenario));
 
             //Asserts
             CheckResultIsAsExpected(projectedVacancies, expectedNumberDisplayed);
@@ -86,10 +86,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
             A.CallTo(() => fakeAVAPIService.GetApprenticeshipVacancyDetailsAsync(A<int>.Ignored)).Returns(A.Dummy<ApprenticeshipVacancyDetails>());
             A.CallTo(() => fakeMapper.Map<Vacancy>(A<ApprenticeshipVacancyDetails>.Ignored)).Returns(A.Dummy<Vacancy>());
 
-            var aVCurrentOpportuntiesRefresh = new AVCurrentOpportuntiesRefresh(fakeLogger, fakeRepository, fakeAVAPIService, fakeMapper);
+            var aVCurrentOpportunitiesRefresh = new AVCurrentOpportuntiesRefresh(fakeLogger, fakeRepository, fakeAVAPIService, fakeMapper);
 
             //Act
-            var result = aVCurrentOpportuntiesRefresh.RefreshApprenticeshipVacanciesAsync(A.Dummy<Guid>()).Result;
+            var result = aVCurrentOpportunitiesRefresh.RefreshApprenticeshipVacanciesAsync(A.Dummy<Guid>()).Result;
 
             //Asserts
             result.Should().Be(numberVacanciesFound);

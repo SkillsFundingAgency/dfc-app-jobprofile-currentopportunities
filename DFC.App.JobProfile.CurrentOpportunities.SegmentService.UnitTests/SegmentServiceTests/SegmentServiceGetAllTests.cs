@@ -19,13 +19,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             // arrange
             var expectedResults = A.CollectionOfFake<CurrentOpportunitiesSegmentModel>(2);
 
-            A.CallTo(() => repository.GetAllAsync()).Returns(expectedResults);
+            A.CallTo(() => FakeRepository.GetAllAsync()).Returns(expectedResults);
 
             // act
             var results = await CurrentOpportunitiesSegmentService.GetAllAsync().ConfigureAwait(false);
 
             // assert
-            A.CallTo(() => repository.GetAllAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeRepository.GetAllAsync()).MustHaveHappenedOnceExactly();
             A.Equals(results, expectedResults);
         }
 
@@ -35,13 +35,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             // arrange
             IEnumerable<CurrentOpportunitiesSegmentModel> expectedResults = null;
 
-            A.CallTo(() => repository.GetAllAsync()).Returns(expectedResults);
+            A.CallTo(() => FakeRepository.GetAllAsync()).Returns(expectedResults);
 
             // act
             var results = await CurrentOpportunitiesSegmentService.GetAllAsync().ConfigureAwait(false);
 
             // assert
-            A.CallTo(() => repository.GetAllAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeRepository.GetAllAsync()).MustHaveHappenedOnceExactly();
             A.Equals(results, expectedResults);
         }
     }

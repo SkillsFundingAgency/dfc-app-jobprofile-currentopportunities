@@ -9,6 +9,7 @@ using Microsoft.Net.Http.Headers;
 using System;
 using System.Net.Http;
 using System.Net.Mime;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.FeedsControllerTests
@@ -18,27 +19,27 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Feed
         public FeedsControllerRefreshApprenticeshipsTests()
         {
             FakeLogger = A.Fake<ILogService>();
-            FakeAVCurrentOpportuntiesRefresh = A.Fake<IAVCurrentOpportuntiesRefresh>();
+            FakeIAVCurrentOpportunitiesRefresh = A.Fake<IAVCurrentOpportunitiesRefresh>();
         }
 
         protected ILogService FakeLogger { get; }
 
-        protected IAVCurrentOpportuntiesRefresh FakeAVCurrentOpportuntiesRefresh { get; }
+        protected IAVCurrentOpportunitiesRefresh FakeIAVCurrentOpportunitiesRefresh { get; }
 
         [Fact]
-        public async void FeedsControllerRefreshApprenticeshipsReturnsSuccess()
+        public async Task FeedsControllerRefreshApprenticeshipsReturnsSuccess()
         {
             // Arrange
             const int expectedResult = 9;
             var controller = BuildFeedsController();
 
-            A.CallTo(() => FakeAVCurrentOpportuntiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).Returns(expectedResult);
+            A.CallTo(() => FakeIAVCurrentOpportunitiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).Returns(expectedResult);
 
             // Act
             var result = await controller.RefreshApprenticeships(Guid.NewGuid()).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeAVCurrentOpportuntiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeIAVCurrentOpportunitiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
 
             var jsonResult = Assert.IsType<OkObjectResult>(result);
             var model = Assert.IsAssignableFrom<FeedRefreshResponseViewModel>(jsonResult.Value);
@@ -50,20 +51,20 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Feed
         }
 
         [Fact]
-        public async void FeedsControllerDRefreshApprenticeshipsExceptionReturnsError()
+        public async Task FeedsControllerDRefreshApprenticeshipsExceptionReturnsError()
         {
             // Arrange
             const int expectedResult = 0;
             const string expectedErrorMessage = "Exception of type 'System.Net.Http.HttpRequestException' was thrown.";
             var controller = BuildFeedsController();
 
-            A.CallTo(() => FakeAVCurrentOpportuntiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).Throws(new HttpRequestException());
+            A.CallTo(() => FakeIAVCurrentOpportunitiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).Throws(new HttpRequestException());
 
             // Act
             var result = await controller.RefreshApprenticeships(Guid.NewGuid()).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeAVCurrentOpportuntiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeIAVCurrentOpportunitiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
 
             var jsonResult = Assert.IsType<BadRequestObjectResult>(result);
             var model = Assert.IsAssignableFrom<FeedRefreshResponseViewModel>(jsonResult.Value);
@@ -80,7 +81,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Feed
 
             httpContext.Request.Headers[HeaderNames.Accept] = MediaTypeNames.Application.Json;
 
-            var controller = new FeedsController(FakeLogger, FakeAVCurrentOpportuntiesRefresh)
+            var controller = new FeedsController(FakeLogger, FakeIAVCurrentOpportunitiesRefresh)
             {
                 ControllerContext = new ControllerContext()
                 {

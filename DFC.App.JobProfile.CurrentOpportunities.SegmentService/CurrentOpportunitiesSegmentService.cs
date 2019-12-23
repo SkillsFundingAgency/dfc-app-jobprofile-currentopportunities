@@ -18,18 +18,18 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
     public class CurrentOpportunitiesSegmentService : ICurrentOpportunitiesSegmentService, IHealthCheck
     {
         private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
-        private readonly ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh;
-        private readonly IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh;
+        private readonly ICourseCurrentOpportunitiesRefresh courseCurrentOpportunitiesRefresh;
+        private readonly IAVCurrentOpportunitiesRefresh aVCurrentOpportunatiesRefresh;
         private readonly ILogger<CurrentOpportunitiesSegmentService> logger;
         private readonly IMapper mapper;
         private readonly IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> jobProfileSegmentRefreshService;
         private readonly ICurrentOpportunitiesSegmentUtilities currentOpportunitiesSegmentUtilities;
 
-        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh, IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh, ILogger<CurrentOpportunitiesSegmentService> logger, IMapper mapper, IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> jobProfileSegmentRefreshService, ICurrentOpportunitiesSegmentUtilities currentOpportunitiesSegmentUtilities)
+        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, ICourseCurrentOpportunitiesRefresh courseCurrentOpportunitiesRefresh, IAVCurrentOpportunitiesRefresh aVCurrentOpportunatiesRefresh, ILogger<CurrentOpportunitiesSegmentService> logger, IMapper mapper, IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> jobProfileSegmentRefreshService, ICurrentOpportunitiesSegmentUtilities currentOpportunitiesSegmentUtilities)
         {
             this.repository = repository;
             this.aVCurrentOpportunatiesRefresh = aVCurrentOpportunatiesRefresh;
-            this.courseCurrentOpportuntiesRefresh = courseCurrentOpportuntiesRefresh;
+            this.courseCurrentOpportunitiesRefresh = courseCurrentOpportunitiesRefresh;
             this.logger = logger;
             this.mapper = mapper;
             this.jobProfileSegmentRefreshService = jobProfileSegmentRefreshService;
@@ -239,13 +239,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 var refreshJobProfileSegmentServiceBusModel = mapper.Map<RefreshJobProfileSegmentServiceBusModel>(existingSegmentModel);
 
                 var aVCurrentOpportunatiesRefreshTask = Task.Run(() => aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(existingSegmentModel.DocumentId));
-                var courseRefreshTask = Task.Run(() => courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(existingSegmentModel.DocumentId));
+                var courseRefreshTask = Task.Run(() => courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(existingSegmentModel.DocumentId));
                 var jobProfileSegmentRefreshTask = Task.Run(() => jobProfileSegmentRefreshService.SendMessageAsync(refreshJobProfileSegmentServiceBusModel).ConfigureAwait(false));
 
-                await Task.WhenAll(aVCurrentOpportunatiesRefreshTask, courseRefreshTask, jobProfileSegmentRefreshTask).ContinueWith((x) =>
-                {
-                    LogTaskException(x.Exception);
-                }).ConfigureAwait(false);
+                await Task.WhenAll(aVCurrentOpportunatiesRefreshTask, courseRefreshTask, jobProfileSegmentRefreshTask).ContinueWith((x) => LogTaskException(x.Exception)).ConfigureAwait(false);
             }
 
             return result;
@@ -253,10 +250,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
 
         private void LogTaskException(AggregateException exception)
         {
-            if (exception != null && exception.InnerExceptions != null)
-            {
-                exception.InnerExceptions.ToList().ForEach(x => logger.LogError(x.Message));
-            }
+            exception?.InnerExceptions?.ToList().ForEach(x => logger.LogError(x.Message));
         }
     }
 }

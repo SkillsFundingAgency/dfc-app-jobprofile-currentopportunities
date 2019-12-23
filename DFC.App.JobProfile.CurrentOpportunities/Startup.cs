@@ -43,6 +43,27 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             this.configuration = configuration;
         }
 
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public static void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+
+                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseHsts();
+            }
+
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseCookiePolicy();
+            app.UseMvcWithDefaultRoute();
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -73,7 +94,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             var topicClient = new TopicClient(serviceBusOptions.ServiceBusConnectionString, serviceBusOptions.TopicName);
             services.AddSingleton<ITopicClient>(topicClient);
 
-            services.AddSingleton<Data.Contracts.ICosmosRepository<CurrentOpportunitiesSegmentModel>, CosmosRepository<CurrentOpportunitiesSegmentModel>>(s =>
+            services.AddSingleton<ICosmosRepository<CurrentOpportunitiesSegmentModel>, CosmosRepository<CurrentOpportunitiesSegmentModel>>(s =>
             {
                 var cosmosDbConnection = configuration.GetSection(CosmosDbConfigAppSettings).Get<CosmosDbConnection>();
                 var documentClient = new DocumentClient(cosmosDbConnection.EndpointUrl, cosmosDbConnection.AccessKey);
@@ -81,7 +102,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
                 return new CosmosRepository<CurrentOpportunitiesSegmentModel>(cosmosDbConnection, documentClient, s.GetService<IHostingEnvironment>());
             });
 
-            services.AddSingleton<Data.Contracts.ICosmosRepository<APIAuditRecordAV>, CosmosRepository<APIAuditRecordAV>>(s =>
+            services.AddSingleton<ICosmosRepository<APIAuditRecordAV>, CosmosRepository<APIAuditRecordAV>>(s =>
             {
                 var cosmosDbAuditConnection = configuration.GetSection(AVFeedAuditSettings).Get<CosmosDbConnection>();
                 var documentClient = new DocumentClient(cosmosDbAuditConnection.EndpointUrl, cosmosDbAuditConnection.AccessKey);
@@ -89,8 +110,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities
                 return new CosmosRepository<APIAuditRecordAV>(cosmosDbAuditConnection, documentClient, s.GetService<IHostingEnvironment>());
             });
 
-            services.AddScoped<ICourseCurrentOpportuntiesRefresh, CourseCurrentOpportuntiesRefresh>();
-            services.AddScoped<IAVCurrentOpportuntiesRefresh, AVCurrentOpportuntiesRefresh>();
+            services.AddScoped<ICourseCurrentOpportunitiesRefresh, CourseCurrentOpportunitiesRefresh>();
+            services.AddScoped<IAVCurrentOpportunitiesRefresh, AVCurrentOpportuntiesRefresh>();
             services.AddScoped<ICurrentOpportunitiesSegmentService, CurrentOpportunitiesSegmentService>();
             services.AddScoped<ICurrentOpportunitiesSegmentUtilities, CurrentOpportunitiesSegmentUtilities>();
             services.AddScoped<IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>, JobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>>();
@@ -104,6 +125,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
                             new CurrentOpportunitiesSegmentModelProfile(),
                             new CoursesProfile(),
                             new ApprenticeshipProfile(),
+                            new FindACourseProfile(),
                          });
                  }).CreateMapper();
              });
@@ -114,31 +136,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities
 
             services.AddHealthChecks()
             .AddCheck<CurrentOpportunitiesSegmentService>("Current Opportunities Segment Service")
-            .AddCheck<CourseCurrentOpportuntiesRefresh>("Course Search")
+            .AddCheck<CourseCurrentOpportunitiesRefresh>("Course Search")
             .AddCheck<AVAPIService>("Apprenticeship Service");
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseCookiePolicy();
-            app.UseMvcWithDefaultRoute();
         }
     }
 }

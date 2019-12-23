@@ -12,15 +12,15 @@ using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
 {
-    public class CourseCurrentOpportuntiesRefresh : ICourseCurrentOpportuntiesRefresh, IHealthCheck
+    public class CourseCurrentOpportunitiesRefresh : ICourseCurrentOpportunitiesRefresh, IHealthCheck
     {
-        private readonly ILogger<CourseCurrentOpportuntiesRefresh> logger;
+        private readonly ILogger<CourseCurrentOpportunitiesRefresh> logger;
         private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
         private readonly ICourseSearchApiService courseSearchApiService;
         private readonly AutoMapper.IMapper mapper;
         private readonly CourseSearchSettings courseSearchSettings;
 
-        public CourseCurrentOpportuntiesRefresh(ILogger<CourseCurrentOpportuntiesRefresh> logger, ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, ICourseSearchApiService courseSearchApiService, AutoMapper.IMapper mapper, CourseSearchSettings courseSearchSettings)
+        public CourseCurrentOpportunitiesRefresh(ILogger<CourseCurrentOpportunitiesRefresh> logger, ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, ICourseSearchApiService courseSearchApiService, AutoMapper.IMapper mapper, CourseSearchSettings courseSearchSettings)
         {
             this.logger = logger;
             this.repository = repository;
@@ -31,7 +31,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
 
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
-            var description = $"{typeof(CourseCurrentOpportuntiesRefresh).Namespace} - SearchKeywords used [{courseSearchSettings.HealthCheckKeyWords}]";
+            var description = $"{typeof(CourseCurrentOpportunitiesRefresh).Namespace} - SearchKeywords used [{courseSearchSettings.HealthCheckKeyWords}]";
             logger.LogInformation($"{nameof(CheckHealthAsync)} has been called - service {description}");
 
             var result = await courseSearchApiService.GetCoursesAsync(courseSearchSettings.HealthCheckKeyWords).ConfigureAwait(false);

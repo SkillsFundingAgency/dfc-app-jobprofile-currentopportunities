@@ -27,38 +27,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             this.mapper = mapper;
         }
 
-        private static string GetJobTitleWithPrefix(string titlePrefix, string title, string contentTitle)
-        {
-            var changedTitle = string.IsNullOrWhiteSpace(contentTitle) ? title?.ToLower(new CultureInfo("en-GB")) : contentTitle;
-
-            if (string.IsNullOrWhiteSpace(changedTitle))
-            {
-                return string.Empty;
-            }
-
-            switch (titlePrefix)
-            {
-                case Constants.TitleNoPrefix:
-                    return $"{changedTitle}";
-
-                case Constants.TitlePrefixWithA:
-                    return $"a {changedTitle}";
-
-                case Constants.TitlePrefixWithAn:
-                    return $"an {changedTitle}";
-
-                case Constants.TitleNoTitle:
-                    return string.Empty;
-
-                default:
-                    return GetDefaultDynamicTitle(changedTitle);
-            }
-        }
-
-        private static string GetDefaultDynamicTitle(string title) => IsStartsWithVowel(title) ? $"an {title}" : $"a {title}";
-
-        private static bool IsStartsWithVowel(string title) => new[] { 'a', 'e', 'i', 'o', 'u' }.Contains(title.ToLower(new CultureInfo("en-GB")).First());
-
         [HttpGet]
         [Route("/")]
         [Route("/Segment")]
@@ -288,5 +256,37 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
 
             return Ok();
         }
+
+        private static string GetJobTitleWithPrefix(string titlePrefix, string title, string contentTitle)
+        {
+            var changedTitle = string.IsNullOrWhiteSpace(contentTitle) ? title?.ToLower(new CultureInfo("en-GB")) : contentTitle;
+
+            if (string.IsNullOrWhiteSpace(changedTitle))
+            {
+                return string.Empty;
+            }
+
+            switch (titlePrefix)
+            {
+                case Constants.TitleNoPrefix:
+                    return $"{changedTitle}";
+
+                case Constants.TitlePrefixWithA:
+                    return $"a {changedTitle}";
+
+                case Constants.TitlePrefixWithAn:
+                    return $"an {changedTitle}";
+
+                case Constants.TitleNoTitle:
+                    return string.Empty;
+
+                default:
+                    return GetDefaultDynamicTitle(changedTitle);
+            }
+        }
+
+        private static string GetDefaultDynamicTitle(string title) => IsStartsWithVowel(title) ? $"an {title}" : $"a {title}";
+
+        private static bool IsStartsWithVowel(string title) => new[] { 'a', 'e', 'i', 'o', 'u' }.Contains(title.ToLower(new CultureInfo("en-GB")).First());
     }
 }

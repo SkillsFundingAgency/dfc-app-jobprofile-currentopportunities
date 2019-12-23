@@ -18,12 +18,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Cour
         public CourseFeedControllerRefreshApprenticeshipsTests()
         {
             FakeLogger = A.Fake<ILogService>();
-            FakeCourseCurrentOpportuntiesRefresh = A.Fake<ICourseCurrentOpportuntiesRefresh>();
+            FakeCourseCurrentOpportunitiesRefresh = A.Fake<ICourseCurrentOpportunitiesRefresh>();
         }
 
         protected ILogService FakeLogger { get; }
 
-        protected ICourseCurrentOpportuntiesRefresh FakeCourseCurrentOpportuntiesRefresh { get; }
+        protected ICourseCurrentOpportunitiesRefresh FakeCourseCurrentOpportunitiesRefresh { get; }
 
         [Fact]
         public async void CourseFeedControllerRefreshApprenticeshipsReturnsSuccess()
@@ -32,13 +32,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Cour
             const int expectedResult = 9;
             var controller = BuildCourseFeedController();
 
-            A.CallTo(() => FakeCourseCurrentOpportuntiesRefresh.RefreshCoursesAsync(A<Guid>.Ignored)).Returns(expectedResult);
+            A.CallTo(() => FakeCourseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A<Guid>.Ignored)).Returns(expectedResult);
 
             // Act
             var result = await controller.RefreshCourses(Guid.NewGuid()).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeCourseCurrentOpportuntiesRefresh.RefreshCoursesAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeCourseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
 
             var jsonResult = Assert.IsType<OkObjectResult>(result);
             var model = Assert.IsAssignableFrom<FeedRefreshResponseViewModel>(jsonResult.Value);
@@ -57,13 +57,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Cour
             const string expectedErrorMessage = "System.Net.Http.HttpRequestException: Exception of type 'System.Net.Http.HttpRequestException' was thrown.";
             var controller = BuildCourseFeedController();
 
-            A.CallTo(() => FakeCourseCurrentOpportuntiesRefresh.RefreshCoursesAsync(A<Guid>.Ignored)).Throws(new HttpRequestException());
+            A.CallTo(() => FakeCourseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A<Guid>.Ignored)).Throws(new HttpRequestException());
 
             // Act
             var result = await controller.RefreshCourses(Guid.NewGuid()).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeCourseCurrentOpportuntiesRefresh.RefreshCoursesAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeCourseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
 
             var jsonResult = Assert.IsType<BadRequestObjectResult>(result);
             var model = Assert.IsAssignableFrom<FeedRefreshResponseViewModel>(jsonResult.Value);
@@ -80,7 +80,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Cour
 
             httpContext.Request.Headers[HeaderNames.Accept] = MediaTypeNames.Application.Json;
 
-            var controller = new CourseFeedController(FakeLogger, FakeCourseCurrentOpportuntiesRefresh)
+            var controller = new CourseFeedController(FakeLogger, FakeCourseCurrentOpportunitiesRefresh)
             {
                 ControllerContext = new ControllerContext()
                 {
