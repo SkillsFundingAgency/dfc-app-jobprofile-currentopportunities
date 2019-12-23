@@ -11,9 +11,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
     public class FeedsController : Controller
     {
         private readonly ILogService logService;
-        private readonly IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh;
+        private readonly IAVCurrentOpportunitiesRefresh aVCurrentOpportunatiesRefresh;
 
-        public FeedsController(ILogService logService, IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh)
+        public FeedsController(ILogService logService, IAVCurrentOpportunitiesRefresh aVCurrentOpportunatiesRefresh)
         {
             this.logService = logService;
             this.aVCurrentOpportunatiesRefresh = aVCurrentOpportunatiesRefresh;

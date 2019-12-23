@@ -20,13 +20,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             Guid documentId = Guid.NewGuid();
             var expectedResult = true;
 
-            A.CallTo(() => repository.DeleteAsync(documentId)).Returns(HttpStatusCode.NoContent);
+            A.CallTo(() => FakeRepository.DeleteAsync(documentId)).Returns(HttpStatusCode.NoContent);
 
             // act
             var result = CurrentOpportunitiesSegmentService.DeleteAsync(documentId).Result;
 
             // assert
-            A.CallTo(() => repository.DeleteAsync(documentId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeRepository.DeleteAsync(documentId)).MustHaveHappenedOnceExactly();
             A.Equals(result, expectedResult);
         }
 
@@ -37,13 +37,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             Guid documentId = Guid.NewGuid();
             var expectedResult = false;
 
-            A.CallTo(() => repository.DeleteAsync(documentId)).Returns(HttpStatusCode.BadRequest);
+            A.CallTo(() => FakeRepository.DeleteAsync(documentId)).Returns(HttpStatusCode.BadRequest);
 
             // act
             var result = CurrentOpportunitiesSegmentService.DeleteAsync(documentId).Result;
 
             // assert
-            A.CallTo(() => repository.DeleteAsync(documentId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeRepository.DeleteAsync(documentId)).MustHaveHappenedOnceExactly();
             A.Equals(result, expectedResult);
         }
 
@@ -55,13 +55,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             var careerPathSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
             var expectedResult = false;
 
-            A.CallTo(() => repository.DeleteAsync(documentId)).Returns(HttpStatusCode.FailedDependency);
+            A.CallTo(() => FakeRepository.DeleteAsync(documentId)).Returns(HttpStatusCode.FailedDependency);
 
             // act
             var result = CurrentOpportunitiesSegmentService.DeleteAsync(documentId).Result;
 
             // assert
-            A.CallTo(() => repository.DeleteAsync(documentId)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeRepository.DeleteAsync(documentId)).MustHaveHappenedOnceExactly();
             A.Equals(result, expectedResult);
         }
     }

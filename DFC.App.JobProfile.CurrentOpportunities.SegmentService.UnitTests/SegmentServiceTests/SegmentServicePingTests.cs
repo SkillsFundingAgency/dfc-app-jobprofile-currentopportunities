@@ -15,13 +15,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         {
             // arrange
             var expectedResult = true;
-            A.CallTo(() => repository.PingAsync()).Returns(expectedResult);
+            A.CallTo(() => FakeRepository.PingAsync()).Returns(expectedResult);
 
             // act
             var result = CurrentOpportunitiesSegmentService.PingAsync().Result;
 
             // assert
-            A.CallTo(() => repository.PingAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeRepository.PingAsync()).MustHaveHappenedOnceExactly();
             A.Equals(result, expectedResult);
         }
 
@@ -31,13 +31,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             // arrange
             var expectedResult = false;
 
-            A.CallTo(() => repository.PingAsync()).Returns(expectedResult);
+            A.CallTo(() => FakeRepository.PingAsync()).Returns(expectedResult);
 
             // act
             var result = CurrentOpportunitiesSegmentService.PingAsync().Result;
 
             // assert
-            A.CallTo(() => repository.PingAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeRepository.PingAsync()).MustHaveHappenedOnceExactly();
             A.Equals(result, expectedResult);
         }
     }

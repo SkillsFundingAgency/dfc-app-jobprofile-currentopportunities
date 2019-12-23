@@ -49,8 +49,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
                 var results = await refreshService.GetListAsync().ConfigureAwait(false);
 
                 // assert
-                A.Equals(results, expectedResults);
+                Assert.Equal(expectedResults.Count, results.Count);
             }
+
+            httpResponse.Dispose();
+            fakeHttpMessageHandler.Dispose();
         }
 
         [Fact]
@@ -73,8 +76,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
                 var results = await refreshService.GetListAsync().ConfigureAwait(false);
 
                 // assert
-                A.Equals(results, expectedResults);
+                Assert.Equal(expectedResults, results);
             }
+
+            httpResponse.Dispose();
+            fakeHttpMessageHandler.Dispose();
         }
     }
 }

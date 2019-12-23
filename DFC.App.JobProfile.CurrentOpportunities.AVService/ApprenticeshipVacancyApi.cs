@@ -39,11 +39,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
                 var response = await httpClient.GetAsync(new Uri(fullRequest)).ConfigureAwait(false);
 
                 //Even if there is a bad response code still read and write the resposne into the audit as it may have information about the cause.
-                string responseContent = await (response.Content?.ReadAsStringAsync()).ConfigureAwait(false);
+                var responseContent = await (response?.Content?.ReadAsStringAsync()).ConfigureAwait(false);
                 var auditRecord = new APIAuditRecordAV() { DocumentId = Guid.NewGuid(),  CorrelationId = correlationId, Request = fullRequest, Response = responseContent };
                 await auditRepository.UpsertAsync(auditRecord).ConfigureAwait(false);
 
-                if (!response.IsSuccessStatusCode)
+                if (response != null && !response.IsSuccessStatusCode)
                 {
                     logger.LogError($"Error status {response.StatusCode},  Getting API data for request :'{fullRequest}' \nResponse : {responseContent}");
 

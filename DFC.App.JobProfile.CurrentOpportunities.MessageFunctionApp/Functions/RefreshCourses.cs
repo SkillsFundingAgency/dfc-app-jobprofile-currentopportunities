@@ -17,10 +17,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
         {
             log.LogInformation($"{nameof(RefreshCourses)}: Timer trigger function starting at: {DateTime.Now}, using TimerInfo: {myTimer.Schedule.ToString()}");
 
-            int abortAfterErrorCount = 10;
-            int errorCount = 0;
-            int totalErrorCount = 0;
-            int totalSuccessCount = 0;
+            var abortAfterErrorCount = 10;
+            var errorCount = 0;
+            var totalErrorCount = 0;
+            var totalSuccessCount = 0;
 
             _ = int.TryParse(Environment.GetEnvironmentVariable(nameof(abortAfterErrorCount)), out abortAfterErrorCount);
 
