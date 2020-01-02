@@ -9,6 +9,7 @@ using Microsoft.Net.Http.Headers;
 using System;
 using System.Net.Http;
 using System.Net.Mime;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.FeedsControllerTests
@@ -26,7 +27,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Feed
         protected IAVCurrentOpportunitiesRefresh FakeIAVCurrentOpportunitiesRefresh { get; }
 
         [Fact]
-        public async void FeedsControllerRefreshApprenticeshipsReturnsSuccess()
+        public async Task FeedsControllerRefreshApprenticeshipsReturnsSuccess()
         {
             // Arrange
             const int expectedResult = 9;
@@ -50,7 +51,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Feed
         }
 
         [Fact]
-        public async void FeedsControllerDRefreshApprenticeshipsExceptionReturnsError()
+        public async Task FeedsControllerDRefreshApprenticeshipsExceptionReturnsError()
         {
             // Arrange
             const int expectedResult = 0;

@@ -354,7 +354,7 @@
                                 "value": "10"
                             },
                             {
-                                "name": "Configuration__CourseSearchClient__CourseSearchSvc__TransintErrorsNumberOfRetries",
+                                "name": "Configuration__CourseSearchClient__CourseSearchSvc__TransientErrorsNumberOfRetries",
                                 "value": "3"
                             },
                             {
