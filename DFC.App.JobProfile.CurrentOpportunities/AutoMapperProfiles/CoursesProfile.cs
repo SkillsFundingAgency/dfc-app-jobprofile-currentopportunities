@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
-using DFC.FindACourseClient.Models;
+using DFC.FindACourseClient;
 using System.Diagnostics.CodeAnalysis;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles
@@ -10,10 +10,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles
     {
         public CoursesProfile()
         {
-            CreateMap<CourseSumary, Opportunity>()
-           .ForMember(o => o.URL, opt => opt.Ignore())
-           .ForMember(o => o.PullDate, opt => opt.Ignore());
-            CreateMap<CourseLocation, Location>();
+            CreateMap<Course, Opportunity>()
+                .ForMember(d => d.Provider, s => s.MapFrom(f => f.ProviderName))
+                .ForMember(d => d.PullDate, s => s.Ignore())
+                .ForMember(d => d.URL, s => s.Ignore())
+                .ForPath(d => d.Location.Town, s => s.MapFrom(f => f.Location));
         }
     }
 }

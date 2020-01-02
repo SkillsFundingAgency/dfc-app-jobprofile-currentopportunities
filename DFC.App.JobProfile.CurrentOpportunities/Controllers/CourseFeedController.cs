@@ -11,12 +11,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
     public class CourseFeedController : Controller
     {
         private readonly ILogService logService;
-        private readonly ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh;
+        private readonly ICourseCurrentOpportunitiesRefresh courseCurrentOpportunitiesRefresh;
 
-        public CourseFeedController(ILogService logService, ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh)
+        public CourseFeedController(ILogService logService, ICourseCurrentOpportunitiesRefresh courseCurrentOpportunitiesRefresh)
         {
             this.logService = logService;
-            this.courseCurrentOpportuntiesRefresh = courseCurrentOpportuntiesRefresh;
+            this.courseCurrentOpportunitiesRefresh = courseCurrentOpportunitiesRefresh;
         }
 
         [HttpGet]
@@ -28,7 +28,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             try
             {
                 //catch any exception that the outgoing request may throw.
-                feedRefreshResponseViewModel.NumberPulled = await courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(documentId).ConfigureAwait(false);
+                feedRefreshResponseViewModel.NumberPulled = await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(documentId).ConfigureAwait(false);
                 logService.LogInformation($"Get courses has succeeded for: document {documentId} - Got {feedRefreshResponseViewModel.NumberPulled} courses");
                 return Ok(feedRefreshResponseViewModel);
             }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.AVService
 {
-    public class AVCurrentOpportuntiesRefresh : IAVCurrentOpportuntiesRefresh
+    public class AVCurrentOpportuntiesRefresh : IAVCurrentOpportunitiesRefresh
     {
         private readonly ILogger<AVCurrentOpportuntiesRefresh> logger;
         private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;

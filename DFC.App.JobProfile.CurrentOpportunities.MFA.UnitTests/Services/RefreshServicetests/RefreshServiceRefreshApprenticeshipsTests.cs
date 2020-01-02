@@ -49,6 +49,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
                 // assert
                 Assert.Equal(result, expectedStatusCode);
             }
+
+            httpResponse.Dispose();
+            fakeHttpMessageHandler.Dispose();
         }
 
         [Fact]
@@ -73,6 +76,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
                 // assert
                 Assert.Equal(result, expectedStatusCode);
             }
+
+            httpResponse.Dispose();
+            fakeHttpMessageHandler.Dispose();
         }
 
         [Fact]
@@ -81,7 +87,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
             // arrange
             const HttpStatusCode expectedStatusCode = HttpStatusCode.BadRequest;
             var documentId = Guid.NewGuid();
-            var expectedResults = A.Fake<FeedRefreshResponseModel>();
             var httpResponse = new HttpResponseMessage { StatusCode = expectedStatusCode };
             var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
             var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
@@ -97,6 +102,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
                 // assert
                 Assert.Equal(result, expectedStatusCode);
             }
+
+            httpResponse.Dispose();
+            fakeHttpMessageHandler.Dispose();
         }
 
         [Fact]
@@ -120,6 +128,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
                 // assert
                 Assert.Equal(result, expectedStatusCode);
             }
+
+            httpResponse.Dispose();
+            fakeHttpMessageHandler.Dispose();
         }
     }
 }

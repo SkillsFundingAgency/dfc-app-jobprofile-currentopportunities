@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Net.Http;
 
 [assembly: WebJobsStartup(typeof(DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Startup.WebJobsExtensionStartup), "Web Jobs Extension Startup")]
 
@@ -46,7 +47,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Startup
                 .AddScoped<IMappingService, MappingService>()
                 .AddScoped<IMessagePropertiesService, MessagePropertiesService>()
                 .AddDFCLogging(configuration["APPINSIGHTS_INSTRUMENTATIONKEY"])
-                .AddScoped<ICorrelationIdProvider, InMemoryCorrelationIdProvider>();
+                .AddScoped<ICorrelationIdProvider, InMemoryCorrelationIdProvider>()
+                .AddSingleton(new HttpClient());
 
             var sp = builder.Services.BuildServiceProvider();
             var mapper = sp.GetService<IMapper>();

@@ -9,26 +9,32 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
 {
     public class SegmentServiceBaseTests
     {
-        protected readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
-        protected readonly ICourseCurrentOpportuntiesRefresh fakeCourseCurrentOpportuntiesRefresh;
-        protected readonly IAVCurrentOpportuntiesRefresh fakeAVCurrentOpportunatiesRefresh;
-        protected readonly ILogger<CurrentOpportunitiesSegmentService> fakeLogger;
-        protected readonly IMapper fakeMapper;
-        protected readonly IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> fakeJobProfileSegmentRefreshService;
-        protected readonly ICurrentOpportunitiesSegmentUtilities fakeCurrentOpportunitiesSegmentUtilities;
-
         public SegmentServiceBaseTests()
         {
-            repository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
-            fakeCourseCurrentOpportuntiesRefresh = A.Fake<ICourseCurrentOpportuntiesRefresh>();
-            fakeAVCurrentOpportunatiesRefresh = A.Fake<IAVCurrentOpportuntiesRefresh>();
-            fakeLogger = A.Fake<ILogger<CurrentOpportunitiesSegmentService>>();
-            fakeMapper = A.Fake<IMapper>();
-            fakeJobProfileSegmentRefreshService = A.Fake<IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>>();
-            fakeCurrentOpportunitiesSegmentUtilities = A.Fake<ICurrentOpportunitiesSegmentUtilities>();
+            FakeRepository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
+            FakeCourseCurrentOpportunitiesRefresh = A.Fake<ICourseCurrentOpportunitiesRefresh>();
+            FakeAVCurrentOpportunatiesRefresh = A.Fake<IAVCurrentOpportunitiesRefresh>();
+            FakeLogger = A.Fake<ILogger<CurrentOpportunitiesSegmentService>>();
+            FakeMapper = A.Fake<IMapper>();
+            FakeJobProfileSegmentRefreshService = A.Fake<IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>>();
+            FakeCurrentOpportunitiesSegmentUtilities = A.Fake<ICurrentOpportunitiesSegmentUtilities>();
 
-            CurrentOpportunitiesSegmentService = new CurrentOpportunitiesSegmentService(repository, fakeCourseCurrentOpportuntiesRefresh, fakeAVCurrentOpportunatiesRefresh, fakeLogger, fakeMapper, fakeJobProfileSegmentRefreshService, fakeCurrentOpportunitiesSegmentUtilities);
+            CurrentOpportunitiesSegmentService = new CurrentOpportunitiesSegmentService(FakeRepository, FakeCourseCurrentOpportunitiesRefresh, FakeAVCurrentOpportunatiesRefresh, FakeLogger, FakeMapper, FakeJobProfileSegmentRefreshService, FakeCurrentOpportunitiesSegmentUtilities);
         }
+
+        protected ICosmosRepository<CurrentOpportunitiesSegmentModel> FakeRepository { get; }
+
+        protected ICourseCurrentOpportunitiesRefresh FakeCourseCurrentOpportunitiesRefresh { get; }
+
+        protected IAVCurrentOpportunitiesRefresh FakeAVCurrentOpportunatiesRefresh { get; }
+
+        protected ILogger<CurrentOpportunitiesSegmentService> FakeLogger { get; }
+
+        protected IMapper FakeMapper { get; }
+
+        protected IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> FakeJobProfileSegmentRefreshService { get; }
+
+        protected ICurrentOpportunitiesSegmentUtilities FakeCurrentOpportunitiesSegmentUtilities { get; }
 
         protected ICurrentOpportunitiesSegmentService CurrentOpportunitiesSegmentService { get; set; }
     }
