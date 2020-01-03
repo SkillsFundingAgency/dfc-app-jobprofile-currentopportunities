@@ -233,24 +233,16 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
         private async Task<HttpStatusCode> UpsertAndRefreshSegmentModel(CurrentOpportunitiesSegmentModel existingSegmentModel)
         {
             var result = await repository.UpsertAsync(existingSegmentModel).ConfigureAwait(false);
-
             if (result == HttpStatusCode.Created || result == HttpStatusCode.OK)
             {
                 var refreshJobProfileSegmentServiceBusModel = mapper.Map<RefreshJobProfileSegmentServiceBusModel>(existingSegmentModel);
 
-                var aVCurrentOpportunatiesRefreshTask = Task.Run(() => aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(existingSegmentModel.DocumentId));
-                var courseRefreshTask = Task.Run(() => courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(existingSegmentModel.DocumentId));
-                var jobProfileSegmentRefreshTask = Task.Run(() => jobProfileSegmentRefreshService.SendMessageAsync(refreshJobProfileSegmentServiceBusModel).ConfigureAwait(false));
-
-                await Task.WhenAll(aVCurrentOpportunatiesRefreshTask, courseRefreshTask, jobProfileSegmentRefreshTask).ContinueWith((x) => LogTaskException(x.Exception)).ConfigureAwait(false);
+                await aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(existingSegmentModel.DocumentId).ConfigureAwait(false);
+                await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(existingSegmentModel.DocumentId).ConfigureAwait(false);
+                await jobProfileSegmentRefreshService.SendMessageAsync(refreshJobProfileSegmentServiceBusModel).ConfigureAwait(false);
             }
 
             return result;
-        }
-
-        private void LogTaskException(AggregateException exception)
-        {
-            exception?.InnerExceptions?.ToList().ForEach(x => logger.LogError(x.Message));
         }
     }
 }
