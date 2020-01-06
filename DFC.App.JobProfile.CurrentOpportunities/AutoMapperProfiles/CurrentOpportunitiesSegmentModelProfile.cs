@@ -28,7 +28,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles
                 .ForMember(d => d.CourseSearchUrl, opt => opt.Ignore());
 
             CreateMap<Opportunity, BodyOpportunityViewModel>();
-            CreateMap<Location, LocationViewModel>();
+            CreateMap<Location, LocationViewModel>()
+                .ForMember(d => d.PostCode, opt => opt.Ignore());
 
             CreateMap<CurrentOpportunitiesSegmentModel, IndexDocumentViewModel>();
 
