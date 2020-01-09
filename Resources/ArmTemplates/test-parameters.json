@@ -50,6 +50,9 @@
         "avfeedCosmosDbDatabaseName": {
             "value": "someDatabase"
         },
+        "csclientCosmosDbDatabaseName": {
+            "value": "someOtherDatabase"
+        },
         "courseProviderServiceEndpoint": {
             "value": "https://course-provider-service.example.net/"
         },

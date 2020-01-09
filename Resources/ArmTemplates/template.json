@@ -111,6 +111,12 @@
                 "description": "AV Feed database name in cosmosdb"
             }
         },
+        "csclientCosmosDbDatabaseName": {
+            "type": "string",
+            "metadata": {
+                "description": "Course provider (Sitefinity) database name in cosmosdb"
+            }
+        },
         "courseProviderServiceEndpoint": {
             "type": "string",
             "metadata": {
@@ -327,11 +333,11 @@
                             },
                             {
                                 "name": "Configuration__CourseSearchClient__CosmosAuditConnection__DatabaseId",
-                                "value": "[parameters('avfeedCosmosDbDatabaseName')]"
+                                "value": "[parameters('csclientCosmosDbDatabaseName')]"
                             },
                             {
                                 "name": "Configuration__CourseSearchClient__CosmosAuditConnection__CollectionId",
-                                "value": "CourseSearchAuditRecords"
+                                "value": "CourseSearchAudit"
                             },
                             {
                                 "name": "Configuration__CourseSearchClient__CosmosAuditConnection__PartitionKey",
