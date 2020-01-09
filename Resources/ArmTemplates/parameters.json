@@ -71,6 +71,9 @@
         "avfeedCosmosDbDatabaseName": {
             "value": "__avfeedCosmosDbDatabaseName__"
         },
+        "csclientCosmosDbDatabaseName": {
+            "value": "__csclientCosmosDbDatabaseName__"
+        },
         "courseProviderServiceEndpoint": {
             "value": "__courseProviderServiceEndpoint__"
         },
