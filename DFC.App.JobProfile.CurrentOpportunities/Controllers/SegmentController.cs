@@ -28,7 +28,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         }
 
         [HttpGet]
-        [Route("/")]
         [Route("/Segment")]
         public async Task<IActionResult> Index()
         {

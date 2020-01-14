@@ -61,7 +61,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            app.UseMvcWithDefaultRoute();
+
+            app.UseMvc(routes =>
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Health}/{action=Ping}"));
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
