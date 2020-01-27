@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-
+    <LangVersion>latest</LangVersion>
     <IsPackable>false</IsPackable>
     <CodeAnalysisRuleSet>../UnitTests.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
     <ProjectGuid>{5A46DF3D-37A0-4D1A-A98D-696C28AA6A3F}</ProjectGuid>

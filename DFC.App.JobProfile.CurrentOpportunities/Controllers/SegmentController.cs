@@ -2,7 +2,9 @@
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels;
+using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
 using DFC.App.JobProfile.CurrentOpportunities.Extensions;
+using DFC.App.JobProfile.CurrentOpportunities.SegmentService;
 using DFC.App.JobProfile.CurrentOpportunities.ViewModels;
 using DFC.Logger.AppInsights.Contracts;
 using Microsoft.AspNetCore.Mvc;
@@ -19,12 +21,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
         private readonly ILogService logService;
         private readonly ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService;
         private readonly AutoMapper.IMapper mapper;
+        private readonly IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> refreshService;
 
-        public SegmentController(ILogService logService, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService, AutoMapper.IMapper mapper)
+        public SegmentController(ILogService logService, ICurrentOpportunitiesSegmentService currentOpportunitiesSegmentService, AutoMapper.IMapper mapper, IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> refreshService)
         {
             this.logService = logService;
             this.currentOpportunitiesSegmentService = currentOpportunitiesSegmentService;
             this.mapper = mapper;
+            this.refreshService = refreshService;
         }
 
         [HttpGet]
@@ -70,6 +74,30 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
 
             logService.LogWarning($"{nameof(Document)} has returned no content for: {article}");
 
+            return NoContent();
+        }
+
+        [HttpPost]
+        [Route("{controller}/refreshDocuments")]
+        public async Task<IActionResult> RefreshDocuments()
+        {
+            logService.LogInformation($"{nameof(RefreshDocuments)} has been called");
+
+            var segmentModels = await currentOpportunitiesSegmentService.GetAllAsync().ConfigureAwait(false);
+            if (segmentModels != null)
+            {
+                var result = segmentModels
+                    .OrderBy(x => x.CanonicalName)
+                    .Select(x => mapper.Map<RefreshJobProfileSegmentServiceBusModel>(x))
+                    .ToList();
+
+                await refreshService.SendMessageListAsync(result).ConfigureAwait(false);
+
+                logService.LogInformation($"{nameof(RefreshDocuments)} has succeeded");
+                return Json(result);
+            }
+
+            logService.LogWarning($"{nameof(RefreshDocuments)} has returned with no results");
             return NoContent();
         }
 
