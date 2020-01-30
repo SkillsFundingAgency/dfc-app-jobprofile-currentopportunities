@@ -2,7 +2,6 @@
 using Microsoft.Azure.ServiceBus;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,26 +11,36 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
     {
         private readonly ITopicClient topicClient;
         private readonly ICorrelationIdProvider correlationIdProvider;
+        private readonly ILogService logService;
 
-        public JobProfileSegmentRefreshService(ITopicClient topicClient, ICorrelationIdProvider correlationIdProvider)
+        public JobProfileSegmentRefreshService(ITopicClient topicClient, ICorrelationIdProvider correlationIdProvider, ILogService logService)
         {
             this.topicClient = topicClient;
             this.correlationIdProvider = correlationIdProvider;
+            this.logService = logService;
         }
 
         public async Task SendMessageAsync(TModel model)
         {
-            var message = CreateMessage(model);
-            await topicClient.SendAsync(message).ConfigureAwait(false);
+            try
+            {
+                var message = CreateMessage(model);
+                await topicClient.SendAsync(message).ConfigureAwait(false);
+            }
+            catch (ServiceBusException e)
+            {
+                logService.LogWarning($"Unable to refresh JobProfile '{JsonConvert.SerializeObject(model)}'. Error: {e.Message}");
+            }
         }
 
         public async Task SendMessageListAsync(IList<TModel> models)
         {
             if (models != null)
             {
-                var listOfMessages = new List<Message>();
-                listOfMessages.AddRange(models.Select(CreateMessage));
-                await topicClient.SendAsync(listOfMessages).ConfigureAwait(false);
+                foreach (var model in models)
+                {
+                    await SendMessageAsync(model).ConfigureAwait(false);
+                }
             }
         }
 
