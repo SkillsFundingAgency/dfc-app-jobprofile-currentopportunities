@@ -33,7 +33,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             {
                 var listOfMessages = new List<Message>();
                 listOfMessages.AddRange(models.Select(CreateMessage));
-                for (var i = 0; i <= listOfMessages.Count; i += BatchSize)
+                for (var i = 0; i < listOfMessages.Count; i += BatchSize)
                 {
                     var batchedList = listOfMessages.Skip(i).Take(BatchSize).ToList();
                     await topicClient.SendAsync(batchedList).ConfigureAwait(false);
