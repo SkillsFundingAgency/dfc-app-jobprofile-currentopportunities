@@ -10,6 +10,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
 {
     public class JobProfileSegmentRefreshService<TModel> : IJobProfileSegmentRefreshService<TModel>
     {
+        private const int BatchSize = 500;
         private readonly ITopicClient topicClient;
         private readonly ICorrelationIdProvider correlationIdProvider;
 
@@ -27,11 +28,16 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
 
         public async Task SendMessageListAsync(IList<TModel> models)
         {
+            // List is batched to avoid exceeding the Service Bus size limit on DEV and SIT of 256KB
             if (models != null)
             {
                 var listOfMessages = new List<Message>();
                 listOfMessages.AddRange(models.Select(CreateMessage));
-                await topicClient.SendAsync(listOfMessages).ConfigureAwait(false);
+                for (var i = 0; i <= listOfMessages.Count; i += BatchSize)
+                {
+                    var batchedList = listOfMessages.Skip(i).Take(BatchSize).ToList();
+                    await topicClient.SendAsync(batchedList).ConfigureAwait(false);
+                }
             }
         }
 
