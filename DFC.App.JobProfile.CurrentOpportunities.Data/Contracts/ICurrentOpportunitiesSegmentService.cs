@@ -15,7 +15,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Contracts
 
         Task<CurrentOpportunitiesSegmentModel> GetByIdAsync(Guid documentId);
 
-        Task<CurrentOpportunitiesSegmentModel> GetByNameAsync(string canonicalName, bool isDraft = false);
+        Task<CurrentOpportunitiesSegmentModel> GetByNameAsync(string canonicalName);
 
         Task<HttpStatusCode> UpsertAsync(CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel);
 

@@ -1,8 +1,7 @@
 ﻿using DFC.App.FindACourseClient.Models.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
-using DFC.FindACourseClient.Contracts;
-using DFC.FindACourseClient.Models;
+using DFC.FindACourseClient;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,29 +12,29 @@ using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
 {
-    public class CourseCurrentOpportuntiesRefresh : ICourseCurrentOpportuntiesRefresh, IHealthCheck
+    public class CourseCurrentOpportunitiesRefresh : ICourseCurrentOpportunitiesRefresh, IHealthCheck
     {
-        private readonly ILogger<CourseCurrentOpportuntiesRefresh> logger;
+        private readonly ILogger<CourseCurrentOpportunitiesRefresh> logger;
         private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
-        private readonly ICourseSearchClient courseSearch;
+        private readonly ICourseSearchApiService courseSearchApiService;
         private readonly AutoMapper.IMapper mapper;
         private readonly CourseSearchSettings courseSearchSettings;
 
-        public CourseCurrentOpportuntiesRefresh(ILogger<CourseCurrentOpportuntiesRefresh> logger, ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, ICourseSearchClient courseSearch, AutoMapper.IMapper mapper, CourseSearchSettings courseSearchSettings)
+        public CourseCurrentOpportunitiesRefresh(ILogger<CourseCurrentOpportunitiesRefresh> logger, ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, ICourseSearchApiService courseSearchApiService, AutoMapper.IMapper mapper, CourseSearchSettings courseSearchSettings)
         {
             this.logger = logger;
             this.repository = repository;
-            this.courseSearch = courseSearch;
+            this.courseSearchApiService = courseSearchApiService;
             this.mapper = mapper;
             this.courseSearchSettings = courseSearchSettings;
         }
 
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
         {
-            var description = $"{typeof(CourseCurrentOpportuntiesRefresh).Namespace} - SearchKeywords used [{courseSearchSettings.HealthCheckKeyWords}]";
+            var description = $"{typeof(CourseCurrentOpportunitiesRefresh).Namespace} - SearchKeywords used [{courseSearchSettings.HealthCheckKeyWords}]";
             logger.LogInformation($"{nameof(CheckHealthAsync)} has been called - service {description}");
 
-            var result = await courseSearch.GetCoursesAsync(courseSearchSettings.HealthCheckKeyWords).ConfigureAwait(false);
+            var result = await courseSearchApiService.GetCoursesAsync(courseSearchSettings.HealthCheckKeyWords).ConfigureAwait(false);
             if (result.Any())
             {
                 return HealthCheckResult.Healthy(description);
@@ -50,26 +49,26 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
         public async Task<int> RefreshCoursesAsync(Guid documentId)
         {
             logger.LogInformation($"{nameof(RefreshCoursesAsync)} has been called for document {documentId}");
-            CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel = await repository.GetAsync(d => d.DocumentId == documentId).ConfigureAwait(false);
+            var currentOpportunitiesSegmentModel = await repository.GetAsync(d => d.DocumentId == documentId).ConfigureAwait(false);
 
-            IEnumerable<CourseSumary> courseSearchResults = Enumerable.Empty<CourseSumary>();
             logger.LogInformation($"Getting course for {currentOpportunitiesSegmentModel.CanonicalName} - course keywords {currentOpportunitiesSegmentModel.Data.Courses.CourseKeywords}");
 
             //if the the call to the courses API fails for anyreason we should log and continue as if there are no courses available.
+            List<Course> courseSearchResults;
             try
             {
-                courseSearchResults = await courseSearch.GetCoursesAsync(currentOpportunitiesSegmentModel.Data.Courses.CourseKeywords).ConfigureAwait(false);
+                var results = await courseSearchApiService.GetCoursesAsync(currentOpportunitiesSegmentModel.Data.Courses.CourseKeywords).ConfigureAwait(false);
+                courseSearchResults = results.ToList();
             }
             catch (Exception ex)
             {
-                var errorMessge = $"{nameof(RefreshCoursesAsync)} had error";
-                logger.LogError(ex, errorMessge);
+                var errorMessage = $"{nameof(RefreshCoursesAsync)} had error";
+                logger.LogError(ex, errorMessage);
                 throw;
             }
 
-            var selectedCourses = SelectCoursesForJobProfile(courseSearchResults);
             var opportunities = new List<Opportunity>();
-            foreach (var course in selectedCourses)
+            foreach (var course in courseSearchResults)
             {
                 var opportunity = mapper.Map<Opportunity>(course);
                 opportunity.URL = new Uri($"{courseSearchSettings.CourseSearchUrl}{opportunity.CourseId}");
@@ -79,29 +78,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
 
             currentOpportunitiesSegmentModel.Data.Courses.Opportunities = opportunities;
             await repository.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
-            return selectedCourses.Count();
-        }
-
-        public IEnumerable<CourseSumary> SelectCoursesForJobProfile(IEnumerable<CourseSumary> courses)
-        {
-            if (courses == null)
-            {
-                return Enumerable.Empty<CourseSumary>();
-            }
-
-            if (courses.Count() > 2)
-            {
-                var distinctProviders = courses.Select(c => c.Provider).Distinct().Count();
-                if (distinctProviders > 1)
-                {
-                    return courses
-                            .GroupBy(c => c.Provider)
-                            .Select(g => g.First())
-                            .Take(2);
-                }
-            }
-
-            return courses.Take(2);
+            return courseSearchResults.Count;
         }
     }
 }

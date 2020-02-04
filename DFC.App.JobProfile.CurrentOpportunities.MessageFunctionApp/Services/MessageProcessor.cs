@@ -54,10 +54,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
                     return await ProcessJobProfileMessageAsync(message, actionType, sequenceNumber).ConfigureAwait(false);
 
                 default:
-                    break;
+                    throw new ArgumentOutOfRangeException(nameof(messageContentType), $"Unexpected sitefinity content type '{messageContentType}'");
             }
-
-            return await Task.FromResult(HttpStatusCode.InternalServerError).ConfigureAwait(false);
         }
 
         private async Task<HttpStatusCode> ProcessJobProfileMessageAsync(string message, MessageAction actionType, long sequenceNumber)
@@ -78,10 +76,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
 
                 case MessageAction.Deleted:
                     return await httpClientService.DeleteAsync(jobProfile.DocumentId).ConfigureAwait(false);
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(actionType), $"Invalid message action '{actionType}' received, should be one of '{string.Join(",", Enum.GetNames(typeof(MessageAction)))}'");
             }
+
+            return HttpStatusCode.InternalServerError;
         }
     }
 }

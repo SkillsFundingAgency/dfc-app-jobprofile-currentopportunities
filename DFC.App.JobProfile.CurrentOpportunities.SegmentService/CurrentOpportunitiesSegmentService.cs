@@ -18,20 +18,22 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
     public class CurrentOpportunitiesSegmentService : ICurrentOpportunitiesSegmentService, IHealthCheck
     {
         private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
-        private readonly ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh;
-        private readonly IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh;
+        private readonly ICourseCurrentOpportunitiesRefresh courseCurrentOpportunitiesRefresh;
+        private readonly IAVCurrentOpportunitiesRefresh aVCurrentOpportunatiesRefresh;
         private readonly ILogger<CurrentOpportunitiesSegmentService> logger;
         private readonly IMapper mapper;
         private readonly IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> jobProfileSegmentRefreshService;
+        private readonly ICurrentOpportunitiesSegmentUtilities currentOpportunitiesSegmentUtilities;
 
-        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, ICourseCurrentOpportuntiesRefresh courseCurrentOpportuntiesRefresh, IAVCurrentOpportuntiesRefresh aVCurrentOpportunatiesRefresh, ILogger<CurrentOpportunitiesSegmentService> logger, IMapper mapper, IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> jobProfileSegmentRefreshService)
+        public CurrentOpportunitiesSegmentService(ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, ICourseCurrentOpportunitiesRefresh courseCurrentOpportunitiesRefresh, IAVCurrentOpportunitiesRefresh aVCurrentOpportunatiesRefresh, ILogger<CurrentOpportunitiesSegmentService> logger, IMapper mapper, IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> jobProfileSegmentRefreshService, ICurrentOpportunitiesSegmentUtilities currentOpportunitiesSegmentUtilities)
         {
             this.repository = repository;
             this.aVCurrentOpportunatiesRefresh = aVCurrentOpportunatiesRefresh;
-            this.courseCurrentOpportuntiesRefresh = courseCurrentOpportuntiesRefresh;
+            this.courseCurrentOpportunitiesRefresh = courseCurrentOpportunitiesRefresh;
             this.logger = logger;
             this.mapper = mapper;
             this.jobProfileSegmentRefreshService = jobProfileSegmentRefreshService;
+            this.currentOpportunitiesSegmentUtilities = currentOpportunitiesSegmentUtilities;
         }
 
         public async Task<bool> PingAsync()
@@ -64,7 +66,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             return await repository.GetAsync(d => d.DocumentId == documentId).ConfigureAwait(false);
         }
 
-        public async Task<CurrentOpportunitiesSegmentModel> GetByNameAsync(string canonicalName, bool isDraft = false)
+        public async Task<CurrentOpportunitiesSegmentModel> GetByNameAsync(string canonicalName)
         {
             if (string.IsNullOrWhiteSpace(canonicalName))
             {
@@ -97,20 +99,17 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             }
 
             var existingSegmentModel = await GetByIdAsync(documentId).ConfigureAwait(false);
-            if (existingSegmentModel is null)
-            {
-                return HttpStatusCode.NotFound;
-            }
 
-            if (patchModel.SequenceNumber <= existingSegmentModel.SequenceNumber)
+            var currentOpportunitiesSegmentPatchStatus = currentOpportunitiesSegmentUtilities.IsSegementOkToPatch(existingSegmentModel, patchModel.SequenceNumber);
+            if (!currentOpportunitiesSegmentPatchStatus.OkToPatch)
             {
-                return HttpStatusCode.AlreadyReported;
+                return currentOpportunitiesSegmentPatchStatus.ReturnStatusCode;
             }
 
             var existingApprenticeships = existingSegmentModel.Data.Apprenticeships;
             if (existingApprenticeships is null)
             {
-                return patchModel.ActionType == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
+                return currentOpportunitiesSegmentUtilities.GetReturnStatusForNullElementPatchRequest(patchModel.ActionType);
             }
 
             if (patchModel.ActionType == MessageAction.Deleted)
@@ -142,14 +141,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             }
 
             var existingSegmentModel = await GetByIdAsync(documentId).ConfigureAwait(false);
-            if (existingSegmentModel is null)
+            var currentOpportunitiesSegmentPatchStatus = currentOpportunitiesSegmentUtilities.IsSegementOkToPatch(existingSegmentModel, patchModel.SequenceNumber);
+            if (!currentOpportunitiesSegmentPatchStatus.OkToPatch)
             {
-                return HttpStatusCode.NotFound;
-            }
-
-            if (patchModel.SequenceNumber <= existingSegmentModel.SequenceNumber)
-            {
-                return HttpStatusCode.AlreadyReported;
+                return currentOpportunitiesSegmentPatchStatus.ReturnStatusCode;
             }
 
             if (existingSegmentModel.Data.Apprenticeships == null)
@@ -162,11 +157,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 existingSegmentModel.Data.Apprenticeships.Frameworks = new List<Data.Models.ApprenticeshipFramework>();
             }
 
-            var existingApprenticeshipFrameworks = existingSegmentModel.Data.Apprenticeships.Frameworks.FirstOrDefault(f => f.Id == patchModel.Id);
+            var existingApprenticeshipFrameworks = existingSegmentModel.Data?.Apprenticeships?.Frameworks?.FirstOrDefault(f => f.Id == patchModel.Id);
 
             if (existingApprenticeshipFrameworks is null)
             {
-                return patchModel.ActionType == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
+                return currentOpportunitiesSegmentUtilities.GetReturnStatusForNullElementPatchRequest(patchModel.ActionType);
             }
 
             if (patchModel.ActionType == MessageAction.Deleted)
@@ -191,14 +186,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             }
 
             var existingSegmentModel = await GetByIdAsync(documentId).ConfigureAwait(false);
-            if (existingSegmentModel is null)
+            var currentOpportunitiesSegmentPatchStatus = currentOpportunitiesSegmentUtilities.IsSegementOkToPatch(existingSegmentModel, patchModel.SequenceNumber);
+            if (!currentOpportunitiesSegmentPatchStatus.OkToPatch)
             {
-                return HttpStatusCode.NotFound;
-            }
-
-            if (patchModel.SequenceNumber <= existingSegmentModel.SequenceNumber)
-            {
-                return HttpStatusCode.AlreadyReported;
+                return currentOpportunitiesSegmentPatchStatus.ReturnStatusCode;
             }
 
             if (existingSegmentModel.Data.Apprenticeships == null)
@@ -211,11 +202,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
                 existingSegmentModel.Data.Apprenticeships.Standards = new List<Data.Models.ApprenticeshipStandard>();
             }
 
-            var existingApprenticeshipStandards = existingSegmentModel.Data.Apprenticeships.Standards.FirstOrDefault(f => f.Id == patchModel.Id);
+            var existingApprenticeshipStandards = existingSegmentModel.Data?.Apprenticeships?.Standards?.FirstOrDefault(f => f.Id == patchModel.Id);
 
             if (existingApprenticeshipStandards is null)
             {
-                return patchModel.ActionType == MessageAction.Deleted ? HttpStatusCode.AlreadyReported : HttpStatusCode.NotFound;
+                return currentOpportunitiesSegmentUtilities.GetReturnStatusForNullElementPatchRequest(patchModel.ActionType);
             }
 
             if (patchModel.ActionType == MessageAction.Deleted)
@@ -242,30 +233,16 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
         private async Task<HttpStatusCode> UpsertAndRefreshSegmentModel(CurrentOpportunitiesSegmentModel existingSegmentModel)
         {
             var result = await repository.UpsertAsync(existingSegmentModel).ConfigureAwait(false);
-
             if (result == HttpStatusCode.Created || result == HttpStatusCode.OK)
             {
                 var refreshJobProfileSegmentServiceBusModel = mapper.Map<RefreshJobProfileSegmentServiceBusModel>(existingSegmentModel);
 
-                var aVCurrentOpportunatiesRefreshTask = Task.Run(() => aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(existingSegmentModel.DocumentId));
-                var courseRefreshTask = Task.Run(() => courseCurrentOpportuntiesRefresh.RefreshCoursesAsync(existingSegmentModel.DocumentId));
-                var jobProfileSegmentRefreshTask = Task.Run(() => jobProfileSegmentRefreshService.SendMessageAsync(refreshJobProfileSegmentServiceBusModel).ConfigureAwait(false));
-
-                await Task.WhenAll(aVCurrentOpportunatiesRefreshTask, courseRefreshTask, jobProfileSegmentRefreshTask).ContinueWith((x) =>
-                {
-                    LogTaskException(x.Exception);
-                }).ConfigureAwait(false);
+                await aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(existingSegmentModel.DocumentId).ConfigureAwait(false);
+                await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(existingSegmentModel.DocumentId).ConfigureAwait(false);
+                await jobProfileSegmentRefreshService.SendMessageAsync(refreshJobProfileSegmentServiceBusModel).ConfigureAwait(false);
             }
 
             return result;
-        }
-
-        private void LogTaskException(AggregateException exception)
-        {
-            if (exception != null && exception.InnerExceptions != null)
-            {
-                exception.InnerExceptions.ToList().ForEach(x => logger.LogError(x.Message));
-            }
         }
     }
 }

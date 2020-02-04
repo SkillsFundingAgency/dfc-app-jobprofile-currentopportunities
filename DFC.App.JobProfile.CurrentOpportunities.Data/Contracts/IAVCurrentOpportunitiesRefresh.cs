@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Data.Contracts
 {
-    public interface IAVCurrentOpportuntiesRefresh
+    public interface IAVCurrentOpportunitiesRefresh
     {
         Task<int> RefreshApprenticeshipVacanciesAsync(Guid documentId);
 

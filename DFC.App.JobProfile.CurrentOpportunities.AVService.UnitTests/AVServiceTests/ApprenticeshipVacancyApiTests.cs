@@ -2,9 +2,7 @@ using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using FakeItEasy;
-using FluentAssertions;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -29,45 +27,46 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
         [Fact]
         public async Task GetAsyncTestAsync()
         {
-            var expectedResponseJson = $"ExpectedResponse";
+            //arrange
+            var expectedResponse = "ExpectedResponse";
 
-            using (var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(expectedResponseJson, HttpStatusCode.OK))
-            {
-                using (var httpClient = new HttpClient(messageHandler))
-                {
-                    //arrange
-                    var apprenticeshipVacancyApi = new ApprenticeshipVacancyApi(fakeLogger, fakeAuditRepository, aVAPIServiceSettings, httpClient);
+            var httpResponse = new HttpResponseMessage { StatusCode = HttpStatusCode.OK, Content = new StringContent(expectedResponse) };
+            var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
+            var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+            var httpClient = new HttpClient(fakeHttpMessageHandler);
+            var apprenticeshipVacancyApi = new ApprenticeshipVacancyApi(fakeLogger, fakeAuditRepository, aVAPIServiceSettings, httpClient);
+            A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
-                    //Act
-                    var result = await apprenticeshipVacancyApi.GetAsync("fakeRequest", RequestType.Search).ConfigureAwait(false);
+            //Act
+            var result = await apprenticeshipVacancyApi.GetAsync("fakeRequest", RequestType.Search).ConfigureAwait(false);
 
-                    //Asserts
-                    A.CallTo(() => fakeAuditRepository.UpsertAsync(A<APIAuditRecordAV>.Ignored)).MustHaveHappened();
+            //Asserts
+            A.CallTo(() => fakeAuditRepository.UpsertAsync(A<APIAuditRecordAV>.Ignored)).MustHaveHappenedOnceExactly();
+            Assert.Equal(expectedResponse, result);
 
-                    result.Should().Be("ExpectedResponse");
-                }
-            }
+            httpResponse.Dispose();
+            httpClient.Dispose();
+            fakeHttpMessageHandler.Dispose();
         }
 
         [Fact]
-        public void GetAsyncWithErrorTest()
+        public async Task GetAsyncWithErrorTest()
         {
-            var expectedResponseJson = $"ExpectedResponse";
+            // Arrange
+            var httpResponse = new HttpResponseMessage { StatusCode = HttpStatusCode.BadRequest, Content = new StringContent("ExpectedResponse") };
+            var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
+            var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+            var httpClient = new HttpClient(fakeHttpMessageHandler);
+            var apprenticeshipVacancyApi = new ApprenticeshipVacancyApi(fakeLogger, fakeAuditRepository, aVAPIServiceSettings, httpClient);
+            A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
-            using (var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(expectedResponseJson, HttpStatusCode.BadRequest))
-            {
-                using (var httpClient = new HttpClient(messageHandler))
-                {
-                    //arrange
-                    var apprenticeshipVacancyApi = new ApprenticeshipVacancyApi(fakeLogger, fakeAuditRepository, aVAPIServiceSettings, httpClient);
+            // Act
+            await Assert.ThrowsAsync<HttpRequestException>(async () => await apprenticeshipVacancyApi.GetAsync("fakeRequest", RequestType.Search).ConfigureAwait(false)).ConfigureAwait(false);
+            A.CallTo(() => fakeAuditRepository.UpsertAsync(A<APIAuditRecordAV>.Ignored)).MustHaveHappenedOnceExactly();
 
-                    Func<Task> f = async () => { await apprenticeshipVacancyApi.GetAsync("fakeRequest", RequestType.Search).ConfigureAwait(false); };
-                    f.Should().Throw<HttpRequestException>();
-
-                    //Asserts
-                    A.CallTo(() => fakeAuditRepository.UpsertAsync(A<APIAuditRecordAV>.Ignored)).MustHaveHappened();
-                }
-            }
+            httpResponse.Dispose();
+            httpClient.Dispose();
+            fakeHttpMessageHandler.Dispose();
         }
     }
 }

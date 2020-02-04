@@ -15,21 +15,23 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
     [Trait("Segment Service", "Health Status Tests")]
     public class SegmentServiceHealthStatusCheckTests
     {
-        private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
-        private readonly ICourseCurrentOpportuntiesRefresh fakeCourseCurrentOpportuntiesRefresh;
-        private readonly IAVCurrentOpportuntiesRefresh fakeAVCurrentOpportunatiesRefresh;
+        private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> fakeRepository;
+        private readonly ICourseCurrentOpportunitiesRefresh fakeCourseCurrentOpportunitiesRefresh;
+        private readonly IAVCurrentOpportunitiesRefresh fakeIAVCurrentOpportunatiesRefresh;
         private readonly ILogger<CurrentOpportunitiesSegmentService> fakeLogger;
         private readonly IMapper fakeMapper;
         private readonly IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> fakeJobProfileSegmentRefreshService;
+        private readonly ICurrentOpportunitiesSegmentUtilities fakeCurrentOpportunitiesSegmentUtilities;
 
         public SegmentServiceHealthStatusCheckTests()
         {
-            repository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
-            fakeCourseCurrentOpportuntiesRefresh = A.Fake<ICourseCurrentOpportuntiesRefresh>();
-            fakeAVCurrentOpportunatiesRefresh = A.Fake<IAVCurrentOpportuntiesRefresh>();
+            fakeRepository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
+            fakeCourseCurrentOpportunitiesRefresh = A.Fake<ICourseCurrentOpportunitiesRefresh>();
+            fakeIAVCurrentOpportunatiesRefresh = A.Fake<IAVCurrentOpportunitiesRefresh>();
             fakeLogger = A.Fake<ILogger<CurrentOpportunitiesSegmentService>>();
             fakeMapper = A.Fake<IMapper>();
             fakeJobProfileSegmentRefreshService = A.Fake<IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>>();
+            fakeCurrentOpportunitiesSegmentUtilities = A.Fake<ICurrentOpportunitiesSegmentUtilities>();
         }
 
         [Theory]
@@ -39,15 +41,15 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         {
             // arrange
             var dummyHealthCheckContext = A.Dummy<HealthCheckContext>();
-            A.CallTo(() => repository.PingAsync()).Returns(isHealthyResponse);
-            var currentOpportunitiesSegmentService = new CurrentOpportunitiesSegmentService(repository, fakeCourseCurrentOpportuntiesRefresh, fakeAVCurrentOpportunatiesRefresh, fakeLogger, fakeMapper, fakeJobProfileSegmentRefreshService);
+            A.CallTo(() => fakeRepository.PingAsync()).Returns(isHealthyResponse);
+            var currentOpportunitiesSegmentService = new CurrentOpportunitiesSegmentService(fakeRepository, fakeCourseCurrentOpportunitiesRefresh, fakeIAVCurrentOpportunatiesRefresh, fakeLogger, fakeMapper, fakeJobProfileSegmentRefreshService, fakeCurrentOpportunitiesSegmentUtilities);
 
             //Act
             var serviceHealthStatus = await currentOpportunitiesSegmentService.CheckHealthAsync(dummyHealthCheckContext).ConfigureAwait(false);
 
             //Asserts
             serviceHealthStatus.Status.Should().Be(expectedStatus);
-            A.CallTo(() => repository.PingAsync()).MustHaveHappenedOnceExactly();
+            A.CallTo(() => fakeRepository.PingAsync()).MustHaveHappenedOnceExactly();
         }
 
         [Fact]
@@ -57,7 +59,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             var repository = A.Fake<ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
             var dummyHealthCheckContext = A.Dummy<HealthCheckContext>();
             A.CallTo(() => repository.PingAsync()).Throws(new ApplicationException());
-            var currentOpportunitiesSegmentService = new CurrentOpportunitiesSegmentService(repository, fakeCourseCurrentOpportuntiesRefresh, fakeAVCurrentOpportunatiesRefresh, fakeLogger, fakeMapper, fakeJobProfileSegmentRefreshService);
+            var currentOpportunitiesSegmentService = new CurrentOpportunitiesSegmentService(repository, fakeCourseCurrentOpportunitiesRefresh, fakeIAVCurrentOpportunatiesRefresh, fakeLogger, fakeMapper, fakeJobProfileSegmentRefreshService, fakeCurrentOpportunitiesSegmentUtilities);
 
             //Act
             Func<Task> serviceHealthStatus = async () => await currentOpportunitiesSegmentService.CheckHealthAsync(dummyHealthCheckContext).ConfigureAwait(false);
