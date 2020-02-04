@@ -8,11 +8,13 @@ using Polly;
 using Polly.Extensions.Http;
 using Polly.Registry;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Net.Mime;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Extensions
 {
+    [ExcludeFromCodeCoverage]
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddPolicies(
@@ -21,6 +23,16 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Extensions
             string keyPrefix,
             PolicyOptions policyOptions)
         {
+            if (policyOptions == null)
+            {
+                throw new ArgumentException("policyOptions cannot be null", nameof(policyOptions));
+            }
+
+            if (policyRegistry == null)
+            {
+                throw new ArgumentException("policyRegistry cannot be null", nameof(policyRegistry));
+            }
+
             policyRegistry.Add(
                 $"{keyPrefix}_{nameof(PolicyOptions.HttpRetry)}",
                 HttpPolicyExtensions
@@ -46,31 +58,34 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Extensions
                     string configurationSectionName,
                     string retryPolicyName,
                     string circuitBreakerPolicyName)
+
                     where TClient : class
                     where TImplementation : class, TClient
-                    where TClientOptions : SegmentClientOptions, new() =>
-                    services
-                        .Configure<TClientOptions>(configuration.GetSection(configurationSectionName))
-                        .AddHttpClient<TClient, TImplementation>()
-                        .ConfigureHttpClient((sp, options) =>
-                        {
-                            var httpClientOptions = sp
-                                .GetRequiredService<IOptions<TClientOptions>>()
-                                .Value;
-                            options.BaseAddress = httpClientOptions.BaseAddress;
-                            options.Timeout = httpClientOptions.Timeout;
-                            options.DefaultRequestHeaders.Clear();
-                            options.DefaultRequestHeaders.Add(HeaderNames.Accept, MediaTypeNames.Application.Json);
-                        })
-                        .ConfigurePrimaryHttpMessageHandler(() =>
-                        {
-                            return new HttpClientHandler()
-                            {
-                                AllowAutoRedirect = false,
-                            };
-                        })
-                        .AddPolicyHandlerFromRegistry($"{configurationSectionName}_{retryPolicyName}")
-                        .AddPolicyHandlerFromRegistry($"{configurationSectionName}_{circuitBreakerPolicyName}")
-                        .Services;
+                    where TClientOptions : SegmentClientOptions, new()
+        {
+            return services
+                .Configure<TClientOptions>(configuration.GetSection(configurationSectionName))
+                .AddHttpClient<TClient, TImplementation>()
+                .ConfigureHttpClient((sp, options) =>
+                {
+                    var httpClientOptions = sp
+                    .GetRequiredService<IOptions<TClientOptions>>()
+                    .Value;
+                    options.BaseAddress = httpClientOptions.BaseAddress;
+                    options.Timeout = httpClientOptions.Timeout;
+                    options.DefaultRequestHeaders.Clear();
+                    options.DefaultRequestHeaders.Add(HeaderNames.Accept, MediaTypeNames.Application.Json);
+                })
+                .ConfigurePrimaryHttpMessageHandler(() =>
+                {
+                    return new HttpClientHandler()
+                    {
+                        AllowAutoRedirect = false,
+                    };
+                })
+                .AddPolicyHandlerFromRegistry($"{configurationSectionName}_{retryPolicyName}")
+                .AddPolicyHandlerFromRegistry($"{configurationSectionName}_{circuitBreakerPolicyName}")
+                .Services;
+        }
     }
 }

@@ -8,7 +8,7 @@
             <span class="govuk-caption-m">In England</span>
         </h3>
     </div>
-    @if (Model.Data.Apprenticeships.Vacancies.Count() > 0)
+    @if (Model.Data.Apprenticeships?.Vacancies?.Count() > 0)
     {
         foreach (var apprenticeVacancy in Model.Data.Apprenticeships.Vacancies)
         {
@@ -24,7 +24,7 @@
                 </div>
             </div>
         }
-        <div class="govuk-body-m dfc-code-jp-vacancyText">
+        <div class="govuk-grid-column-full govuk-body-m dfc-code-jp-vacancyText">
             <a href="https://www.findapprenticeship.service.gov.uk/apprenticeshipsearch">Find apprenticeships near you</a>
         </div>
     }
@@ -43,7 +43,7 @@
             <span class="govuk-caption-m">In England</span>
         </h3>
     </div>
-    @if (Model.Data.Courses.Opportunities.Count() > 0)
+    @if (Model.Data.Courses?.Opportunities?.Count() > 0)
     {
         foreach (var course in Model.Data.Courses.Opportunities)
         {
@@ -55,12 +55,12 @@
                     <ul class="govuk-list">
                         <li><span class="govuk-body govuk-!-font-weight-bold">Provider:</span> @course.Provider</li>
                         <li><span class="govuk-body govuk-!-font-weight-bold">Start date:</span> @course.StartDate.ToString("dd MMMM yyyy")</li>
-                        <li><span class="govuk-body govuk-!-font-weight-bold">Location:</span> @course.Location.Town @course.Location.PostCode</li>
+                        <li><span class="govuk-body govuk-!-font-weight-bold">Location:</span> @course.Location.Town</li>
                     </ul>
                 </div>
             </div>
         }
-        <div class="govuk-body dfc-code-jp-TrainingCoursesText">
+        <div class="govuk-grid-column-full govuk-body dfc-code-jp-TrainingCoursesText">
             <a href="@Model.Data.Courses.CourseSearchUrl/find-a-course">Find courses near you</a>
         </div>
     }

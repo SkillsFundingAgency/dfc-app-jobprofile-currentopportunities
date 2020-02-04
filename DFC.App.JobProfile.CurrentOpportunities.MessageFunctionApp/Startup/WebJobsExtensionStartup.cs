@@ -4,17 +4,22 @@ using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.HttpClientPolic
 using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.HttpClientPolicies.Polly;
 using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services;
 using DFC.Functions.DI.Standard;
+using DFC.Logger.AppInsights.Contracts;
+using DFC.Logger.AppInsights.CorrelationIdProviders;
+using DFC.Logger.AppInsights.Extensions;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Net.Http;
 
 [assembly: WebJobsStartup(typeof(DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Startup.WebJobsExtensionStartup), "Web Jobs Extension Startup")]
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Startup
 {
+    [ExcludeFromCodeCoverage]
     public class WebJobsExtensionStartup : IWebJobsStartup
     {
         public void Configure(IWebJobsBuilder builder)
@@ -37,10 +42,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Startup
             builder.Services
                 .AddPolicies(policyRegistry, nameof(RefreshClientOptions), policyOptions)
                 .AddHttpClient<IRefreshService, RefreshService, RefreshClientOptions>(configuration, nameof(RefreshClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker))
-                .AddSingleton<IHttpClientService, HttpClientService>()
-                .AddSingleton<IMessageProcessor, MessageProcessor>()
-                .AddSingleton<IMappingService, MappingService>()
-                .AddSingleton<ILogger, Logger<WebJobsExtensionStartup>>();
+                .AddScoped<IHttpClientService, HttpClientService>()
+                .AddScoped<IMessageProcessor, MessageProcessor>()
+                .AddScoped<IMappingService, MappingService>()
+                .AddScoped<IMessagePropertiesService, MessagePropertiesService>()
+                .AddDFCLogging(configuration["APPINSIGHTS_INSTRUMENTATIONKEY"])
+                .AddScoped<ICorrelationIdProvider, InMemoryCorrelationIdProvider>()
+                .AddSingleton(new HttpClient());
 
             var sp = builder.Services.BuildServiceProvider();
             var mapper = sp.GetService<IMapper>();

@@ -1,5 +1,4 @@
-﻿using FakeItEasy;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Net.Mime;
 using Xunit;
@@ -21,7 +20,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Heal
             // Assert
             var statusResult = Assert.IsType<OkResult>(result);
 
-            A.Equals((int)HttpStatusCode.OK, statusResult.StatusCode);
+            Assert.Equal((int)HttpStatusCode.OK, statusResult.StatusCode);
 
             controller.Dispose();
         }

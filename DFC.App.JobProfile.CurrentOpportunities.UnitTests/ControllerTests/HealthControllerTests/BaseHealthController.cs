@@ -1,9 +1,9 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Controllers;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+using DFC.Logger.AppInsights.Contracts;
 using FakeItEasy;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.HealthControllerTests
@@ -12,11 +12,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Heal
     {
         public BaseHealthController()
         {
-            FakeLogger = A.Fake<ILogger<HealthController>>();
+            FakeLogger = A.Fake<ILogService>();
             FakeCurrentOpportunitiesSegmentService = A.Fake<ICurrentOpportunitiesSegmentService>();
         }
 
-        protected ILogger<HealthController> FakeLogger { get; }
+        protected ILogService FakeLogger { get; }
 
         protected ICurrentOpportunitiesSegmentService FakeCurrentOpportunitiesSegmentService { get; }
 

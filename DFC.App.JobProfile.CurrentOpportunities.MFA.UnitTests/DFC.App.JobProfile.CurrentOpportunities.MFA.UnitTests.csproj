@@ -2,19 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-
+    <LangVersion>latest</LangVersion>
     <IsPackable>false</IsPackable>
     <CodeAnalysisRuleSet>../UnitTests.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
+    <ProjectGuid>{062FEB5C-50AB-497E-97C3-3A279A048878}</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="..\stylecop.json" Link="../stylecop.json" />
   </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="5.2.0" />
     <PackageReference Include="FluentAssertions" Version="5.9.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.7">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

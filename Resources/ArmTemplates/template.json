@@ -111,6 +111,12 @@
                 "description": "AV Feed database name in cosmosdb"
             }
         },
+        "csclientCosmosDbDatabaseName": {
+            "type": "string",
+            "metadata": {
+                "description": "Course provider (Sitefinity) database name in cosmosdb"
+            }
+        },
         "courseProviderServiceEndpoint": {
             "type": "string",
             "metadata": {
@@ -298,7 +304,7 @@
                                 "value": "26,30"
                             },
                             {
-                                "name":  "Configuration__CosmosDbConnections__AVFeedAudit__EndpointUrl",
+                                "name": "Configuration__CosmosDbConnections__AVFeedAudit__EndpointUrl",
                                 "value": "[parameters('avfeedCosmosDbEndpoint')]"
                             },
                             {
@@ -327,11 +333,11 @@
                             },
                             {
                                 "name": "Configuration__CourseSearchClient__CosmosAuditConnection__DatabaseId",
-                                "value": "[parameters('avfeedCosmosDbDatabaseName')]"
+                                "value": "[parameters('csclientCosmosDbDatabaseName')]"
                             },
                             {
                                 "name": "Configuration__CourseSearchClient__CosmosAuditConnection__CollectionId",
-                                "value": "CourseSearchAuditRecords"
+                                "value": "CourseSearchAudit"
                             },
                             {
                                 "name": "Configuration__CourseSearchClient__CosmosAuditConnection__PartitionKey",
@@ -350,20 +356,28 @@
                                 "value": "20"
                             },
                             {
-                                "name": "Configuration__CourseSearchClient__CourseSearchSvc__AttendanceModes",
-                                "value": "AM1,AM2,AM3,AM4,AM5,AM6,AM7,AM8,AM9"
-                            },
-                            {
                                 "name": "Configuration__CourseSearchClient__CourseSearchSvc__RequestTimeOutSeconds",
                                 "value": "10"
                             },
                             {
-                              "name": "Configuration__CourseSearchClient__CourseSearchSvc__MaxReceivedMessageSize",
-                              "value": "2147483647"
+                                "name": "Configuration__CourseSearchClient__CourseSearchSvc__TransientErrorsNumberOfRetries",
+                                "value": "3"
                             },
                             {
-                              "name": "Configuration__CourseSearchClient__CourseSearchSvc__MaxBufferSize",
-                              "value": "2147483647"
+                                "name": "Configuration__CourseSearchClient__Policies__HttpCircuitBreaker__DurationOfBreak",
+                                "value": "00:01:00"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__Policies__HttpCircuitBreaker__ExceptionsAllowedBeforeBreaking",
+                                "value": "3"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__Policies__HttpRetry__BackoffPower",
+                                "value": "2"
+                            },
+                            {
+                                "name": "Configuration__CourseSearchClient__Policies__HttpRetry__Count",
+                                "value": "3"
                             },
                             {
                                 "name": "Logging__ApplicationInsights__LogLevel__Default",
@@ -425,7 +439,7 @@
                     },
                     "appServiceAppSettings": {
                         "value": [
-                             {
+                            {
                                 "name": "FUNCTIONS_EXTENSION_VERSION",
                                 "value": "~2"
                             },
@@ -504,7 +518,7 @@
                             {
                                 "name": "Logging__ApplicationInsights__LogLevel__Default",
                                 "value": "Information"
-                            }                            
+                            }
                         ]
                     }
                 }
@@ -571,5 +585,6 @@
             }
         }
     ],
-        "outputs": {}
+    "outputs": {
     }
+}

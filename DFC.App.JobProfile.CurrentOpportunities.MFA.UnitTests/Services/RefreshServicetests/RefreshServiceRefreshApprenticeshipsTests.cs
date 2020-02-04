@@ -1,6 +1,7 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.HttpClientPolicies;
 using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Models;
 using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services;
+using DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.FakeHttpHandlers;
 using FakeItEasy;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -33,62 +34,103 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services.Refresh
             // arrange
             var documentId = Guid.NewGuid();
             const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
-            using (var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(null, expectedStatusCode))
+            var httpResponse = new HttpResponseMessage { StatusCode = expectedStatusCode };
+            var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
+            var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+            using (var httpClient = new HttpClient(fakeHttpMessageHandler))
             {
-                using (var httpClient = new HttpClient(messageHandler))
-                {
-                    var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
+                var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
 
-                    // act
-                    var result = await refreshService.RefreshApprenticeshipsAsync(documentId).ConfigureAwait(false);
+                A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
-                    // assert
-                    A.Equals(result, expectedStatusCode);
-                }
+                // act
+                var result = await refreshService.RefreshApprenticeshipsAsync(documentId).ConfigureAwait(false);
+
+                // assert
+                Assert.Equal(result, expectedStatusCode);
             }
+
+            httpResponse.Dispose();
+            fakeHttpMessageHandler.Dispose();
+        }
+
+        [Fact]
+        public async Task RefreshApprenticeshipsReturnsNotFound()
+        {
+            // arrange
+            var documentId = Guid.NewGuid();
+            const HttpStatusCode expectedStatusCode = HttpStatusCode.NotFound;
+            var feedRefreshResponseModel = new FeedRefreshResponseModel() { NumberPulled = 0, RequestErrorMessage = "No results" };
+            var httpResponse = new HttpResponseMessage { StatusCode = expectedStatusCode, Content = new StringContent(JsonConvert.SerializeObject(feedRefreshResponseModel)) };
+            var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
+            var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+            using (var httpClient = new HttpClient(fakeHttpMessageHandler))
+            {
+                var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
+
+                A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
+
+                // act
+                var result = await refreshService.RefreshApprenticeshipsAsync(documentId).ConfigureAwait(false);
+
+                // assert
+                Assert.Equal(result, expectedStatusCode);
+            }
+
+            httpResponse.Dispose();
+            fakeHttpMessageHandler.Dispose();
         }
 
         [Fact]
         public async Task RefreshApprenticeshipsReturnsNullWhenError()
         {
             // arrange
+            const HttpStatusCode expectedStatusCode = HttpStatusCode.BadRequest;
             var documentId = Guid.NewGuid();
-            var expectedStatusCode = HttpStatusCode.BadRequest;
-            var expectedResults = A.Fake<FeedRefreshResponseModel>();
-            using (var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(JsonConvert.SerializeObject(expectedResults), expectedStatusCode))
+            var httpResponse = new HttpResponseMessage { StatusCode = expectedStatusCode };
+            var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
+            var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+            using (var httpClient = new HttpClient(fakeHttpMessageHandler))
             {
-                using (var httpClient = new HttpClient(messageHandler))
-                {
-                    var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
+                var refreshService = new RefreshService(httpClient, fakeLogger, fakeRefreshClientOptions);
 
-                    // act
-                    var result = await refreshService.RefreshApprenticeshipsAsync(documentId).ConfigureAwait(false);
+                A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
-                    // assert
-                    A.Equals(result, expectedStatusCode);
-                }
+                // act
+                var result = await refreshService.RefreshApprenticeshipsAsync(documentId).ConfigureAwait(false);
+
+                // assert
+                Assert.Equal(result, expectedStatusCode);
             }
+
+            httpResponse.Dispose();
+            fakeHttpMessageHandler.Dispose();
         }
 
         [Fact]
         public async Task RefreshApprenticeshipsReturnsNullWhenException()
         {
             // arrange
+            const HttpStatusCode expectedStatusCode = HttpStatusCode.InternalServerError;
             var documentId = Guid.NewGuid();
-            var expectedStatusCode = HttpStatusCode.InternalServerError;
-            using (var messageHandler = FakeHttpMessageHandler.GetHttpMessageHandler(null, expectedStatusCode))
+            var httpResponse = new HttpResponseMessage { StatusCode = expectedStatusCode };
+            var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
+            var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
+            using (var httpClient = new HttpClient(fakeHttpMessageHandler))
             {
-                using (var httpClient = new HttpClient(messageHandler))
-                {
-                    var refreshService = new RefreshService(null, fakeLogger, fakeRefreshClientOptions);
+                var refreshService = new RefreshService(null, fakeLogger, fakeRefreshClientOptions);
 
-                    // act
-                    var result = await refreshService.RefreshApprenticeshipsAsync(documentId).ConfigureAwait(false);
+                A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
-                    // assert
-                    A.Equals(result, expectedStatusCode);
-                }
+                // act
+                var result = await refreshService.RefreshApprenticeshipsAsync(documentId).ConfigureAwait(false);
+
+                // assert
+                Assert.Equal(result, expectedStatusCode);
             }
+
+            httpResponse.Dispose();
+            fakeHttpMessageHandler.Dispose();
         }
     }
 }

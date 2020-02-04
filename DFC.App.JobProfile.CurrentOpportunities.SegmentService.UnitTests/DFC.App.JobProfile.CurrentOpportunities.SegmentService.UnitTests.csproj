@@ -2,20 +2,21 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-
+    <LangVersion>latest</LangVersion>
     <IsPackable>false</IsPackable>
     <CodeAnalysisRuleSet>../UnitTests.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
+    <ProjectGuid>{0FDAD7B6-6B19-4CC2-AE6C-C054A1AA43CC}</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="..\stylecop.json" Link="../stylecop.json" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="FakeItEasy" Version="5.2.0" />
     <PackageReference Include="FluentAssertions" Version="5.9.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.7">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -33,7 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Data\DFC.App.JobProfile.CurrentOpportunities.Data.csproj" />
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.SegmentService\DFC.App.JobProfile.CurrentOpportunities.SegmentService.csproj" />
   </ItemGroup>
 

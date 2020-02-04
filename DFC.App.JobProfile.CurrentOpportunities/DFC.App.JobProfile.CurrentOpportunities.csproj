@@ -4,20 +4,21 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <CodeAnalysisRuleSet>../DFC.Digital.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
-	<ProjectGuid>{BFCF8910-6AFD-421F-B385-A8EC58C382D3}</ProjectGuid>
+	  <ProjectGuid>{BFCF8910-6AFD-421F-B385-A8EC58C382D3}</ProjectGuid>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <AdditionalFiles Include="..\stylecop.json" Link="stylecop.json" />
+    <AdditionalFiles Include="..\stylecop.json" Link="../stylecop.json" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="DFC.FindACourseClient" Version="1.2.1" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.1" />
+    <PackageReference Include="DFC.FindACourseClient" Version="2.1.6" />
+    <PackageReference Include="DFC.Logger.AppInsights" Version="1.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.7">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -33,9 +34,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.AVService\DFC.App.JobProfile.CurrentOpportunities.AVService.csproj" />
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.CourseService\DFC.App.JobProfile.CurrentOpportunities.CourseService.csproj" />
-    <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Data\DFC.App.JobProfile.CurrentOpportunities.Data.csproj" />
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb\DFC.App.CurrentOpportunities.Repository.CosmosDb.csproj" />
-    <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Repository.SitefinityApi\DFC.App.CurrentOpportunities.Repository.SitefinityApi.csproj" />
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.SegmentService\DFC.App.JobProfile.CurrentOpportunities.SegmentService.csproj" />
   </ItemGroup>
 
