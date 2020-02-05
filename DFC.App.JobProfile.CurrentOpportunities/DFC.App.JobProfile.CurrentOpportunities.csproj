@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="DFC.FindACourseClient" Version="2.1.6" />
+    <PackageReference Include="DFC.FindACourseClient" Version="2.1.17" />
     <PackageReference Include="DFC.Logger.AppInsights" Version="1.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" />
