@@ -137,6 +137,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             services.AddDFCLogging(configuration["ApplicationInsights:InstrumentationKey"]);
             services.AddHttpClient<IApprenticeshipVacancyApi, ApprenticeshipVacancyApi>();
             services.AddScoped<IAVAPIService, AVAPIService>();
+            services.AddScoped<Data.Contracts.IAuditService, AuditService>();
 
             services.AddHealthChecks()
             .AddCheck<CurrentOpportunitiesSegmentService>("Current Opportunities Segment Service")

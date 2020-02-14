@@ -18,9 +18,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 
         public Guid CorrelationId { get; set; }
 
-        public string Request { get; set; }
+        public object Request { get; set; }
 
-        public string Response { get; set; }
+        public object Response { get; set; }
 
         public string PartitionKey => $"{AuditDateTime.Year}{AuditDateTime.Month}";
     }
