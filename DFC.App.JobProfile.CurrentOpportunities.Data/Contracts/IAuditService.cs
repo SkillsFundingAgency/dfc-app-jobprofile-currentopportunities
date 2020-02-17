@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Data.Contracts
 {
     public interface IAuditService
     {
-        Task AuditAsync(string request, string response);
+        //Fire and forget audit
+        void CreateAudit(object request, object response, Guid? correlationId = null);
     }
 }

@@ -1,6 +1,5 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
-using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net.Http;
@@ -12,15 +11,15 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
     public class ApprenticeshipVacancyApi : IApprenticeshipVacancyApi
     {
         private readonly ILogger<ApprenticeshipVacancyApi> logger;
-        private readonly ICosmosRepository<APIAuditRecordAV> auditRepository;
+        private readonly IAuditService auditService;
         private readonly AVAPIServiceSettings aVAPIServiceSettings;
         private readonly HttpClient httpClient;
         private readonly Guid correlationId;
 
-        public ApprenticeshipVacancyApi(ILogger<ApprenticeshipVacancyApi> logger, ICosmosRepository<APIAuditRecordAV> auditRepository,  AVAPIServiceSettings aVAPIServiceSettings, HttpClient httpClient)
+        public ApprenticeshipVacancyApi(ILogger<ApprenticeshipVacancyApi> logger, IAuditService auditService, AVAPIServiceSettings aVAPIServiceSettings, HttpClient httpClient)
         {
             this.logger = logger;
-            this.auditRepository = auditRepository;
+            this.auditService = auditService;
             this.aVAPIServiceSettings = aVAPIServiceSettings ?? throw new ArgumentNullException(nameof(aVAPIServiceSettings));
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
@@ -32,26 +31,26 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
 
         public async Task<string> GetAsync(string requestQueryString, RequestType requestType)
         {
-                var requestRoute = requestType == RequestType.Search ? $"{requestType.ToString()}?" : string.Empty;
-                var fullRequest = $"{aVAPIServiceSettings.FAAEndPoint}/{requestRoute}{requestQueryString}";
-                logger.LogInformation($"Getting API data for request :'{fullRequest}'");
+            var requestRoute = requestType == RequestType.Search ? $"{requestType.ToString()}?" : string.Empty;
+            var fullRequest = $"{aVAPIServiceSettings.FAAEndPoint}/{requestRoute}{requestQueryString}";
+            logger.LogInformation($"Getting API data for request :'{fullRequest}'");
 
-                var response = await httpClient.GetAsync(new Uri(fullRequest)).ConfigureAwait(false);
+            var response = await httpClient.GetAsync(new Uri(fullRequest)).ConfigureAwait(false);
 
-                //Even if there is a bad response code still read and write the resposne into the audit as it may have information about the cause.
-                var responseContent = await (response?.Content?.ReadAsStringAsync()).ConfigureAwait(false);
-                var auditRecord = new APIAuditRecordAV() { DocumentId = Guid.NewGuid(),  CorrelationId = correlationId, Request = fullRequest, Response = responseContent };
-                await auditRepository.UpsertAsync(auditRecord).ConfigureAwait(false);
+            //Even if there is a bad response code still read and write the resposne into the audit as it may have information about the cause.
+            var responseContent = await (response?.Content?.ReadAsStringAsync()).ConfigureAwait(false);
 
-                if (response != null && !response.IsSuccessStatusCode)
-                {
-                    logger.LogError($"Error status {response.StatusCode},  Getting API data for request :'{fullRequest}' \nResponse : {responseContent}");
+            auditService.CreateAudit(fullRequest, responseContent, correlationId);
 
-                    //this will throw an exception as is not a success code
-                    response.EnsureSuccessStatusCode();
-                }
+            if (response != null && !response.IsSuccessStatusCode)
+            {
+                logger.LogError($"Error status {response.StatusCode},  Getting API data for request :'{fullRequest}' \nResponse : {responseContent}");
 
-                return responseContent;
+                //this will throw an exception as is not a success code
+                response.EnsureSuccessStatusCode();
             }
+
+            return responseContent;
+        }
     }
 }
