@@ -2,9 +2,12 @@
 using DFC.App.FindACourseClient.Models.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles;
 using DFC.App.JobProfile.CurrentOpportunities.AVService;
+using DFC.App.JobProfile.CurrentOpportunities.Core.Extensions;
 using DFC.App.JobProfile.CurrentOpportunities.CourseService;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+using DFC.App.JobProfile.CurrentOpportunities.Data.HttpClientPolicies;
+using DFC.App.JobProfile.CurrentOpportunities.Data.HttpClientPolicies.Polly;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
 using DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb;
@@ -19,6 +22,8 @@ using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Polly.Registry;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -30,6 +35,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
         public const string CosmosDbConfigAppSettings = "Configuration:CosmosDbConnections:JobProfileSegment";
         public const string ServiceBusOptionsAppSettings = "ServiceBusOptions";
         public const string AVAPIServiceAppSettings = "Configuration:AVAPIService";
+        public const string AVAPIServiceClientPolicySettings = "Configuration:AVAPIService:Policies";
         public const string AVFeedAuditSettings = "Configuration:CosmosDbConnections:AVFeedAudit";
         public const string CourseSearchAppSettings = "Configuration:CourseSearch";
         public const string CourseSearchClientSvcSettings = "Configuration:CourseSearchClient:CourseSearchSvc";
@@ -134,8 +140,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities
                  }).CreateMapper();
              });
 
+            var corePolicyOptions = configuration.GetSection(AVAPIServiceClientPolicySettings).Get<CorePolicyOptions>() ?? new CorePolicyOptions();
+
+            var policyRegistry = services.AddPolicyRegistry();
+
+            services.AddPolicies(policyRegistry, nameof(RefreshClientOptions), corePolicyOptions);
+
             services.AddDFCLogging(configuration["ApplicationInsights:InstrumentationKey"]);
-            services.AddHttpClient<IApprenticeshipVacancyApi, ApprenticeshipVacancyApi>();
+            services.AddHttpClient<IApprenticeshipVacancyApi, ApprenticeshipVacancyApi, RefreshClientOptions>(configuration, nameof(RefreshClientOptions), nameof(CorePolicyOptions.HttpRetry), nameof(CorePolicyOptions.HttpCircuitBreaker));
             services.AddScoped<IAVAPIService, AVAPIService>();
 
             services.AddHealthChecks()

@@ -27,6 +27,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Core\DFC.App.JobProfile.CurrentOpportunities.Core.csproj" />
     <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.Data\DFC.App.JobProfile.CurrentOpportunities.Data.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -44,5 +45,8 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="HttpClientPolicies\" />
   </ItemGroup>
 </Project>

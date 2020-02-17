@@ -1,5 +1,5 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.HttpClientPolicies;
-using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.HttpClientPolicies.Polly;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Data.HttpClientPolicies;
+using DFC.App.JobProfile.CurrentOpportunities.Data.HttpClientPolicies.Polly;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -12,16 +12,16 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
 using System.Net.Mime;
 
-namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Extensions
+namespace DFC.App.JobProfile.CurrentOpportunities.Core.Extensions
 {
     [ExcludeFromCodeCoverage]
-    public static class ServiceCollectionExtensions
+    public static class ServiceCollectionCoreExtensions
     {
         public static IServiceCollection AddPolicies(
             this IServiceCollection services,
             IPolicyRegistry<string> policyRegistry,
             string keyPrefix,
-            PolicyOptions policyOptions)
+            CorePolicyOptions policyOptions)
         {
             if (policyOptions == null)
             {
@@ -34,7 +34,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Extensions
             }
 
             policyRegistry.Add(
-                $"{keyPrefix}_{nameof(PolicyOptions.HttpRetry)}",
+                $"{keyPrefix}_{nameof(CorePolicyOptions.HttpRetry)}",
                 HttpPolicyExtensions
                     .HandleTransientHttpError()
                     .WaitAndRetryAsync(
@@ -42,7 +42,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Extensions
                         retryAttempt => TimeSpan.FromSeconds(Math.Pow(policyOptions.HttpRetry.BackoffPower, retryAttempt))));
 
             policyRegistry.Add(
-                $"{keyPrefix}_{nameof(PolicyOptions.HttpCircuitBreaker)}",
+                $"{keyPrefix}_{nameof(CorePolicyOptions.HttpCircuitBreaker)}",
                 HttpPolicyExtensions
                     .HandleTransientHttpError()
                     .CircuitBreakerAsync(
@@ -61,31 +61,31 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Extensions
 
                     where TClient : class
                     where TImplementation : class, TClient
-                    where TClientOptions : SegmentClientOptions, new()
+                    where TClientOptions : CoreClientOptions, new()
         {
             return services
-                .Configure<TClientOptions>(configuration.GetSection(configurationSectionName))
-                .AddHttpClient<TClient, TImplementation>()
-                .ConfigureHttpClient((sp, options) =>
+            .Configure<TClientOptions>(configuration.GetSection(configurationSectionName))
+            .AddHttpClient<TClient, TImplementation>()
+            .ConfigureHttpClient((sp, options) =>
+            {
+                var httpClientOptions = sp
+                .GetRequiredService<IOptions<TClientOptions>>()
+                .Value;
+                options.BaseAddress = httpClientOptions.BaseAddress;
+                options.Timeout = httpClientOptions.Timeout;
+                options.DefaultRequestHeaders.Clear();
+                options.DefaultRequestHeaders.Add(HeaderNames.Accept, MediaTypeNames.Application.Json);
+            })
+            .ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                return new HttpClientHandler()
                 {
-                    var httpClientOptions = sp
-                    .GetRequiredService<IOptions<TClientOptions>>()
-                    .Value;
-                    options.BaseAddress = httpClientOptions.BaseAddress;
-                    options.Timeout = httpClientOptions.Timeout;
-                    options.DefaultRequestHeaders.Clear();
-                    options.DefaultRequestHeaders.Add(HeaderNames.Accept, MediaTypeNames.Application.Json);
-                })
-                .ConfigurePrimaryHttpMessageHandler(() =>
-                {
-                    return new HttpClientHandler()
-                    {
-                        AllowAutoRedirect = false,
-                    };
-                })
-                .AddPolicyHandlerFromRegistry($"{configurationSectionName}_{retryPolicyName}")
-                .AddPolicyHandlerFromRegistry($"{configurationSectionName}_{circuitBreakerPolicyName}")
-                .Services;
+                    AllowAutoRedirect = false,
+                };
+            })
+            .AddPolicyHandlerFromRegistry($"{configurationSectionName}_{retryPolicyName}")
+            .AddPolicyHandlerFromRegistry($"{configurationSectionName}_{circuitBreakerPolicyName}")
+            .Services;
         }
     }
 }

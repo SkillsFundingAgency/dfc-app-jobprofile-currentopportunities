@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.HttpClientPolicies.Polly
+namespace DFC.App.JobProfile.CurrentOpportunities.Data.HttpClientPolicies.Polly
 {
     public class CircuitBreakerPolicyOptions
     {

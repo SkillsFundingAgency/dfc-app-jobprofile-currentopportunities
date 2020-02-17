@@ -1,4 +1,4 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.HttpClientPolicies;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Data.HttpClientPolicies;
 using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;

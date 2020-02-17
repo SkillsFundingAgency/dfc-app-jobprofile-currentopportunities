@@ -1,4 +1,4 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.HttpClientPolicies;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Data.HttpClientPolicies;
 using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services;
 using DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.FakeHttpHandlers;
 using DFC.Logger.AppInsights.Contracts;
@@ -16,13 +16,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services
     {
         private readonly ILogService logService;
         private readonly ICorrelationIdProvider correlationIdProvider;
-        private readonly SegmentClientOptions segmentClientOptions;
+        private readonly CoreClientOptions coreClientOptions;
 
         public HttpClientServiceDeleteTests()
         {
             logService = A.Fake<ILogService>();
             correlationIdProvider = A.Fake<ICorrelationIdProvider>();
-            segmentClientOptions = new SegmentClientOptions
+            coreClientOptions = new CoreClientOptions
             {
                 BaseAddress = new Uri("https://somewhere.com", UriKind.Absolute),
             };
@@ -36,8 +36,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services
             var httpResponse = new HttpResponseMessage { StatusCode = expectedResult };
             var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
             var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
-            var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = segmentClientOptions.BaseAddress };
-            var httpClientService = new HttpClientService(segmentClientOptions, httpClient, logService, correlationIdProvider);
+            var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = coreClientOptions.BaseAddress };
+            var httpClientService = new HttpClientService(coreClientOptions, httpClient, logService, correlationIdProvider);
 
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
@@ -61,8 +61,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services
             var httpResponse = new HttpResponseMessage { StatusCode = expectedResult };
             var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
             var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
-            var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = segmentClientOptions.BaseAddress };
-            var httpClientService = new HttpClientService(segmentClientOptions, httpClient, logService, correlationIdProvider);
+            var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = coreClientOptions.BaseAddress };
+            var httpClientService = new HttpClientService(coreClientOptions, httpClient, logService, correlationIdProvider);
 
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
@@ -86,8 +86,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services
             var httpResponse = new HttpResponseMessage { StatusCode = expectedResult, Content = new StringContent("bad delete") };
             var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
             var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
-            var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = segmentClientOptions.BaseAddress };
-            var httpClientService = new HttpClientService(segmentClientOptions, httpClient, logService, correlationIdProvider);
+            var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = coreClientOptions.BaseAddress };
+            var httpClientService = new HttpClientService(coreClientOptions, httpClient, logService, correlationIdProvider);
 
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
