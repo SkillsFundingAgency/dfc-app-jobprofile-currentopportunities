@@ -98,7 +98,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             };
             services.AddSingleton(courseSearchClientSettings);
             services.AddScoped<ICourseSearchApiService, CourseSearchApiService>();
-            services.AddFindACourseServices(courseSearchClientSettings);
+            services.AddFindACourseServicesWithoutFaultHandling(courseSearchClientSettings);
+            var policyRegistry = services.AddPolicyRegistry();
+            services.AddFindACourseTransientFaultHandlingPolicies(courseSearchClientSettings, policyRegistry);
 
             var serviceBusOptions = configuration.GetSection(ServiceBusOptionsAppSettings).Get<ServiceBusOptions>();
             var topicClient = new TopicClient(serviceBusOptions.ServiceBusConnectionString, serviceBusOptions.TopicName);
@@ -141,9 +143,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities
              });
 
             var corePolicyOptions = configuration.GetSection(AVAPIServiceClientPolicySettings).Get<CorePolicyOptions>() ?? new CorePolicyOptions();
-
-            var policyRegistry = services.AddPolicyRegistry();
-
             services.AddPolicies(policyRegistry, nameof(RefreshClientOptions), corePolicyOptions);
 
             services.AddDFCLogging(configuration["ApplicationInsights:InstrumentationKey"]);
