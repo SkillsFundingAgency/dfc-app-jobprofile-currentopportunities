@@ -22,8 +22,6 @@ using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Polly.Registry;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
