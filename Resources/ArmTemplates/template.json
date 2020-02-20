@@ -304,6 +304,22 @@
                                 "value": "26,30"
                             },
                             {
+                                "name": "Configuration__AVAPIService__Policies__HttpCircuitBreaker__DurationOfBreak",
+                                "value": "00:00:10"
+                            },
+                                                        {
+                                "name": "Configuration__AVAPIService__Policies__HttpCircuitBreaker__ExceptionsAllowedBeforeBreaking",
+                                "value": "3"
+                            },
+                            {
+                                "name": "Configuration__AVAPIService__Policies__HttpRetry__BackoffPower",
+                                "value": "2"
+                            },
+                            {
+                                "name": "Configuration__AVAPIService__Policies__HttpRetry__Count",
+                                "value": "3"
+                            },
+                            {
                                 "name": "Configuration__CosmosDbConnections__AVFeedAudit__EndpointUrl",
                                 "value": "[parameters('avfeedCosmosDbEndpoint')]"
                             },

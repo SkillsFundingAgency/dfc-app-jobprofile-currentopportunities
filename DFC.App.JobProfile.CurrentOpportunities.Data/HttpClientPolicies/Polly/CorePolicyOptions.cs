@@ -1,6 +1,6 @@
-﻿namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.HttpClientPolicies.Polly
+﻿namespace DFC.App.JobProfile.CurrentOpportunities.Data.HttpClientPolicies.Polly
 {
-    public class PolicyOptions
+    public class CorePolicyOptions
     {
         public CircuitBreakerPolicyOptions HttpCircuitBreaker { get; set; }
 

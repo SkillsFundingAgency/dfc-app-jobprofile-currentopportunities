@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="DFC.FindACourseClient" Version="2.1.17" />
+    <PackageReference Include="DFC.FindACourseClient" Version="2.1.19" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.9.2" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
