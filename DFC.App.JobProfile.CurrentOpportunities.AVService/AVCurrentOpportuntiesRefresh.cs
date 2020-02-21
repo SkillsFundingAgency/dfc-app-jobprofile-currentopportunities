@@ -33,17 +33,24 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
                 Standards = currentOpportunitiesSegmentModel.Data.Apprenticeships?.Standards?.Where(w => !string.IsNullOrWhiteSpace(w.Url)).Select(b => b.Url).ToArray(),
                 Frameworks = currentOpportunitiesSegmentModel.Data.Apprenticeships?.Frameworks?.Where(w => !string.IsNullOrWhiteSpace(w.Url)).Select(b => b.Url).ToArray(),
             };
-            var mappedVacancies = await aVAPIService.GetAVsForMultipleProvidersAsync(aVMapping).ConfigureAwait(false);
 
-            var projectedVacancies = ProjectVacanciesForProfile(mappedVacancies);
             var vacancies = new List<Vacancy>();
-
-            //projectedVacancies will contain at most 2 records
-            foreach (var vacancy in projectedVacancies)
+            if (aVMapping.Standards.Any() || aVMapping.Frameworks.Any())
             {
-                var projectedVacancyDetails = await aVAPIService.GetApprenticeshipVacancyDetailsAsync(vacancy.VacancyReference).ConfigureAwait(false);
-                vacancies.Add(mapper.Map<Vacancy>(projectedVacancyDetails));
-                logger.LogInformation($"{nameof(RefreshApprenticeshipVacanciesAsync)} added details for {vacancy.VacancyReference} to list");
+                var mappedVacancies = await aVAPIService.GetAVsForMultipleProvidersAsync(aVMapping).ConfigureAwait(false);
+                var projectedVacancies = ProjectVacanciesForProfile(mappedVacancies);
+
+                //projectedVacancies will contain at most 2 records
+                foreach (var vacancy in projectedVacancies)
+                {
+                    var projectedVacancyDetails = await aVAPIService.GetApprenticeshipVacancyDetailsAsync(vacancy.VacancyReference).ConfigureAwait(false);
+                    vacancies.Add(mapper.Map<Vacancy>(projectedVacancyDetails));
+                    logger.LogInformation($"{nameof(RefreshApprenticeshipVacanciesAsync)} added details for {vacancy.VacancyReference} to list");
+                }
+            }
+            else
+            {
+                logger.LogInformation($"{nameof(RefreshApprenticeshipVacanciesAsync)} no standards or frameworks found for document {documentId}, blanking vacancies");
             }
 
             currentOpportunitiesSegmentModel.Data.Apprenticeships.Vacancies = vacancies;
