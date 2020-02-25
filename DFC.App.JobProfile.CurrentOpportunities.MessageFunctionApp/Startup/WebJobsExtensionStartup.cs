@@ -38,10 +38,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Startup
 
             var policyRegistry = builder.Services.AddPolicyRegistry();
             var policyOptions = configuration.GetSection("Policies").Get<CorePolicyOptions>();
+            policyRegistry.AddStandardPolicies(nameof(RefreshClientOptions), policyOptions);
 
             builder.Services
-                .AddPolicies(policyRegistry, nameof(RefreshClientOptions), policyOptions)
-                .AddHttpClient<IRefreshService, RefreshService, RefreshClientOptions>(configuration, nameof(RefreshClientOptions), nameof(CorePolicyOptions.HttpRetry), nameof(CorePolicyOptions.HttpCircuitBreaker))
+                .BuildHttpClient<IRefreshService, RefreshService, RefreshClientOptions>(configuration, nameof(RefreshClientOptions))
+                .AddPolicyHandlerFromRegistry($"{nameof(RefreshClientOptions)}_{nameof(CorePolicyOptions.HttpRetry)}")
+                .AddPolicyHandlerFromRegistry($"{nameof(RefreshClientOptions)}_{nameof(CorePolicyOptions.HttpCircuitBreaker)}");
+
+            builder.Services
                 .AddScoped<IHttpClientService, HttpClientService>()
                 .AddScoped<IMessageProcessor, MessageProcessor>()
                 .AddScoped<IMappingService, MappingService>()

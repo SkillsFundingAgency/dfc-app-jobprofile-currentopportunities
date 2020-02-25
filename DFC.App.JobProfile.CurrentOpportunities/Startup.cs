@@ -141,12 +141,19 @@ namespace DFC.App.JobProfile.CurrentOpportunities
              });
 
             var corePolicyOptions = configuration.GetSection(AVAPIServiceClientPolicySettings).Get<CorePolicyOptions>() ?? new CorePolicyOptions();
-            services.AddPolicies(policyRegistry, nameof(RefreshClientOptions), corePolicyOptions);
+            corePolicyOptions.HttpRateLimitRetry ??= new RateLimitPolicyOptions();
+            policyRegistry.AddRateLimitPolicy(nameof(RefreshClientOptions), corePolicyOptions.HttpRateLimitRetry);
+            policyRegistry.AddStandardPolicies(nameof(RefreshClientOptions), corePolicyOptions);
 
-            services.AddDFCLogging(configuration["ApplicationInsights:InstrumentationKey"]);
-            services.AddHttpClient<IApprenticeshipVacancyApi, ApprenticeshipVacancyApi, RefreshClientOptions>(configuration, nameof(RefreshClientOptions), nameof(CorePolicyOptions.HttpRetry), nameof(CorePolicyOptions.HttpCircuitBreaker));
+            services.BuildHttpClient<IApprenticeshipVacancyApi, ApprenticeshipVacancyApi, RefreshClientOptions>(configuration, nameof(RefreshClientOptions))
+            .AddPolicyHandlerFromRegistry($"{nameof(RefreshClientOptions)}_{nameof(CorePolicyOptions.HttpRateLimitRetry)}")
+            .AddPolicyHandlerFromRegistry($"{nameof(RefreshClientOptions)}_{nameof(CorePolicyOptions.HttpRetry)}")
+            .AddPolicyHandlerFromRegistry($"{nameof(RefreshClientOptions)}_{nameof(CorePolicyOptions.HttpCircuitBreaker)}");
+
             services.AddScoped<IAVAPIService, AVAPIService>();
             services.AddScoped<Data.Contracts.IAuditService, AuditService>();
+
+            services.AddDFCLogging(configuration["ApplicationInsights:InstrumentationKey"]);
 
             services.AddHealthChecks()
             .AddCheck<CurrentOpportunitiesSegmentService>("Current Opportunities Segment Service")
