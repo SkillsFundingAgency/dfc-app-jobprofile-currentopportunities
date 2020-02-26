@@ -4,7 +4,8 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
-using System.Threading.Tasks;
+using System.Net.Http;
+using System.Web.Http;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
 {
@@ -32,6 +33,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
             aVRequestsPerMinute = aVRequestsPerMinuteSettingOveride > 0 ? aVRequestsPerMinuteSettingOveride : aVRequestsPerMinute;
 
             var sleepTimeMilliSecsBetweenRequests = 60000 / (aVRequestsPerMinute / 3);   //on average we make 3 calls per profile to get 2 vacancies, so divide by 3
+
+            HttpStatusCode statusCode = HttpStatusCode.OK;
 
             var simpleJobProfileModels = await refreshService.GetListAsync().ConfigureAwait(false);
 
@@ -64,7 +67,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
 
                     if (errorCount >= abortAfterErrorCount)
                     {
-                        log.LogWarning($"{nameof(RefreshApprenticeships)}: Timer trigger aborting after {abortAfterErrorCount} consecutive erors");
+                        log.LogWarning($"{nameof(RefreshApprenticeships)}: Timer trigger aborting after {abortAfterErrorCount} consecutive errors");
                         break;
                     }
                 }
@@ -73,6 +76,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
             log.LogInformation($"{nameof(RefreshApprenticeships)}: Timer trigger function, Apprenticeships refreshed: {totalSuccessCount}");
             log.LogInformation($"{nameof(RefreshApprenticeships)}: Timer trigger function, Apprenticeships refresh errors: {totalErrorCount}");
             log.LogInformation($"{nameof(RefreshApprenticeships)}: Timer trigger function completed at: {DateTime.Now}");
+
+            // if we aborted due to the number of errors exceeding the abortAfterErrorCount
+            if (errorCount >= abortAfterErrorCount)
+            {
+                throw new HttpResponseException(new HttpResponseMessage() { StatusCode = statusCode, ReasonPhrase = $"Timer trigger aborting after {abortAfterErrorCount} consecutive errors" });
+            }
         }
     }
 }

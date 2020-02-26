@@ -30,8 +30,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Startup
                .AddEnvironmentVariables()
                .Build();
 
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
             builder.AddDependencyInjection();
-            builder?.Services.AddAutoMapper(typeof(WebJobsExtensionStartup).Assembly);
+            builder.Services.AddAutoMapper(typeof(WebJobsExtensionStartup).Assembly);
 
             builder.Services.AddSingleton(configuration.GetSection(nameof(RefreshClientOptions)).Get<RefreshClientOptions>());
             builder.Services.AddSingleton(configuration.GetSection("CurrentOpportunitiesSegmentClientOptions").Get<CoreClientOptions>());

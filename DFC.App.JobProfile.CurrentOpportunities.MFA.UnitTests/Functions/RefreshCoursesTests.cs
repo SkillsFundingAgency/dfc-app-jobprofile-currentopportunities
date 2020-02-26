@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using System.Web.Http;
 using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Functions
@@ -76,7 +77,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Functions
             A.CallTo(() => fakeRefreshService.RefreshCoursesAsync(A<Guid>.Ignored)).Returns(expectedStatusCode);
 
             // Act
-            await RefreshCourses.RunAsync(timer, fakeLogger, fakeRefreshService).ConfigureAwait(false);
+            var ex = await Assert.ThrowsAsync<HttpResponseException>(() => RefreshCourses.RunAsync(timer, fakeLogger, fakeRefreshService)).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeRefreshService.GetListAsync()).MustHaveHappenedOnceExactly();
