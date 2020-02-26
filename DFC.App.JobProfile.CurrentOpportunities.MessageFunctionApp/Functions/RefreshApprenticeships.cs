@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
@@ -48,7 +49,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
 
                     await Task.Delay(sleepTimeMilliSecsBetweenRequests).ConfigureAwait(false);
 
-                    var statusCode = await refreshService.RefreshApprenticeshipsAsync(simpleJobProfileModel.DocumentId).ConfigureAwait(false);
+                    statusCode = await refreshService.RefreshApprenticeshipsAsync(simpleJobProfileModel.DocumentId).ConfigureAwait(false);
 
                     switch (statusCode)
                     {
