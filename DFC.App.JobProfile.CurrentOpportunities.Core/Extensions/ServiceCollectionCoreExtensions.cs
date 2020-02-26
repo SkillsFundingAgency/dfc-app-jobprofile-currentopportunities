@@ -76,7 +76,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Core.Extensions
             return policyRegistry;
         }
 
-
         public static IHttpClientBuilder BuildHttpClient<TClient, TImplementation, TClientOptions>(
                    this IServiceCollection services,
                    IConfiguration configuration,

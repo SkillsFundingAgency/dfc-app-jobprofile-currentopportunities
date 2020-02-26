@@ -27,7 +27,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
             int aVRequestsPerMinute = 240;
             int aVRequestsPerMinuteSettingOveride = 0;
 
-            _ = int.TryParse(Environment.GetEnvironmentVariable(nameof(abortAfterErrorCount)), out abortAfterErrorCount); 
+            _ = int.TryParse(Environment.GetEnvironmentVariable(nameof(abortAfterErrorCount)), out abortAfterErrorCount);
             _ = int.TryParse(Environment.GetEnvironmentVariable(nameof(aVRequestsPerMinuteSettingOveride)), out aVRequestsPerMinuteSettingOveride);
 
             //override with a setting variable if required
