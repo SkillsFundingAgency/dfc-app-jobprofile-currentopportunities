@@ -4,6 +4,8 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
+using System.Net.Http;
+using System.Web.Http;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
 {
@@ -24,6 +26,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
 
             _ = int.TryParse(Environment.GetEnvironmentVariable(nameof(abortAfterErrorCount)), out abortAfterErrorCount);
 
+            HttpStatusCode statusCode = HttpStatusCode.OK;
+
             var simpleJobProfileModels = await refreshService.GetListAsync().ConfigureAwait(false);
 
             if (simpleJobProfileModels != null)
@@ -34,7 +38,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
                 {
                     log.LogInformation($"{nameof(RefreshCourses)}: Refreshing Job Profile Courses: {simpleJobProfileModel.DocumentId} / {simpleJobProfileModel.CanonicalName}");
 
-                    var statusCode = await refreshService.RefreshCoursesAsync(simpleJobProfileModel.DocumentId).ConfigureAwait(false);
+                    statusCode = await refreshService.RefreshCoursesAsync(simpleJobProfileModel.DocumentId).ConfigureAwait(false);
 
                     switch (statusCode)
                     {
@@ -53,7 +57,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
 
                     if (errorCount >= abortAfterErrorCount)
                     {
-                        log.LogWarning($"{nameof(RefreshCourses)}: Timer trigger aborting after {abortAfterErrorCount} consecutive erors");
+                        log.LogWarning($"{nameof(RefreshCourses)}: Timer trigger aborting after {abortAfterErrorCount} consecutive errors");
                         break;
                     }
                 }
@@ -62,6 +66,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
             log.LogInformation($"{nameof(RefreshCourses)}: Timer trigger function, Courses refreshed: {totalSuccessCount}");
             log.LogInformation($"{nameof(RefreshCourses)}: Timer trigger function, Courses refresh errors: {totalErrorCount}");
             log.LogInformation($"{nameof(RefreshCourses)}: Timer trigger function completed at: {DateTime.Now}");
+
+            // if we aborted due to the number of errors exceeding the abortAfterErrorCount
+            if (errorCount >= abortAfterErrorCount)
+            {
+                throw new HttpResponseException(new HttpResponseMessage() { StatusCode = statusCode, ReasonPhrase = $"Timer trigger aborting after {abortAfterErrorCount} consecutive errors" });
+            }
         }
     }
 }
