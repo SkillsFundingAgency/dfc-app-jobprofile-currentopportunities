@@ -17,9 +17,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Core.Extensions
     [ExcludeFromCodeCoverage]
     public static class ServiceCollectionCoreExtensions
     {
-        public static IServiceCollection AddPolicies(
-            this IServiceCollection services,
-            IPolicyRegistry<string> policyRegistry,
+        public static IPolicyRegistry<string> AddStandardPolicies(
+            this IPolicyRegistry<string> policyRegistry,
             string keyPrefix,
             CorePolicyOptions policyOptions)
         {
@@ -49,43 +48,61 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Core.Extensions
                         handledEventsAllowedBeforeBreaking: policyOptions.HttpCircuitBreaker.ExceptionsAllowedBeforeBreaking,
                         durationOfBreak: policyOptions.HttpCircuitBreaker.DurationOfBreak));
 
-            return services;
+            return policyRegistry;
         }
 
-        public static IServiceCollection AddHttpClient<TClient, TImplementation, TClientOptions>(
-                    this IServiceCollection services,
-                    IConfiguration configuration,
-                    string configurationSectionName,
-                    string retryPolicyName,
-                    string circuitBreakerPolicyName)
-
-                    where TClient : class
-                    where TImplementation : class, TClient
-                    where TClientOptions : CoreClientOptions, new()
+        public static IPolicyRegistry<string> AddRateLimitPolicy(
+           this IPolicyRegistry<string> policyRegistry,
+           string keyPrefix,
+           RateLimitPolicyOptions rateLimitPolicyOptions)
         {
-            return services
-            .Configure<TClientOptions>(configuration.GetSection(configurationSectionName))
-            .AddHttpClient<TClient, TImplementation>()
-            .ConfigureHttpClient((sp, options) =>
+            if (rateLimitPolicyOptions == null)
             {
-                var httpClientOptions = sp
-                .GetRequiredService<IOptions<TClientOptions>>()
-                .Value;
-                options.BaseAddress = httpClientOptions.BaseAddress;
-                options.Timeout = httpClientOptions.Timeout;
-                options.DefaultRequestHeaders.Clear();
-                options.DefaultRequestHeaders.Add(HeaderNames.Accept, MediaTypeNames.Application.Json);
-            })
-            .ConfigurePrimaryHttpMessageHandler(() =>
+                throw new ArgumentException("rateLimitPolicyOptions cannot be null", nameof(rateLimitPolicyOptions));
+            }
+
+            if (policyRegistry == null)
             {
-                return new HttpClientHandler()
-                {
-                    AllowAutoRedirect = false,
-                };
-            })
-            .AddPolicyHandlerFromRegistry($"{configurationSectionName}_{retryPolicyName}")
-            .AddPolicyHandlerFromRegistry($"{configurationSectionName}_{circuitBreakerPolicyName}")
-            .Services;
+                throw new ArgumentException("policyRegistry cannot be null", nameof(policyRegistry));
+            }
+
+            policyRegistry.Add(
+              $"{keyPrefix}_{nameof(CorePolicyOptions.HttpRateLimitRetry)}",
+              HttpPolicyExtensions
+                  .HandleTransientHttpError()
+                  .OrResult(r => r.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                  .WaitAndRetryAsync(rateLimitPolicyOptions.Count, retryAttempt => TimeSpan.FromSeconds(Math.Pow(rateLimitPolicyOptions.BackoffPower, retryAttempt))));
+
+            return policyRegistry;
+        }
+
+        public static IHttpClientBuilder BuildHttpClient<TClient, TImplementation, TClientOptions>(
+                   this IServiceCollection services,
+                   IConfiguration configuration,
+                   string configurationSectionName)
+                   where TClient : class
+                   where TImplementation : class, TClient
+                   where TClientOptions : CoreClientOptions, new()
+        {
+            return services.Configure<TClientOptions>(configuration.GetSection(configurationSectionName))
+             .AddHttpClient<TClient, TImplementation>()
+             .ConfigureHttpClient((sp, options) =>
+             {
+                 var httpClientOptions = sp
+                 .GetRequiredService<IOptions<TClientOptions>>()
+                 .Value;
+                 options.BaseAddress = httpClientOptions.BaseAddress;
+                 options.Timeout = httpClientOptions.Timeout;
+                 options.DefaultRequestHeaders.Clear();
+                 options.DefaultRequestHeaders.Add(HeaderNames.Accept, MediaTypeNames.Application.Json);
+             })
+             .ConfigurePrimaryHttpMessageHandler(() =>
+             {
+                 return new HttpClientHandler()
+                 {
+                     AllowAutoRedirect = false,
+                 };
+             });
         }
     }
 }
