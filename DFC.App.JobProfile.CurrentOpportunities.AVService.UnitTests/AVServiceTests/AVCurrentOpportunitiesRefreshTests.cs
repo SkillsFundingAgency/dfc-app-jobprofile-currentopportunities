@@ -100,7 +100,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
 
         [Theory]
         [InlineData("F1", "S1", true)]
-        [InlineData("", "S1", true )]
+        [InlineData("", "S1", true)]
         [InlineData("F1", "", true)]
         [InlineData("", "", false)]
         public void BlankStandardsAndFrameworksAsync(string framework, string standard, bool requestShouldBeMade)

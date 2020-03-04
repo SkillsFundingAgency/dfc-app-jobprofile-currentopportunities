@@ -66,7 +66,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             if (currentOpportunitiesSegmentModel != null)
             {
                 var viewModel = mapper.Map<DocumentViewModel>(currentOpportunitiesSegmentModel);
-
+                viewModel.Data.JobTitleWithPrefix = GetJobTitleWithPrefix(currentOpportunitiesSegmentModel.Data?.TitlePrefix, currentOpportunitiesSegmentModel.Data?.JobTitle, currentOpportunitiesSegmentModel.Data?.ContentTitle);
                 logService.LogInformation($"{nameof(Document)} has succeeded for: {article}");
 
                 return View(viewModel);

@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net.Mime;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.SegmentControllerTests
@@ -33,7 +34,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
         [Theory]
         [InlineData("contentTitle", "jobTitle", "contentTitle")]
         [InlineData("", "jobTitle", "jobtitle")]
-        public async void JobTitlePrefixContentTitleTests(string contentTitle, string jobTitle, string expectedTitle)
+        public async Task JobTitlePrefixContentTitleTests(string contentTitle, string jobTitle, string expectedTitle)
         {
             //Arrange
             var documentId = Guid.NewGuid();
@@ -63,7 +64,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
         [InlineData("actuary", Constants.TitlePrefixWithA, "a actuary")]
         [InlineData("actuary", Constants.TitlePrefixWithAn, "an actuary")]
         [InlineData("actuary", Constants.TitleNoTitle, "")]
-        public async void JobTitlePrefixDefaultTests(string jobTitle, string titlePrefix, string expectedTitle)
+        public async Task JobTitlePrefixDefaultTests(string jobTitle, string titlePrefix, string expectedTitle)
         {
             //Arrange
             var documentId = Guid.NewGuid();
