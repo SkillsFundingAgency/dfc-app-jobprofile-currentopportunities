@@ -4,6 +4,7 @@ using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.SegmentControllerTests
@@ -13,7 +14,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
     {
         [Theory]
         [MemberData(nameof(HtmlMediaTypes))]
-        public async void SegmentControllerBodyHtmlReturnsSuccess(string mediaTypeName)
+        public async Task SegmentControllerBodyHtmlReturnsSuccess(string mediaTypeName)
         {
             // Arrange
             var documentId = Guid.NewGuid();
@@ -42,7 +43,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerBodyJsonReturnsSuccess(string mediaTypeName)
+        public async Task SegmentControllerBodyJsonReturnsSuccess(string mediaTypeName)
         {
             // Arrange
             var documentId = Guid.NewGuid();
@@ -72,7 +73,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         [Theory]
         [MemberData(nameof(InvalidMediaTypes))]
-        public async void SegmentControllerBodyReturnsNotAcceptable(string mediaTypeName)
+        public async Task SegmentControllerBodyReturnsNotAcceptable(string mediaTypeName)
         {
             // Arrange
             var documentId = Guid.NewGuid();
@@ -102,7 +103,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         [Theory]
         [MemberData(nameof(HtmlMediaTypes))]
-        public async void SegmentControllerBodyHtmlReturnsNoContentWhenNoData(string mediaTypeName)
+        public async Task SegmentControllerBodyHtmlReturnsNoContentWhenNoData(string mediaTypeName)
         {
             // Arrange
             var documentId = Guid.NewGuid();

@@ -3,6 +3,7 @@ using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.SegmentControllerTests
@@ -12,7 +13,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
     {
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerCreateReturnsSuccessForNewItem(string mediaTypeName)
+        public async Task SegmentControllerCreateReturnsSuccessForNewItem(string mediaTypeName)
         {
             // Arrange
             const HttpStatusCode expectedResponse = HttpStatusCode.Created;
@@ -38,7 +39,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerCreateReturnsAlreadyReportedForExisting(string mediaTypeName)
+        public async Task SegmentControllerCreateReturnsAlreadyReportedForExisting(string mediaTypeName)
         {
             // Arrange
             var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
@@ -61,7 +62,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerCreateReturnsBadRequestWhenModelIsNull(string mediaTypeName)
+        public async Task SegmentControllerCreateReturnsBadRequestWhenModelIsNull(string mediaTypeName)
         {
             // Arrange
             CurrentOpportunitiesSegmentModel careerPathSegmentModel = null;
@@ -80,7 +81,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerCreateReturnsBadRequestWhenModelIsInvalid(string mediaTypeName)
+        public async Task SegmentControllerCreateReturnsBadRequestWhenModelIsInvalid(string mediaTypeName)
         {
             // Arrange
             var careerPathSegmentModel = new CurrentOpportunitiesSegmentModel();

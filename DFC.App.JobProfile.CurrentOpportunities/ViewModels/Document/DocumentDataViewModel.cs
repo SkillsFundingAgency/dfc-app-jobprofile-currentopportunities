@@ -9,7 +9,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
         public string JobTitle { get; set; }
 
         [Display(Name = "Title Prefix")]
-        public string TitlePrefix { get; set; }
+        public string JobTitleWithPrefix { get; set; }
 
         [Display(Name = "Content Title")]
         public string ContentTitle { get; set; }
