@@ -79,6 +79,9 @@
         },
         "courseProviderServiceApiKey": {
             "value": "__courseProviderServiceApiKey__"
+        },
+        "enableAlerts": {
+            "value": __EnableAzureMonitorAlerting__
         }
     }
 }
