@@ -23,6 +23,8 @@ jobs:
 #Build and test application
 - job: BuildDotNetCore
   displayName: Build-DotNetCore
+  workspace:
+    clean: all
   pool:
     name: NCS - CI and CD
     demands:
