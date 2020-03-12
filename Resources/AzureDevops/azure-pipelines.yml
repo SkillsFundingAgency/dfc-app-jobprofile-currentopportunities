@@ -38,9 +38,11 @@ jobs:
       BuildConfiguration: $(BuildConfiguration)
       PublishWebApp: true
       TestSuffix: UnitTests
+      DotNetCoreVersion: 2.2.402
   - template: AzureDevOpsTemplates/Build/dfc-dotnetcore-build-notests.yml@dfc-devops
     parameters:
       SolutionBaseName: $(SolutionBaseName).MessageFunctionApp
       BuildPlatform: $(BuildPlatform)
       BuildConfiguration: $(BuildConfiguration)
+      DotNetCoreVersion: 2.2.402
       PublishWebApp: true

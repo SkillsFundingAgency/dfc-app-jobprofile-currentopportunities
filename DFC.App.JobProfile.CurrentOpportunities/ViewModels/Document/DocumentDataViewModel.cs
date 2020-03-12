@@ -14,7 +14,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
         [Display(Name = "Content Title")]
         public string ContentTitle { get; set; }
 
-        [Display(Name = "Last Reviewed")]
+        [Display(Name = "Last Updated")]
         public DateTime LastReviewed { get; set; }
 
         [Display(Name = "Apprenticeships")]
