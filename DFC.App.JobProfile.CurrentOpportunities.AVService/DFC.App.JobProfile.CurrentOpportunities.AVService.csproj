@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <CodeAnalysisRuleSet>../DFC.Digital.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
     <ProjectGuid>{75C7C6FD-F289-4B1F-ABFB-1A9C1B006EAD}</ProjectGuid>
     <LangVersion>latest</LangVersion>
@@ -13,13 +13,13 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.9.2" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.10.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="3.1.2" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

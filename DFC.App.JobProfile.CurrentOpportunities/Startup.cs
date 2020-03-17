@@ -22,6 +22,7 @@ using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -48,7 +49,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public static void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -65,11 +66,15 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseRouting();
 
-            app.UseMvc(routes =>
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Health}/{action=Ping}"));
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+
+                // add the default route
+                endpoints.MapControllerRoute("default", "{controller=Health}/{action=Ping}");
+            });
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -109,7 +114,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
                 var cosmosDbConnection = configuration.GetSection(CosmosDbConfigAppSettings).Get<CosmosDbConnection>();
                 var documentClient = new DocumentClient(cosmosDbConnection.EndpointUrl, cosmosDbConnection.AccessKey);
 
-                return new CosmosRepository<CurrentOpportunitiesSegmentModel>(cosmosDbConnection, documentClient, s.GetService<IHostingEnvironment>());
+                return new CosmosRepository<CurrentOpportunitiesSegmentModel>(cosmosDbConnection, documentClient, s.GetService<IWebHostEnvironment>().IsDevelopment());
             });
 
             services.AddSingleton<ICosmosRepository<APIAuditRecordAV>, CosmosRepository<APIAuditRecordAV>>(s =>
@@ -117,7 +122,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
                 var cosmosDbAuditConnection = configuration.GetSection(AVFeedAuditSettings).Get<CosmosDbConnection>();
                 var documentClient = new DocumentClient(cosmosDbAuditConnection.EndpointUrl, cosmosDbAuditConnection.AccessKey);
 
-                return new CosmosRepository<APIAuditRecordAV>(cosmosDbAuditConnection, documentClient, s.GetService<IHostingEnvironment>());
+                return new CosmosRepository<APIAuditRecordAV>(cosmosDbAuditConnection, documentClient, s.GetService<IWebHostEnvironment>().IsDevelopment());
             });
 
             services.AddScoped<ICourseCurrentOpportunitiesRefresh, CourseCurrentOpportunitiesRefresh>();
@@ -160,7 +165,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             .AddCheck<CourseCurrentOpportunitiesRefresh>("Course Search")
             .AddCheck<AVAPIService>("Apprenticeship Service");
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
     }
 }

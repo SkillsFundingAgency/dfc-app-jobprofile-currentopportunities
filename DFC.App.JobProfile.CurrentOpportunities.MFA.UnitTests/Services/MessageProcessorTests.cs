@@ -161,7 +161,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services
             var exceptionResult = await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await messageProcessor.ProcessAsync(string.Empty, 1, (MessageContentType)(-1), MessageAction.Published).ConfigureAwait(false)).ConfigureAwait(false);
 
             // assert
-            Assert.Equal("Unexpected sitefinity content type '-1'\r\nParameter name: messageContentType", exceptionResult.Message);
+            Assert.Equal("Unexpected sitefinity content type '-1' (Parameter 'messageContentType')", exceptionResult.Message);
         }
     }
 }
