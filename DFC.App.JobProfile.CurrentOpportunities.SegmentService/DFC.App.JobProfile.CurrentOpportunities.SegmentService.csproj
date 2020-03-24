@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="DFC.Logger.AppInsights" Version="1.0.7" />
+    <PackageReference Include="DFC.Logger.AppInsights" Version="1.0.8" />
     <PackageReference Include="Microsoft.Azure.ServiceBus" Version="4.1.2" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
