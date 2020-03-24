@@ -14,8 +14,8 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="DFC.FindACourseClient" Version="2.1.21" />
-    <PackageReference Include="DFC.Logger.AppInsights" Version="1.0.7" />
+     <PackageReference Include="DFC.FindACourseClient" Version="2.1.22" />
+    <PackageReference Include="DFC.Logger.AppInsights" Version="1.0.8" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
