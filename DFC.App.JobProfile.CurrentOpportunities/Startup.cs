@@ -165,7 +165,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             .AddCheck<CourseCurrentOpportunitiesRefresh>("Course Search")
             .AddCheck<AVAPIService>("Apprenticeship Service");
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services.AddMvc().AddNewtonsoftJson().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
     }
 }
