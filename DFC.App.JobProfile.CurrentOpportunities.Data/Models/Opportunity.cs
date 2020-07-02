@@ -8,6 +8,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 
         public string CourseId { get; set; }
 
+        public string RunId { get; set; }
+
         public string Provider { get; set; }
 
         public string StartDate { get; set; }

@@ -9,6 +9,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
 
         public string CourseId { get; set; }
 
+        public string RunId { get; set; }
+
         public string Provider { get; set; }
 
         [Display(Name = "Start Date")]
