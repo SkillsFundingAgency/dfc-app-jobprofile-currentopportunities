@@ -71,7 +71,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
             foreach (var course in courseSearchResults)
             {
                 var opportunity = mapper.Map<Opportunity>(course);
-                opportunity.URL = new Uri($"{courseSearchSettings.CourseSearchUrl}{opportunity.CourseId}");
+                opportunity.URL = new Uri($"{courseSearchSettings.CourseSearchUrl}/find-a-course/course-details?CourseId={opportunity.CourseId}&r={opportunity.RunId}");
                 opportunities.Add(opportunity);
                 logger.LogInformation($"{nameof(RefreshCoursesAsync)} added details for {course.CourseId} to list");
             }
