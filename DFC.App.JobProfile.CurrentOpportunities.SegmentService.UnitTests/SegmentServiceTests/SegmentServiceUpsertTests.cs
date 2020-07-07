@@ -1,8 +1,10 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
 using FakeItEasy;
 using System;
 using System.Linq.Expressions;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -107,5 +109,55 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
                 A.CallTo(() => FakeAVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).MustNotHaveHappened();
             }
         }
+
+        [Fact]
+        public void RefreshJobProfileMessageSentWhenOnlyCourseServiceFails()
+        {
+            // arrange
+            var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
+            A.CallTo(() => FakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.OK);
+            A.CallTo(() => FakeAVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(currentOpportunitiesSegmentModel.DocumentId)).Returns(2);
+            A.CallTo(() => FakeCourseCurrentOpportunitiesRefresh.RefreshCoursesAsync(currentOpportunitiesSegmentModel.DocumentId)).Throws(new HttpRequestException());
+
+            // act
+            var result = CurrentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).Result;
+
+            // asserts
+            A.CallTo(() => FakeJobProfileSegmentRefreshService.SendMessageAsync(A<RefreshJobProfileSegmentServiceBusModel>.Ignored)).MustHaveHappened();
+        }
+
+        [Fact]
+        public void RefreshJobProfileMessageSentWhenOnlyAVServiceFails()
+        {
+            // arrange
+            var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
+            A.CallTo(() => FakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.OK);
+            A.CallTo(() => FakeAVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(currentOpportunitiesSegmentModel.DocumentId)).Throws(new HttpRequestException());
+            A.CallTo(() => FakeCourseCurrentOpportunitiesRefresh.RefreshCoursesAsync(currentOpportunitiesSegmentModel.DocumentId)).Returns(2);
+
+            // act
+            var result = CurrentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).Result;
+
+            // asserts
+            A.CallTo(() => FakeJobProfileSegmentRefreshService.SendMessageAsync(A<RefreshJobProfileSegmentServiceBusModel>.Ignored)).MustHaveHappened();
+        }
+
+        [Fact]
+        public void RefreshJobProfileMessageNotSentWhenCourseAndAVServiceFails()
+        {
+            // arrange
+            var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
+            A.CallTo(() => FakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.OK);
+            A.CallTo(() => FakeAVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(currentOpportunitiesSegmentModel.DocumentId)).Throws(new HttpRequestException());
+            A.CallTo(() => FakeCourseCurrentOpportunitiesRefresh.RefreshCoursesAsync(currentOpportunitiesSegmentModel.DocumentId)).Throws(new HttpRequestException());
+
+            // act
+            var result = CurrentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).Result;
+
+            // asserts
+            A.CallTo(() => FakeJobProfileSegmentRefreshService.SendMessageAsync(A<RefreshJobProfileSegmentServiceBusModel>.Ignored)).MustNotHaveHappened();
+        }
+
+
     }
 }

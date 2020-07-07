@@ -230,16 +230,39 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             return result == HttpStatusCode.NoContent;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "We want to catch all errors that happen when we call the external API")]
         private async Task<HttpStatusCode> UpsertAndRefreshSegmentModel(CurrentOpportunitiesSegmentModel existingSegmentModel)
         {
             var result = await repository.UpsertAsync(existingSegmentModel).ConfigureAwait(false);
+            int numberOfRefreshFailures = 0;
             if (result == HttpStatusCode.Created || result == HttpStatusCode.OK)
             {
                 var refreshJobProfileSegmentServiceBusModel = mapper.Map<RefreshJobProfileSegmentServiceBusModel>(existingSegmentModel);
 
-                await aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(existingSegmentModel.DocumentId).ConfigureAwait(false);
-                await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(existingSegmentModel.DocumentId).ConfigureAwait(false);
-                await jobProfileSegmentRefreshService.SendMessageAsync(refreshJobProfileSegmentServiceBusModel).ConfigureAwait(false);
+                try
+                {
+                    await aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(existingSegmentModel.DocumentId).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, $"{nameof(UpsertAndRefreshSegmentModel)}: Error refreshing Apprenticeships for {existingSegmentModel.CanonicalName}");
+                    numberOfRefreshFailures++;
+                }
+
+                try
+                {
+                    await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(existingSegmentModel.DocumentId).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, $"{nameof(UpsertAndRefreshSegmentModel)}: Error refreshing courses for {existingSegmentModel.CanonicalName}");
+                    numberOfRefreshFailures++;
+                }
+
+                if (numberOfRefreshFailures <= 1)
+                {
+                    await jobProfileSegmentRefreshService.SendMessageAsync(refreshJobProfileSegmentServiceBusModel).ConfigureAwait(false);
+                }
             }
 
             return result;

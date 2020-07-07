@@ -174,6 +174,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
 
             if (currentOpportunitiesSegmentModel.SequenceNumber <= existingDocument.SequenceNumber)
             {
+                logService.LogWarning($"{nameof(Post)} Sequence error {currentOpportunitiesSegmentModel.SequenceNumber} is not greate then the current document {existingDocument.SequenceNumber}");
                 return new StatusCodeResult((int)HttpStatusCode.AlreadyReported);
             }
 
