@@ -2,6 +2,7 @@
 using FakeItEasy;
 using System;
 using System.Net;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.SegmentServiceTests
@@ -14,7 +15,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         }
 
         [Fact]
-        public void CareerPathSegmentServiceDeleteReturnsSuccessWhenSegmentDeleted()
+        public async Task CareerPathSegmentServiceDeleteReturnsSuccessWhenSegmentDeleted()
         {
             // arrange
             Guid documentId = Guid.NewGuid();
@@ -23,7 +24,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => FakeRepository.DeleteAsync(documentId)).Returns(HttpStatusCode.NoContent);
 
             // act
-            var result = CurrentOpportunitiesSegmentService.DeleteAsync(documentId).Result;
+            var result = await CurrentOpportunitiesSegmentService.DeleteAsync(documentId).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => FakeRepository.DeleteAsync(documentId)).MustHaveHappenedOnceExactly();
@@ -31,7 +32,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         }
 
         [Fact]
-        public void CareerPathSegmentServiceDeleteReturnsNullWhenSegmentNotDeleted()
+        public async Task CareerPathSegmentServiceDeleteReturnsNullWhenSegmentNotDeleted()
         {
             // arrange
             Guid documentId = Guid.NewGuid();
@@ -40,7 +41,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => FakeRepository.DeleteAsync(documentId)).Returns(HttpStatusCode.BadRequest);
 
             // act
-            var result = CurrentOpportunitiesSegmentService.DeleteAsync(documentId).Result;
+            var result = await CurrentOpportunitiesSegmentService.DeleteAsync(documentId).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => FakeRepository.DeleteAsync(documentId)).MustHaveHappenedOnceExactly();
@@ -48,7 +49,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         }
 
         [Fact]
-        public void CareerPathSegmentServiceDeleteReturnsFalseWhenMissingRepository()
+        public async Task CareerPathSegmentServiceDeleteReturnsFalseWhenMissingRepository()
         {
             // arrange
             Guid documentId = Guid.NewGuid();
@@ -58,7 +59,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => FakeRepository.DeleteAsync(documentId)).Returns(HttpStatusCode.FailedDependency);
 
             // act
-            var result = CurrentOpportunitiesSegmentService.DeleteAsync(documentId).Result;
+            var result = await CurrentOpportunitiesSegmentService.DeleteAsync(documentId).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => FakeRepository.DeleteAsync(documentId)).MustHaveHappenedOnceExactly();

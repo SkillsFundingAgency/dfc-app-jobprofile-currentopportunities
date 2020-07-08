@@ -230,7 +230,6 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             return result == HttpStatusCode.NoContent;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "We want to catch all errors that happen when we call the external API")]
         private async Task<HttpStatusCode> UpsertAndRefreshSegmentModel(CurrentOpportunitiesSegmentModel existingSegmentModel)
         {
             var result = await repository.UpsertAsync(existingSegmentModel).ConfigureAwait(false);
@@ -238,27 +237,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             if (result == HttpStatusCode.Created || result == HttpStatusCode.OK)
             {
                 var refreshJobProfileSegmentServiceBusModel = mapper.Map<RefreshJobProfileSegmentServiceBusModel>(existingSegmentModel);
-
-                try
-                {
-                    await aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(existingSegmentModel.DocumentId).ConfigureAwait(false);
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, $"{nameof(UpsertAndRefreshSegmentModel)}: Error refreshing Apprenticeships for {existingSegmentModel.CanonicalName}");
-                    numberOfRefreshFailures++;
-                }
-
-                try
-                {
-                    await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(existingSegmentModel.DocumentId).ConfigureAwait(false);
-                }
-                catch (Exception ex)
-                {
-                    logger.LogError(ex, $"{nameof(UpsertAndRefreshSegmentModel)}: Error refreshing courses for {existingSegmentModel.CanonicalName}");
-                    numberOfRefreshFailures++;
-                }
-
+                numberOfRefreshFailures += await TryRefresh(() => aVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(existingSegmentModel.DocumentId), existingSegmentModel.CanonicalName).ConfigureAwait(false);
+                numberOfRefreshFailures += await TryRefresh(() => courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(existingSegmentModel.DocumentId), existingSegmentModel.CanonicalName).ConfigureAwait(false);
                 if (numberOfRefreshFailures <= 1)
                 {
                     await jobProfileSegmentRefreshService.SendMessageAsync(refreshJobProfileSegmentServiceBusModel).ConfigureAwait(false);
@@ -266,6 +246,22 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService
             }
 
             return result;
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "We want to catch all errors that happen when we call the external API")]
+        private async Task<int> TryRefresh(Func<Task<int>> refreshMethod, string canonicalName)
+        {
+            try
+            {
+                await refreshMethod().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, $"{nameof(refreshMethod)}: Error refreshing for {canonicalName}");
+                return 1;
+            }
+
+            return 0;
         }
     }
 }
