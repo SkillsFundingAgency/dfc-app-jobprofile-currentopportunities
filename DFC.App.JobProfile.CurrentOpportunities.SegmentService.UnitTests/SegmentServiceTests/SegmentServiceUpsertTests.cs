@@ -1,8 +1,10 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
 using FakeItEasy;
 using System;
 using System.Linq.Expressions;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -16,7 +18,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         }
 
         [Fact]
-        public void CurrentOpportunitiesSegementServiceCreateReturnsCreatedWhenSegmentCreated()
+        public async Task CurrentOpportunitiesSegementServiceCreateReturnsCreatedWhenSegmentCreated()
         {
             // arrange
             var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
@@ -25,7 +27,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => FakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.Created);
 
             // act
-            var result = CurrentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).Result;
+            var result = await CurrentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => FakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
@@ -45,7 +47,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         }
 
         [Fact]
-        public void CurrentOpportunitiesSegmentServiceCreateReturnsNullWhenSegmentNotCreated()
+        public async Task CurrentOpportunitiesSegmentServiceCreateReturnsNullWhenSegmentNotCreated()
         {
             // arrange
             var createOrUdateCareerPathSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
@@ -54,7 +56,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => FakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.BadRequest);
 
             // act
-            var result = CurrentOpportunitiesSegmentService.UpsertAsync(createOrUdateCareerPathSegmentModel).Result;
+            var result = await CurrentOpportunitiesSegmentService.UpsertAsync(createOrUdateCareerPathSegmentModel).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => FakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
@@ -63,7 +65,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         }
 
         [Fact]
-        public void CurrentOpportunitiesSegmentServiceCreateReturnsNullWhenMissingRepository()
+        public async Task CurrentOpportunitiesSegmentServiceCreateReturnsNullWhenMissingRepository()
         {
             // arrange
             var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
@@ -72,7 +74,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => FakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.FailedDependency);
 
             // act
-            var result = CurrentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).Result;
+            var result = await CurrentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => FakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
@@ -84,14 +86,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         [InlineData(HttpStatusCode.Created, true)]
         [InlineData(HttpStatusCode.OK, true)]
         [InlineData(HttpStatusCode.FailedDependency, false)]
-        public void CurrentOpportunitiesSegmentServiceUpdateCoursesAndAppreticeshipsWhenUpserted(HttpStatusCode upsertReturnCode, bool shouldRefresh)
+        public async Task CurrentOpportunitiesSegmentServiceUpdateCoursesAndAppreticeshipsWhenUpserted(HttpStatusCode upsertReturnCode, bool shouldRefresh)
         {
             // arrange
             var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
             A.CallTo(() => FakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(upsertReturnCode);
 
             // act
-            var result = CurrentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).Result;
+            var result = await CurrentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
 
             // assert
             A.CallTo(() => FakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
@@ -106,6 +108,54 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
                 A.CallTo(() => FakeCourseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A<Guid>.Ignored)).MustNotHaveHappened();
                 A.CallTo(() => FakeAVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).MustNotHaveHappened();
             }
+        }
+
+        [Fact]
+        public async Task RefreshJobProfileMessageSentWhenOnlyCourseServiceFails()
+        {
+            // arrange
+            var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
+            A.CallTo(() => FakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.OK);
+            A.CallTo(() => FakeAVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(currentOpportunitiesSegmentModel.DocumentId)).Returns(2);
+            A.CallTo(() => FakeCourseCurrentOpportunitiesRefresh.RefreshCoursesAsync(currentOpportunitiesSegmentModel.DocumentId)).Throws(new HttpRequestException());
+
+            // act
+            var result = await CurrentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
+
+            // asserts
+            A.CallTo(() => FakeJobProfileSegmentRefreshService.SendMessageAsync(A<RefreshJobProfileSegmentServiceBusModel>.Ignored)).MustHaveHappened();
+        }
+
+        [Fact]
+        public async Task RefreshJobProfileMessageSentWhenOnlyAVServiceFails()
+        {
+            // arrange
+            var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
+            A.CallTo(() => FakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.OK);
+            A.CallTo(() => FakeAVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(currentOpportunitiesSegmentModel.DocumentId)).Throws(new HttpRequestException());
+            A.CallTo(() => FakeCourseCurrentOpportunitiesRefresh.RefreshCoursesAsync(currentOpportunitiesSegmentModel.DocumentId)).Returns(2);
+
+            // act
+            var result = await CurrentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
+
+            // asserts
+            A.CallTo(() => FakeJobProfileSegmentRefreshService.SendMessageAsync(A<RefreshJobProfileSegmentServiceBusModel>.Ignored)).MustHaveHappened();
+        }
+
+        [Fact]
+        public async Task RefreshJobProfileMessageNotSentWhenCourseAndAVServiceFails()
+        {
+            // arrange
+            var currentOpportunitiesSegmentModel = A.Fake<CurrentOpportunitiesSegmentModel>();
+            A.CallTo(() => FakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).Returns(HttpStatusCode.OK);
+            A.CallTo(() => FakeAVCurrentOpportunatiesRefresh.RefreshApprenticeshipVacanciesAsync(currentOpportunitiesSegmentModel.DocumentId)).Throws(new HttpRequestException());
+            A.CallTo(() => FakeCourseCurrentOpportunitiesRefresh.RefreshCoursesAsync(currentOpportunitiesSegmentModel.DocumentId)).Throws(new HttpRequestException());
+
+            // act
+            var result = await CurrentOpportunitiesSegmentService.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
+
+            // asserts
+            A.CallTo(() => FakeJobProfileSegmentRefreshService.SendMessageAsync(A<RefreshJobProfileSegmentServiceBusModel>.Ignored)).MustNotHaveHappened();
         }
     }
 }

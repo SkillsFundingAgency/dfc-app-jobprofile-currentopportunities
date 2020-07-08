@@ -1,4 +1,5 @@
 ﻿using FakeItEasy;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.SegmentServiceTests
@@ -11,14 +12,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         }
 
         [Fact]
-        public void CareerPathSegmentServicePingReturnsSuccess()
+        public async Task CareerPathSegmentServicePingReturnsSuccess()
         {
             // arrange
             var expectedResult = true;
             A.CallTo(() => FakeRepository.PingAsync()).Returns(expectedResult);
 
             // act
-            var result = CurrentOpportunitiesSegmentService.PingAsync().Result;
+            var result = await CurrentOpportunitiesSegmentService.PingAsync().ConfigureAwait(false);
 
             // assert
             A.CallTo(() => FakeRepository.PingAsync()).MustHaveHappenedOnceExactly();
@@ -26,7 +27,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         }
 
         [Fact]
-        public void CareerPathSegmentServicePingReturnsFalseWhenMissingRepository()
+        public async Task CareerPathSegmentServicePingReturnsFalseWhenMissingRepository()
         {
             // arrange
             var expectedResult = false;
@@ -34,7 +35,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             A.CallTo(() => FakeRepository.PingAsync()).Returns(expectedResult);
 
             // act
-            var result = CurrentOpportunitiesSegmentService.PingAsync().Result;
+            var result = await CurrentOpportunitiesSegmentService.PingAsync().ConfigureAwait(false);
 
             // assert
             A.CallTo(() => FakeRepository.PingAsync()).MustHaveHappenedOnceExactly();

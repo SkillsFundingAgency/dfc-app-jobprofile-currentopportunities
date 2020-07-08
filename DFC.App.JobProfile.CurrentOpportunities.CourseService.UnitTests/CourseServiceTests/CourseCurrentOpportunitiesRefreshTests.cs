@@ -60,7 +60,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         [InlineData(0)]
         [InlineData(1)]
         [InlineData(2)]
-        public void RefreshCoursesAsync(int numberVacanciesFound)
+        public async Task RefreshCoursesAsync(int numberVacanciesFound)
         {
             //arrange
             A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
@@ -70,7 +70,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
 
             //Act
-            var result = courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).Result;
+            var result = await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).ConfigureAwait(false);
 
             //Asserts
             result.Should().Be(numberVacanciesFound);
