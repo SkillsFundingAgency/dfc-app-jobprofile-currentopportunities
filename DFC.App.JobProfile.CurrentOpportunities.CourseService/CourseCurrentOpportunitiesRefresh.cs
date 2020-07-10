@@ -84,7 +84,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
 
             currentOpportunitiesSegmentModel.Data.Courses.Opportunities = opportunities;
             await repository.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
-            return courseSearchResults.Count;
+            return courseSearchResults == null ? 0 : courseSearchResults.Count;
         }
     }
 }
