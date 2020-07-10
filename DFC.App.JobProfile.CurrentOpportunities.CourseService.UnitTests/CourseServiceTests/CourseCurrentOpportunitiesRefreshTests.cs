@@ -97,6 +97,41 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             A.CallTo(() => fakeMapper.Map<Opportunity>(A<object>.Ignored)).MustNotHaveHappened();
         }
 
+        [Fact]
+        public async Task ShouldNotMakeACallToFACClientIfCousreKeyWordIsBlank()
+        {
+            //arrange
+            var modelWithBlankCourses = currentOpportunitiesSegmentModel;
+            modelWithBlankCourses.Data.Courses.CourseKeywords = string.Empty;
+            A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
+            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
+
+            //Act
+            var result = await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).ConfigureAwait(false);
+
+            //Asserts
+            result.Should().Be(0);
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).MustNotHaveHappened(); 
+        }
+
+        [Fact]
+        public async Task ShouldHandleFACClientReturningNullForASearch()
+        {
+            //arrange
+            A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).Returns(GetTestCourses(0));
+
+            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
+
+            //Act
+            var result = await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).ConfigureAwait(false);
+
+            //Asserts
+            result.Should().Be(0);
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).MustHaveHappened();
+        }
+
+
         private static IEnumerable<Course> GetTestCourses(int numberToGet)
         {
             for (var i = 0; i < numberToGet; i++)
