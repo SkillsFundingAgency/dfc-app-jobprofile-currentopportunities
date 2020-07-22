@@ -3,6 +3,7 @@ using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.SegmentControllerTests
@@ -12,7 +13,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
     {
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerPatchApprenticeshipFrameworksReturnsSuccess(string mediaTypeName)
+        public async Task SegmentControllerPatchApprenticeshipFrameworksReturnsSuccess(string mediaTypeName)
         {
             // Arrange
             const HttpStatusCode expectedResponse = HttpStatusCode.OK;
@@ -35,7 +36,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerPatchApprenticeshipFrameworksReturnsNotFound(string mediaTypeName)
+        public async Task SegmentControllerPatchApprenticeshipFrameworksReturnsNotFound(string mediaTypeName)
         {
             // Arrange
             const HttpStatusCode expectedResponse = HttpStatusCode.NotFound;
@@ -58,7 +59,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerPatchApprenticeshipFrameworksReturnsBadRequestWhenNullPatchmodel(string mediaTypeName)
+        public async Task SegmentControllerPatchApprenticeshipFrameworksReturnsBadRequestWhenNullPatchmodel(string mediaTypeName)
         {
             // Arrange
             const HttpStatusCode expectedResponse = HttpStatusCode.BadRequest;
@@ -78,7 +79,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerPatchApprenticeshipFrameworksReturnsBadRequestWhenInvalidPatchmodel(string mediaTypeName)
+        public async Task SegmentControllerPatchApprenticeshipFrameworksReturnsBadRequestWhenInvalidPatchmodel(string mediaTypeName)
         {
             // Arrange
             const HttpStatusCode expectedResponse = HttpStatusCode.BadRequest;

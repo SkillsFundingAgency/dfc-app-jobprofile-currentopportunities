@@ -66,7 +66,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             if (currentOpportunitiesSegmentModel != null)
             {
                 var viewModel = mapper.Map<DocumentViewModel>(currentOpportunitiesSegmentModel);
-
+                viewModel.Data.JobTitleWithPrefix = GetJobTitleWithPrefix(currentOpportunitiesSegmentModel.Data?.TitlePrefix, currentOpportunitiesSegmentModel.Data?.JobTitle, currentOpportunitiesSegmentModel.Data?.ContentTitle);
                 logService.LogInformation($"{nameof(Document)} has succeeded for: {article}");
 
                 return View(viewModel);
@@ -174,6 +174,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
 
             if (currentOpportunitiesSegmentModel.SequenceNumber <= existingDocument.SequenceNumber)
             {
+                logService.LogWarning($"{nameof(Post)} Sequence error {currentOpportunitiesSegmentModel.SequenceNumber} is not greate then the current document {existingDocument.SequenceNumber}");
                 return new StatusCodeResult((int)HttpStatusCode.AlreadyReported);
             }
 

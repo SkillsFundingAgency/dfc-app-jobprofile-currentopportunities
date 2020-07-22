@@ -1,6 +1,6 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Data.HttpClientPolicies;
+using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels;
-using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.HttpClientPolicies;
 using DFC.Logger.AppInsights.Constants;
 using DFC.Logger.AppInsights.Contracts;
 using System;
@@ -15,14 +15,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0063:Use simple 'using' statement", Justification = "Do not use C#8.0 features for now as they are not supported on the build servers")]
     public class HttpClientService : IHttpClientService
     {
-        private readonly SegmentClientOptions segmentClientOptions;
+        private readonly CoreClientOptions coreClientOptions;
         private readonly HttpClient httpClient;
         private readonly ILogService logService;
         private readonly ICorrelationIdProvider correlationIdProvider;
 
-        public HttpClientService(SegmentClientOptions segmentClientOptions, HttpClient httpClient, ILogService logService, ICorrelationIdProvider correlationIdProvider)
+        public HttpClientService(CoreClientOptions segmentClientOptions, HttpClient httpClient, ILogService logService, ICorrelationIdProvider correlationIdProvider)
         {
-            this.segmentClientOptions = segmentClientOptions;
+            this.coreClientOptions = segmentClientOptions;
             this.httpClient = httpClient;
             this.logService = logService;
             this.correlationIdProvider = correlationIdProvider;
@@ -30,7 +30,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
 
         public async Task<HttpStatusCode> PostAsync(CurrentOpportunitiesSegmentModel overviewSegmentModel)
         {
-            var url = new Uri($"{segmentClientOptions?.BaseAddress}segment");
+            var url = new Uri($"{coreClientOptions?.BaseAddress}segment");
             ConfigureHttpClient();
 
             using (var content = new ObjectContent(typeof(CurrentOpportunitiesSegmentModel), overviewSegmentModel, new JsonMediaTypeFormatter(), MediaTypeNames.Application.Json))
@@ -49,7 +49,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
 
         public async Task<HttpStatusCode> PutAsync(CurrentOpportunitiesSegmentModel overviewSegmentModel)
         {
-            var url = new Uri($"{segmentClientOptions?.BaseAddress}segment");
+            var url = new Uri($"{coreClientOptions?.BaseAddress}segment");
             ConfigureHttpClient();
 
             using (var content = new ObjectContent(typeof(CurrentOpportunitiesSegmentModel), overviewSegmentModel, new JsonMediaTypeFormatter(), MediaTypeNames.Application.Json))
@@ -70,7 +70,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
         public async Task<HttpStatusCode> PatchAsync<T>(T patchModel, string patchTypeEndpoint)
             where T : BasePatchModel
         {
-            var url = new Uri($"{segmentClientOptions.BaseAddress}segment/{patchModel?.JobProfileId}/{patchTypeEndpoint}");
+            var url = new Uri($"{coreClientOptions.BaseAddress}segment/{patchModel?.JobProfileId}/{patchTypeEndpoint}");
             ConfigureHttpClient();
 
             using (var content = new ObjectContent<T>(patchModel, new JsonMediaTypeFormatter(), MediaTypeNames.Application.Json))
@@ -90,7 +90,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
 
         public async Task<HttpStatusCode> DeleteAsync(Guid id)
         {
-            var url = new Uri($"{segmentClientOptions?.BaseAddress}segment/{id}");
+            var url = new Uri($"{coreClientOptions?.BaseAddress}segment/{id}");
             ConfigureHttpClient();
 
             var response = await httpClient.DeleteAsync(url).ConfigureAwait(false);

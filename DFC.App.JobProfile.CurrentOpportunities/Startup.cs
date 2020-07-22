@@ -2,9 +2,12 @@
 using DFC.App.FindACourseClient.Models.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles;
 using DFC.App.JobProfile.CurrentOpportunities.AVService;
+using DFC.App.JobProfile.CurrentOpportunities.Core.Extensions;
 using DFC.App.JobProfile.CurrentOpportunities.CourseService;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
+using DFC.App.JobProfile.CurrentOpportunities.Data.HttpClientPolicies;
+using DFC.App.JobProfile.CurrentOpportunities.Data.HttpClientPolicies.Polly;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
 using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
 using DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb;
@@ -19,6 +22,7 @@ using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -30,6 +34,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
         public const string CosmosDbConfigAppSettings = "Configuration:CosmosDbConnections:JobProfileSegment";
         public const string ServiceBusOptionsAppSettings = "ServiceBusOptions";
         public const string AVAPIServiceAppSettings = "Configuration:AVAPIService";
+        public const string AVAPIServiceClientPolicySettings = "Configuration:AVAPIService:Policies";
         public const string AVFeedAuditSettings = "Configuration:CosmosDbConnections:AVFeedAudit";
         public const string CourseSearchAppSettings = "Configuration:CourseSearch";
         public const string CourseSearchClientSvcSettings = "Configuration:CourseSearchClient:CourseSearchSvc";
@@ -44,7 +49,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public static void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -61,11 +66,15 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseRouting();
 
-            app.UseMvc(routes =>
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Health}/{action=Ping}"));
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+
+                // add the default route
+                endpoints.MapControllerRoute("default", "{controller=Health}/{action=Ping}");
+            });
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -92,7 +101,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities
             };
             services.AddSingleton(courseSearchClientSettings);
             services.AddScoped<ICourseSearchApiService, CourseSearchApiService>();
-            services.AddFindACourseServices(courseSearchClientSettings);
+            services.AddFindACourseServicesWithoutFaultHandling(courseSearchClientSettings);
+            var policyRegistry = services.AddPolicyRegistry();
+            services.AddFindACourseTransientFaultHandlingPolicies(courseSearchClientSettings, policyRegistry);
 
             var serviceBusOptions = configuration.GetSection(ServiceBusOptionsAppSettings).Get<ServiceBusOptions>();
             var topicClient = new TopicClient(serviceBusOptions.ServiceBusConnectionString, serviceBusOptions.TopicName);
@@ -103,7 +114,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
                 var cosmosDbConnection = configuration.GetSection(CosmosDbConfigAppSettings).Get<CosmosDbConnection>();
                 var documentClient = new DocumentClient(cosmosDbConnection.EndpointUrl, cosmosDbConnection.AccessKey);
 
-                return new CosmosRepository<CurrentOpportunitiesSegmentModel>(cosmosDbConnection, documentClient, s.GetService<IHostingEnvironment>());
+                return new CosmosRepository<CurrentOpportunitiesSegmentModel>(cosmosDbConnection, documentClient, s.GetService<IWebHostEnvironment>().IsDevelopment());
             });
 
             services.AddSingleton<ICosmosRepository<APIAuditRecordAV>, CosmosRepository<APIAuditRecordAV>>(s =>
@@ -111,7 +122,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities
                 var cosmosDbAuditConnection = configuration.GetSection(AVFeedAuditSettings).Get<CosmosDbConnection>();
                 var documentClient = new DocumentClient(cosmosDbAuditConnection.EndpointUrl, cosmosDbAuditConnection.AccessKey);
 
-                return new CosmosRepository<APIAuditRecordAV>(cosmosDbAuditConnection, documentClient, s.GetService<IHostingEnvironment>());
+                return new CosmosRepository<APIAuditRecordAV>(cosmosDbAuditConnection, documentClient, s.GetService<IWebHostEnvironment>().IsDevelopment());
             });
 
             services.AddScoped<ICourseCurrentOpportunitiesRefresh, CourseCurrentOpportunitiesRefresh>();
@@ -134,16 +145,27 @@ namespace DFC.App.JobProfile.CurrentOpportunities
                  }).CreateMapper();
              });
 
-            services.AddDFCLogging(configuration["ApplicationInsights:InstrumentationKey"]);
-            services.AddHttpClient<IApprenticeshipVacancyApi, ApprenticeshipVacancyApi>();
+            var corePolicyOptions = configuration.GetSection(AVAPIServiceClientPolicySettings).Get<CorePolicyOptions>() ?? new CorePolicyOptions();
+            corePolicyOptions.HttpRateLimitRetry ??= new RateLimitPolicyOptions();
+            policyRegistry.AddRateLimitPolicy(nameof(RefreshClientOptions), corePolicyOptions.HttpRateLimitRetry);
+            policyRegistry.AddStandardPolicies(nameof(RefreshClientOptions), corePolicyOptions);
+
+            services.BuildHttpClient<IApprenticeshipVacancyApi, ApprenticeshipVacancyApi, RefreshClientOptions>(configuration, nameof(RefreshClientOptions))
+            .AddPolicyHandlerFromRegistry($"{nameof(RefreshClientOptions)}_{nameof(CorePolicyOptions.HttpRateLimitRetry)}")
+            .AddPolicyHandlerFromRegistry($"{nameof(RefreshClientOptions)}_{nameof(CorePolicyOptions.HttpRetry)}")
+            .AddPolicyHandlerFromRegistry($"{nameof(RefreshClientOptions)}_{nameof(CorePolicyOptions.HttpCircuitBreaker)}");
+
             services.AddScoped<IAVAPIService, AVAPIService>();
+            services.AddScoped<Data.Contracts.IAuditService, AuditService>();
+
+            services.AddDFCLogging(configuration["ApplicationInsights:InstrumentationKey"]);
 
             services.AddHealthChecks()
             .AddCheck<CurrentOpportunitiesSegmentService>("Current Opportunities Segment Service")
             .AddCheck<CourseCurrentOpportunitiesRefresh>("Course Search")
             .AddCheck<AVAPIService>("Apprenticeship Service");
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().AddNewtonsoftJson().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
         }
     }
 }

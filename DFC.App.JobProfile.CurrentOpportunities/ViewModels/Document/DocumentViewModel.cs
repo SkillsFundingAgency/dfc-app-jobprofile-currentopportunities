@@ -8,16 +8,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
         [Display(Name = "Document Id")]
         public Guid? DocumentId { get; set; }
 
-        public string Etag { get; set; }
-
         [Display(Name = "Canonical Name")]
         public string CanonicalName { get; set; }
 
-        [Display(Name = "SOC Level two")]
-        public string SocLevelTwo { get; set; }
-
-        [Display(Name = "Partition Key")]
-        public string PartitionKey { get; set; }
+        [Display(Name = "Sequence Number")]
+        public long SequenceNumber { get; set; }
 
         public DocumentDataViewModel Data { get; set; }
     }

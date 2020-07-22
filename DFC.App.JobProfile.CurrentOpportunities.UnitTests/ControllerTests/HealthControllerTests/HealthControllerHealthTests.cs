@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Mime;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.HealthControllerTests
@@ -13,7 +14,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Heal
     public class HealthControllerHealthTests : BaseHealthController
     {
         [Fact]
-        public async void HealthControllerHealthReturnsSuccessWhenhealthy()
+        public async Task HealthControllerHealthReturnsSuccessWhenhealthy()
         {
             // Arrange
             var controller = BuildHealthController(MediaTypeNames.Application.Json);
@@ -37,7 +38,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Heal
         }
 
         [Fact]
-        public async void HealthControllerHealthReturnsServiceUnavailableWhenUnhealthy()
+        public async Task HealthControllerHealthReturnsServiceUnavailableWhenUnhealthy()
         {
             // Arrange
             var controller = BuildHealthController(MediaTypeNames.Application.Json);
@@ -58,7 +59,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Heal
         }
 
         [Fact]
-        public async void HealthControllerHealthReturnsServiceUnavailableWhenException()
+        public async Task HealthControllerHealthReturnsServiceUnavailableWhenException()
         {
             // Arrange
             var controller = BuildHealthController(MediaTypeNames.Application.Json);

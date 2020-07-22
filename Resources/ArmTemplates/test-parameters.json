@@ -58,6 +58,9 @@
         },
         "courseProviderServiceApiKey": {
             "value": "not-a-real-key"
+        },
+        "enableAlerts": {
+            "value": false
         }
     }
 }

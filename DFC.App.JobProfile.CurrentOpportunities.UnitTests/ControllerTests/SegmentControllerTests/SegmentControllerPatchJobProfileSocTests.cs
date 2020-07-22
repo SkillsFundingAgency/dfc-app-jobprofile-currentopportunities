@@ -3,6 +3,7 @@ using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.SegmentControllerTests
@@ -12,7 +13,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
     {
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerPatchJobProfileSocReturnsSuccess(string mediaTypeName)
+        public async Task SegmentControllerPatchJobProfileSocReturnsSuccess(string mediaTypeName)
         {
             // Arrange
             const HttpStatusCode expectedResponse = HttpStatusCode.OK;
@@ -35,7 +36,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerPatchJobProfileSocReturnsNotFound(string mediaTypeName)
+        public async Task SegmentControllerPatchJobProfileSocReturnsNotFound(string mediaTypeName)
         {
             // Arrange
             const HttpStatusCode expectedResponse = HttpStatusCode.NotFound;
@@ -58,7 +59,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerPatchJobProfileSocReturnsBadRequestWhenNullPatchmodel(string mediaTypeName)
+        public async Task SegmentControllerPatchJobProfileSocReturnsBadRequestWhenNullPatchmodel(string mediaTypeName)
         {
             // Arrange
             const HttpStatusCode expectedResponse = HttpStatusCode.BadRequest;
@@ -78,7 +79,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerPatchJobProfileSocReturnsBadRequestWhenInvalidPatchmodel(string mediaTypeName)
+        public async Task SegmentControllerPatchJobProfileSocReturnsBadRequestWhenInvalidPatchmodel(string mediaTypeName)
         {
             // Arrange
             const HttpStatusCode expectedResponse = HttpStatusCode.BadRequest;
