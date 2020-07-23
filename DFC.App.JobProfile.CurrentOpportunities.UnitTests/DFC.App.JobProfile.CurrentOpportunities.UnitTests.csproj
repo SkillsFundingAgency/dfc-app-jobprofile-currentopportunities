@@ -58,18 +58,4 @@
     <Folder Include="ControllerTests\CourseFeedControllerTests\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities\DFC.App.JobProfile.CurrentOpportunities.csproj" />
-  </ItemGroup>
- 
-  <ItemGroup>
-    <None Update="appsettings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
- 
-  <ItemGroup>
-    <Folder Include="ControllerTests\CourseFeedControllerTests\" />
-  </ItemGroup>
-
 </Project>
