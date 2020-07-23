@@ -87,7 +87,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
             var numberProviders = aVSumaryList.Select(v => v.TrainingProviderName).Distinct().Count();
             numberProviders.Should().BeGreaterThan(1);
 
-            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.Search)).MustHaveHappened(Repeated.Exactly.Twice);
+            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.Search)).MustHaveHappenedTwiceExactly();
         }
 
         [Fact]

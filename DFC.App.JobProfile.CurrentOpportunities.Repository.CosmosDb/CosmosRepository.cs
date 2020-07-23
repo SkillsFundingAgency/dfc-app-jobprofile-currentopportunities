@@ -1,5 +1,4 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -21,12 +20,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Repository.CosmosDb
         private readonly CosmosDbConnection cosmosDbConnection;
         private readonly IDocumentClient documentClient;
 
-        public CosmosRepository(CosmosDbConnection cosmosDbConnection, IDocumentClient documentClient, IHostingEnvironment env)
+        public CosmosRepository(CosmosDbConnection cosmosDbConnection, IDocumentClient documentClient, bool isDevEnv)
         {
             this.cosmosDbConnection = cosmosDbConnection;
             this.documentClient = documentClient;
 
-            if (env.IsDevelopment())
+            if (isDevEnv)
             {
                 CreateDatabaseIfNotExistsAsync().Wait();
                 CreateCollectionIfNotExistsAsync().Wait();

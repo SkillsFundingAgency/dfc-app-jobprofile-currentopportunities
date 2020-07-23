@@ -61,6 +61,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.App.JobProfile.CurrentO
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.App.JobProfile.CurrentOpportunities.Data", "DFC.App.JobProfile.CurrentOpportunities.Data\DFC.App.JobProfile.CurrentOpportunities.Data.csproj", "{23FAC210-C9A2-4FA7-B5D5-326D31ABAAA1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{C1CE6A6C-CA8E-4102-83BD-69C0206345C7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.App.JobProfile.CurrentOpportunities.Core", "DFC.App.JobProfile.CurrentOpportunities.Core\DFC.App.JobProfile.CurrentOpportunities.Core.csproj", "{8C030748-5B9B-4E91-814F-14C4BBD895FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -119,6 +123,10 @@ Global
 		{23FAC210-C9A2-4FA7-B5D5-326D31ABAAA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23FAC210-C9A2-4FA7-B5D5-326D31ABAAA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23FAC210-C9A2-4FA7-B5D5-326D31ABAAA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C030748-5B9B-4E91-814F-14C4BBD895FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C030748-5B9B-4E91-814F-14C4BBD895FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C030748-5B9B-4E91-814F-14C4BBD895FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C030748-5B9B-4E91-814F-14C4BBD895FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -142,6 +150,7 @@ Global
 		{AD0B4E22-EBB1-4455-BEBE-62D68489063D} = {2E12ED6F-6C7F-4B05-BF79-1974F6F71F09}
 		{062FEB5C-50AB-497E-97C3-3A279A048878} = {048389AA-B637-40C1-9B13-5C86915463BB}
 		{23FAC210-C9A2-4FA7-B5D5-326D31ABAAA1} = {0B7EADF2-7AE7-407C-A910-55361746755C}
+		{8C030748-5B9B-4E91-814F-14C4BBD895FF} = {C1CE6A6C-CA8E-4102-83BD-69C0206345C7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {147B3C69-E27D-471C-A294-B484874010CC}

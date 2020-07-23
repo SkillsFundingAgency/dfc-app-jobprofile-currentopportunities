@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Extensions;
-using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.HttpClientPolicies;
-using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.HttpClientPolicies.Polly;
+using DFC.App.JobProfile.CurrentOpportunities.Core.Extensions;
+using DFC.App.JobProfile.CurrentOpportunities.Data.HttpClientPolicies;
+using DFC.App.JobProfile.CurrentOpportunities.Data.HttpClientPolicies.Polly;
 using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services;
 using DFC.Functions.DI.Standard;
 using DFC.Logger.AppInsights.Contracts;
@@ -30,18 +30,27 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Startup
                .AddEnvironmentVariables()
                .Build();
 
+            if (builder == null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
             builder.AddDependencyInjection();
-            builder?.Services.AddAutoMapper(typeof(WebJobsExtensionStartup).Assembly);
+            builder.Services.AddAutoMapper(typeof(WebJobsExtensionStartup).Assembly);
 
             builder.Services.AddSingleton(configuration.GetSection(nameof(RefreshClientOptions)).Get<RefreshClientOptions>());
-            builder.Services.AddSingleton(configuration.GetSection("CurrentOpportunitiesSegmentClientOptions").Get<SegmentClientOptions>());
+            builder.Services.AddSingleton(configuration.GetSection("CurrentOpportunitiesSegmentClientOptions").Get<CoreClientOptions>());
 
             var policyRegistry = builder.Services.AddPolicyRegistry();
-            var policyOptions = configuration.GetSection("Policies").Get<PolicyOptions>();
+            var policyOptions = configuration.GetSection("Policies").Get<CorePolicyOptions>();
+            policyRegistry.AddStandardPolicies(nameof(RefreshClientOptions), policyOptions);
 
             builder.Services
-                .AddPolicies(policyRegistry, nameof(RefreshClientOptions), policyOptions)
-                .AddHttpClient<IRefreshService, RefreshService, RefreshClientOptions>(configuration, nameof(RefreshClientOptions), nameof(PolicyOptions.HttpRetry), nameof(PolicyOptions.HttpCircuitBreaker))
+                .BuildHttpClient<IRefreshService, RefreshService, RefreshClientOptions>(configuration, nameof(RefreshClientOptions))
+                .AddPolicyHandlerFromRegistry($"{nameof(RefreshClientOptions)}_{nameof(CorePolicyOptions.HttpRetry)}")
+                .AddPolicyHandlerFromRegistry($"{nameof(RefreshClientOptions)}_{nameof(CorePolicyOptions.HttpCircuitBreaker)}");
+
+            builder.Services
                 .AddScoped<IHttpClientService, HttpClientService>()
                 .AddScoped<IMessageProcessor, MessageProcessor>()
                 .AddScoped<IMappingService, MappingService>()

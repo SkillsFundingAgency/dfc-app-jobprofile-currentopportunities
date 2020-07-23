@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.HttpClientPolicies
+namespace DFC.App.JobProfile.CurrentOpportunities.Data.HttpClientPolicies
 {
-    public class SegmentClientOptions
+    public class CoreClientOptions
     {
         public Uri BaseAddress { get; set; }
 

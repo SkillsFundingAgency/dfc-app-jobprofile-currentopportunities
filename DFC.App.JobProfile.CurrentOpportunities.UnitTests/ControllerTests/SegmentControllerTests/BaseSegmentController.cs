@@ -14,7 +14,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 {
     public abstract class BaseSegmentController
     {
-        public BaseSegmentController()
+        protected BaseSegmentController()
         {
             FakeLogger = A.Fake<ILogService>();
             FakeCurrentOpportunitiesSegmentService = A.Fake<ICurrentOpportunitiesSegmentService>();
@@ -24,18 +24,18 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         public static IEnumerable<object[]> HtmlMediaTypes => new List<object[]>
         {
-            new string[] { "*/*" },
-            new string[] { MediaTypeNames.Text.Html },
+            new object[] { "*/*" },
+            new object[] { MediaTypeNames.Text.Html },
         };
 
         public static IEnumerable<object[]> InvalidMediaTypes => new List<object[]>
         {
-            new string[] { MediaTypeNames.Text.Plain },
+            new object[] { MediaTypeNames.Text.Plain },
         };
 
         public static IEnumerable<object[]> JsonMediaTypes => new List<object[]>
         {
-            new string[] { MediaTypeNames.Application.Json },
+            new object[] { MediaTypeNames.Application.Json },
         };
 
         protected ILogService FakeLogger { get; }

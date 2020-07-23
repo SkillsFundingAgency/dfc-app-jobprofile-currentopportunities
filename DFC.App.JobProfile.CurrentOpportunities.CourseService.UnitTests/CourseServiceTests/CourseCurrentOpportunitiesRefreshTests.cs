@@ -60,7 +60,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         [InlineData(0)]
         [InlineData(1)]
         [InlineData(2)]
-        public void RefreshCoursesAsync(int numberVacanciesFound)
+        public async Task RefreshCoursesAsync(int numberVacanciesFound)
         {
             //arrange
             A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
@@ -70,7 +70,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
 
             //Act
-            var result = courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).Result;
+            var result = await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).ConfigureAwait(false);
 
             //Asserts
             result.Should().Be(numberVacanciesFound);
@@ -96,6 +96,41 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             A.CallTo(() => fakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustNotHaveHappened();
             A.CallTo(() => fakeMapper.Map<Opportunity>(A<object>.Ignored)).MustNotHaveHappened();
         }
+
+        [Fact]
+        public async Task ShouldNotMakeACallToFACClientIfCousreKeyWordIsBlank()
+        {
+            //arrange
+            var modelWithBlankCourses = currentOpportunitiesSegmentModel;
+            modelWithBlankCourses.Data.Courses.CourseKeywords = string.Empty;
+            A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
+            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
+
+            //Act
+            var result = await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).ConfigureAwait(false);
+
+            //Asserts
+            result.Should().Be(0);
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).MustNotHaveHappened(); 
+        }
+
+        [Fact]
+        public async Task ShouldHandleFACClientReturningNullForASearch()
+        {
+            //arrange
+            A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).Returns(GetTestCourses(0));
+
+            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
+
+            //Act
+            var result = await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).ConfigureAwait(false);
+
+            //Asserts
+            result.Should().Be(0);
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).MustHaveHappened();
+        }
+
 
         private static IEnumerable<Course> GetTestCourses(int numberToGet)
         {

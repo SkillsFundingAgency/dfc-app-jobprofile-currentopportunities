@@ -50,35 +50,41 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
         {
             logger.LogInformation($"{nameof(RefreshCoursesAsync)} has been called for document {documentId}");
             var currentOpportunitiesSegmentModel = await repository.GetAsync(d => d.DocumentId == documentId).ConfigureAwait(false);
-
             logger.LogInformation($"Getting course for {currentOpportunitiesSegmentModel.CanonicalName} - course keywords {currentOpportunitiesSegmentModel.Data.Courses.CourseKeywords}");
+            List<Course> courseSearchResults = new List<Course>();
 
-            //if the the call to the courses API fails for anyreason we should log and continue as if there are no courses available.
-            List<Course> courseSearchResults;
-            try
+            if (!string.IsNullOrWhiteSpace(currentOpportunitiesSegmentModel.Data.Courses.CourseKeywords))
             {
-                var results = await courseSearchApiService.GetCoursesAsync(currentOpportunitiesSegmentModel.Data.Courses.CourseKeywords).ConfigureAwait(false);
-                courseSearchResults = results.ToList();
-            }
-            catch (Exception ex)
-            {
-                var errorMessage = $"{nameof(RefreshCoursesAsync)} had error";
-                logger.LogError(ex, errorMessage);
-                throw;
+                try
+                {
+                    var results = await courseSearchApiService.GetCoursesAsync(currentOpportunitiesSegmentModel.Data.Courses.CourseKeywords).ConfigureAwait(false);
+                    courseSearchResults = results?.ToList();
+                }
+                catch (Exception ex)
+                {
+                    var errorMessage = $"{nameof(RefreshCoursesAsync)} had error";
+                    logger.LogError(ex, errorMessage);
+                    throw;
+                }
             }
 
             var opportunities = new List<Opportunity>();
-            foreach (var course in courseSearchResults)
+
+            //Leaving this check in just incase the FAC client gets changed and starts to return null if no courses found.
+            if (courseSearchResults != null)
             {
-                var opportunity = mapper.Map<Opportunity>(course);
-                opportunity.URL = new Uri($"{courseSearchSettings.CourseSearchUrl}{opportunity.CourseId}");
-                opportunities.Add(opportunity);
-                logger.LogInformation($"{nameof(RefreshCoursesAsync)} added details for {course.CourseId} to list");
+                foreach (var course in courseSearchResults)
+                {
+                    var opportunity = mapper.Map<Opportunity>(course);
+                    opportunity.URL = new Uri($"{courseSearchSettings.CourseSearchUrl}/find-a-course/course-details?CourseId={opportunity.CourseId}&r={opportunity.RunId}");
+                    opportunities.Add(opportunity);
+                    logger.LogInformation($"{nameof(RefreshCoursesAsync)} added details for {course.CourseId} to list");
+                }
             }
 
             currentOpportunitiesSegmentModel.Data.Courses.Opportunities = opportunities;
             await repository.UpsertAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
-            return courseSearchResults.Count;
+            return courseSearchResults == null ? 0 : courseSearchResults.Count;
         }
     }
 }

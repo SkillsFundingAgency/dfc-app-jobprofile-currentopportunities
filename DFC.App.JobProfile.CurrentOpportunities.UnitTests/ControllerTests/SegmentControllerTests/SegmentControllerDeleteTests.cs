@@ -3,6 +3,7 @@ using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.SegmentControllerTests
@@ -12,7 +13,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
     {
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerDeleteReturnsSuccess(string mediaTypeName)
+        public async Task SegmentControllerDeleteReturnsSuccess(string mediaTypeName)
         {
             // Arrange
             Guid documentId = Guid.NewGuid();
@@ -36,7 +37,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Segm
 
         [Theory]
         [MemberData(nameof(JsonMediaTypes))]
-        public async void SegmentControllerDeleteReturnsNotFound(string mediaTypeName)
+        public async Task SegmentControllerDeleteReturnsNotFound(string mediaTypeName)
         {
             // Arrange
             Guid documentId = Guid.NewGuid();
