@@ -1,5 +1,7 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Data.Contracts;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
+using DFC.App.JobProfile.CurrentOpportunities.SegmentService;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -14,20 +16,36 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
         private readonly ICosmosRepository<CurrentOpportunitiesSegmentModel> repository;
         private readonly IAVAPIService aVAPIService;
         private readonly AutoMapper.IMapper mapper;
+        private readonly IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> jobProfileSegmentRefreshService;
 
-        public AVCurrentOpportuntiesRefresh(ILogger<AVCurrentOpportuntiesRefresh> logger, ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, IAVAPIService aVAPIService, AutoMapper.IMapper mapper)
+        public AVCurrentOpportuntiesRefresh(ILogger<AVCurrentOpportuntiesRefresh> logger, ICosmosRepository<CurrentOpportunitiesSegmentModel> repository, IAVAPIService aVAPIService, AutoMapper.IMapper mapper, IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> jobProfileSegmentRefreshService)
         {
             this.logger = logger;
             this.repository = repository;
             this.aVAPIService = aVAPIService;
             this.mapper = mapper;
+            this.jobProfileSegmentRefreshService = jobProfileSegmentRefreshService;
         }
 
         public async Task<int> RefreshApprenticeshipVacanciesAsync(Guid documentId)
         {
             logger.LogInformation($"{nameof(RefreshApprenticeshipVacanciesAsync)} has been called for document {documentId}");
-
             CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel = await repository.GetAsync(d => d.DocumentId == documentId).ConfigureAwait(false);
+            return await RefreshApprenticeshipVacanciesAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
+        }
+
+        public async Task<int> RefreshApprenticeshipVacanciesAndUpdateJobProfileAsync(Guid documentId)
+        {
+            logger.LogInformation($"{nameof(RefreshApprenticeshipVacanciesAsync)} has been called for document {documentId}");
+            CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel = await repository.GetAsync(d => d.DocumentId == documentId).ConfigureAwait(false);
+            var numberPulled = await RefreshApprenticeshipVacanciesAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
+            var refreshJobProfileSegmentServiceBusModel = mapper.Map<RefreshJobProfileSegmentServiceBusModel>(currentOpportunitiesSegmentModel);
+            await jobProfileSegmentRefreshService.SendMessageAsync(refreshJobProfileSegmentServiceBusModel).ConfigureAwait(false);
+            return numberPulled;
+        }
+
+        private async Task<int> RefreshApprenticeshipVacanciesAsync(CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel)
+        {
             var aVMapping = new AVMapping()
             {
                 Standards = currentOpportunitiesSegmentModel.Data.Apprenticeships?.Standards?.Where(w => !string.IsNullOrWhiteSpace(w.Url)).Select(b => b.Url).ToArray(),
@@ -50,7 +68,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
             }
             else
             {
-                logger.LogInformation($"{nameof(RefreshApprenticeshipVacanciesAsync)} no standards or frameworks found for document {documentId}, blanking vacancies");
+                logger.LogInformation($"{nameof(RefreshApprenticeshipVacanciesAsync)} no standards or frameworks found for document {currentOpportunitiesSegmentModel.DocumentId}, blanking vacancies");
             }
 
             currentOpportunitiesSegmentModel.Data.Apprenticeships.Vacancies = vacancies;

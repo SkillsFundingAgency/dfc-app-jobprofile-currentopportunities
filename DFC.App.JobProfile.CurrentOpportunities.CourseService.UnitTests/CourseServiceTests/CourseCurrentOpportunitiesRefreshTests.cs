@@ -1,5 +1,7 @@
 using DFC.App.FindACourseClient.Models.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
+using DFC.App.JobProfile.CurrentOpportunities.SegmentService;
 using DFC.FindACourseClient;
 using FakeItEasy;
 using FluentAssertions;
@@ -30,6 +32,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         private readonly AutoMapper.IMapper fakeMapper;
         private readonly CourseSearchSettings courseSearchSettings;
         private readonly CurrentOpportunitiesSegmentModel currentOpportunitiesSegmentModel;
+        private readonly IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> fakejobProfileSegmentRefreshService;
 
         public CourseCurrentOpportunitiesRefreshTests()
         {
@@ -37,6 +40,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             fakeRepository = A.Fake<Data.Contracts.ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
             fakeCourseSearchClient = A.Fake<ICourseSearchApiService>();
             fakeMapper = A.Fake<AutoMapper.IMapper>();
+            fakejobProfileSegmentRefreshService = A.Fake<IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>>();
 
             courseSearchSettings = new CourseSearchSettings()
             {
@@ -67,7 +71,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).Returns(GetTestCourses(numberVacanciesFound));
             A.CallTo(() => fakeMapper.Map<Opportunity>(A<Course>.Ignored)).Returns(new Opportunity() { CourseId = "1" });
 
-            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
+            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings, fakejobProfileSegmentRefreshService);
 
             //Act
             var result = await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).ConfigureAwait(false);
@@ -85,7 +89,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
             A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).Throws(new ApplicationException());
 
-            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
+            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings, fakejobProfileSegmentRefreshService);
             Func<Task> serviceHealthStatus = async () => await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).ConfigureAwait(false);
 
             //Asserts
@@ -104,7 +108,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             var modelWithBlankCourses = currentOpportunitiesSegmentModel;
             modelWithBlankCourses.Data.Courses.CourseKeywords = string.Empty;
             A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
-            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
+            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings, fakejobProfileSegmentRefreshService);
 
             //Act
             var result = await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).ConfigureAwait(false);
@@ -121,7 +125,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
             A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).Returns(GetTestCourses(0));
 
-            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
+            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings, fakejobProfileSegmentRefreshService);
 
             //Act
             var result = await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).ConfigureAwait(false);
@@ -131,6 +135,20 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).MustHaveHappened();
         }
 
+        [Fact]
+        public async Task RefreshApprenticeshipVacanciesAndUpdateJobProfileSendsMsg()
+        {
+            //arrange
+            A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
+
+            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings, fakejobProfileSegmentRefreshService);
+
+            //Act
+            _ = await courseCurrentOpportunitiesRefresh.RefreshCoursesAndUpdateJobProfileAsync(A.Dummy<Guid>()).ConfigureAwait(false);
+
+            //Asserts
+            A.CallTo(() => fakejobProfileSegmentRefreshService.SendMessageAsync(A<RefreshJobProfileSegmentServiceBusModel>.Ignored)).MustHaveHappenedOnceExactly();
+        }
 
         private static IEnumerable<Course> GetTestCourses(int numberToGet)
         {
