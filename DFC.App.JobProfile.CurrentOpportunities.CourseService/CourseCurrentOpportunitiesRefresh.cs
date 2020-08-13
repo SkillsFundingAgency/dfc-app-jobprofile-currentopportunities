@@ -54,13 +54,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
             logger.LogInformation($"{nameof(RefreshCoursesAndUpdateJobProfileAsync)} has been called for document {documentId}");
             var currentOpportunitiesSegmentModel = await repository.GetAsync(d => d.DocumentId == documentId).ConfigureAwait(false);
             var numberPulled = await RefreshCoursesAsync(currentOpportunitiesSegmentModel).ConfigureAwait(false);
-
-            if (numberPulled > 0)
-            {
-                var refreshJobProfileSegmentServiceBusModel = mapper.Map<RefreshJobProfileSegmentServiceBusModel>(currentOpportunitiesSegmentModel);
-                await jobProfileSegmentRefreshService.SendMessageAsync(refreshJobProfileSegmentServiceBusModel).ConfigureAwait(false);
-            }
-
+            var refreshJobProfileSegmentServiceBusModel = mapper.Map<RefreshJobProfileSegmentServiceBusModel>(currentOpportunitiesSegmentModel);
+            await jobProfileSegmentRefreshService.SendMessageAsync(refreshJobProfileSegmentServiceBusModel).ConfigureAwait(false);
             return numberPulled;
         }
 

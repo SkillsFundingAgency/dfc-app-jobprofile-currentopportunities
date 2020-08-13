@@ -28,7 +28,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Controllers
             try
             {
                 //catch any exception that the outgoing request may throw.
-                feedRefreshResponseViewModel.NumberPulled = await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(documentId).ConfigureAwait(false);
+                feedRefreshResponseViewModel.NumberPulled = await courseCurrentOpportunitiesRefresh.RefreshCoursesAndUpdateJobProfileAsync(documentId).ConfigureAwait(false);
                 logService.LogInformation($"Get courses has succeeded for: document {documentId} - Got {feedRefreshResponseViewModel.NumberPulled} courses");
                 return Ok(feedRefreshResponseViewModel);
             }
