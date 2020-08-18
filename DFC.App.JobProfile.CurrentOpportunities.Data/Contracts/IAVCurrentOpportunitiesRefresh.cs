@@ -9,6 +9,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Contracts
     {
         Task<int> RefreshApprenticeshipVacanciesAsync(Guid documentId);
 
+        Task<int> RefreshApprenticeshipVacanciesAndUpdateJobProfileAsync(Guid documentId);
+
         IEnumerable<ApprenticeshipVacancySummary> ProjectVacanciesForProfile(IEnumerable<ApprenticeshipVacancySummary> mappedVacancies);
     }
 }

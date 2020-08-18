@@ -33,13 +33,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Feed
             const int expectedResult = 9;
             var controller = BuildFeedsController();
 
-            A.CallTo(() => FakeIAVCurrentOpportunitiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).Returns(expectedResult);
+            A.CallTo(() => FakeIAVCurrentOpportunitiesRefresh.RefreshApprenticeshipVacanciesAndUpdateJobProfileAsync(A<Guid>.Ignored)).Returns(expectedResult);
 
             // Act
             var result = await controller.RefreshApprenticeships(Guid.NewGuid()).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeIAVCurrentOpportunitiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeIAVCurrentOpportunitiesRefresh.RefreshApprenticeshipVacanciesAndUpdateJobProfileAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
 
             var jsonResult = Assert.IsType<OkObjectResult>(result);
             var model = Assert.IsAssignableFrom<FeedRefreshResponseViewModel>(jsonResult.Value);
@@ -58,13 +58,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.UnitTests.ControllerTests.Feed
             const string expectedErrorMessage = "Exception of type 'System.Net.Http.HttpRequestException' was thrown.";
             var controller = BuildFeedsController();
 
-            A.CallTo(() => FakeIAVCurrentOpportunitiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).Throws(new HttpRequestException());
+            A.CallTo(() => FakeIAVCurrentOpportunitiesRefresh.RefreshApprenticeshipVacanciesAndUpdateJobProfileAsync(A<Guid>.Ignored)).Throws(new HttpRequestException());
 
             // Act
             var result = await controller.RefreshApprenticeships(Guid.NewGuid()).ConfigureAwait(false);
 
             // Assert
-            A.CallTo(() => FakeIAVCurrentOpportunitiesRefresh.RefreshApprenticeshipVacanciesAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
+            A.CallTo(() => FakeIAVCurrentOpportunitiesRefresh.RefreshApprenticeshipVacanciesAndUpdateJobProfileAsync(A<Guid>.Ignored)).MustHaveHappenedOnceExactly();
 
             var jsonResult = Assert.IsType<BadRequestObjectResult>(result);
             var model = Assert.IsAssignableFrom<FeedRefreshResponseViewModel>(jsonResult.Value);

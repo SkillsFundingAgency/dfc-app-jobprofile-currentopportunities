@@ -1,5 +1,7 @@
 ﻿using DFC.App.FindACourseClient.Models.Configuration;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models;
+using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels;
+using DFC.App.JobProfile.CurrentOpportunities.SegmentService;
 using DFC.FindACourseClient;
 using FakeItEasy;
 using FluentAssertions;
@@ -21,6 +23,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         private readonly CourseSearchSettings courseSearchSettings;
         private readonly ILogger<CourseCurrentOpportunitiesRefresh> fakeLogger;
         private readonly HealthCheckContext dummyHealthCheckContext;
+        private readonly IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel> fakejobProfileSegmentRefreshService;
 
         public CourseServiceHealthStatusCheckTests()
         {
@@ -30,6 +33,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             fakeRepository = A.Fake<Data.Contracts.ICosmosRepository<CurrentOpportunitiesSegmentModel>>();
             fakeCourseSearchClient = A.Fake<ICourseSearchApiService>();
             fakeMapper = A.Fake<AutoMapper.IMapper>();
+            fakejobProfileSegmentRefreshService = A.Fake<IJobProfileSegmentRefreshService<RefreshJobProfileSegmentServiceBusModel>>();
+
             courseSearchSettings = new CourseSearchSettings()
             {
                 HealthCheckKeyWords = "DummyKeyword",
@@ -43,7 +48,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         {
             //Arrange
             A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).Returns(GetTestCourses(recordsToReturn));
-            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
+            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings, fakejobProfileSegmentRefreshService);
 
             //Act
             var serviceHealthStatus = await courseCurrentOpportunitiesRefresh.CheckHealthAsync(dummyHealthCheckContext).ConfigureAwait(false);
@@ -58,7 +63,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         {
             //Arrange
             A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).Throws(new ApplicationException());
-            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings);
+            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings, fakejobProfileSegmentRefreshService);
 
             //Act
             Func<Task> serviceHealthStatus = async () => await courseCurrentOpportunitiesRefresh.CheckHealthAsync(dummyHealthCheckContext).ConfigureAwait(false);
