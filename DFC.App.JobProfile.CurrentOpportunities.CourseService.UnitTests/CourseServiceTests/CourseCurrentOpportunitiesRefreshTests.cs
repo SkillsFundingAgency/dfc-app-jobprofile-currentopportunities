@@ -68,7 +68,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         {
             //arrange
             A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
-            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).Returns(GetTestCourses(numberVacanciesFound));
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, false)).Returns(GetTestCourses(numberVacanciesFound));
             A.CallTo(() => fakeMapper.Map<Opportunity>(A<Course>.Ignored)).Returns(new Opportunity() { CourseId = "1" });
 
             var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings, fakejobProfileSegmentRefreshService);
@@ -87,7 +87,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         {
             //Arrange
             A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
-            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).Throws(new ApplicationException());
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, false)).Throws(new ApplicationException());
 
             var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings, fakejobProfileSegmentRefreshService);
             Func<Task> serviceHealthStatus = async () => await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).ConfigureAwait(false);
@@ -115,7 +115,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
 
             //Asserts
             result.Should().Be(0);
-            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).MustNotHaveHappened(); 
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, false)).MustNotHaveHappened(); 
         }
 
         [Fact]
@@ -123,7 +123,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         {
             //arrange
             A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
-            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).Returns(GetTestCourses(0));
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, false)).Returns(GetTestCourses(0));
 
             var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings, fakejobProfileSegmentRefreshService);
 
@@ -132,7 +132,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
 
             //Asserts
             result.Should().Be(0);
-            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).MustHaveHappened();
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, false)).MustHaveHappened();
         }
 
         [Fact]
