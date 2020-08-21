@@ -68,7 +68,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         {
             //arrange
             A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
-            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, false)).Returns(GetTestCourses(numberVacanciesFound));
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, true)).Returns(GetTestCourses(numberVacanciesFound));
             A.CallTo(() => fakeMapper.Map<Opportunity>(A<Course>.Ignored)).Returns(new Opportunity() { CourseId = "1" });
 
             var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings, fakejobProfileSegmentRefreshService);
@@ -115,7 +115,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
 
             //Asserts
             result.Should().Be(0);
-            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, false)).MustNotHaveHappened(); 
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, true)).MustNotHaveHappened();
         }
 
         [Fact]
@@ -132,7 +132,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
 
             //Asserts
             result.Should().Be(0);
-            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, false)).MustHaveHappened();
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, true)).MustHaveHappened();
         }
 
         [Fact]
