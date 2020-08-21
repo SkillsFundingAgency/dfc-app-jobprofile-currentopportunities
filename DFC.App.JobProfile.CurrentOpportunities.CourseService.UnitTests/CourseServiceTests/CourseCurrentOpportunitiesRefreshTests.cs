@@ -87,7 +87,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         {
             //Arrange
             A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
-            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, false)).Throws(new ApplicationException());
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, true)).Throws(new ApplicationException());
 
             var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings, fakejobProfileSegmentRefreshService);
             Func<Task> serviceHealthStatus = async () => await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).ConfigureAwait(false);
