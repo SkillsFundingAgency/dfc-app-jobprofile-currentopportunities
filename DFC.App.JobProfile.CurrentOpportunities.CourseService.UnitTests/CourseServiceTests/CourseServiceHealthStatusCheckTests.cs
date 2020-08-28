@@ -47,7 +47,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         public async Task GetCurrentHealthStatusAsyncTestAsync(int recordsToReturn, HealthStatus expectedStatus)
         {
             //Arrange
-            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).Returns(GetTestCourses(recordsToReturn));
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, false)).Returns(GetTestCourses(recordsToReturn));
             var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings, fakejobProfileSegmentRefreshService);
 
             //Act
@@ -55,14 +55,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
 
             //Asserts
             serviceHealthStatus.Status.Should().Be(expectedStatus);
-            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>._)).MustHaveHappened();
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>._, false)).MustHaveHappened();
         }
 
         [Fact]
         public void GetCurrentHealthStatusAsyncExceptionTestAsync()
         {
             //Arrange
-            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored)).Throws(new ApplicationException());
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, false)).Throws(new ApplicationException());
             var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings, fakejobProfileSegmentRefreshService);
 
             //Act

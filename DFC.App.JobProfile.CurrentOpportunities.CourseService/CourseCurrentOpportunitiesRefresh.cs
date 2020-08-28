@@ -76,7 +76,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
             {
                 try
                 {
-                    var results = await courseSearchApiService.GetCoursesAsync(currentOpportunitiesSegmentModel.Data.Courses.CourseKeywords).ConfigureAwait(false);
+                    var results = await courseSearchApiService.GetCoursesAsync(currentOpportunitiesSegmentModel.Data.Courses.CourseKeywords, true).ConfigureAwait(false);
                     courseSearchResults = results?.ToList();
                 }
                 catch (Exception ex)

@@ -13,19 +13,16 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
     [Trait("AVAPI Service", "Tests")]
     public class AVAPIServiceTests
     {
-        private ILogger<AVAPIService> fakeLogger;
-        private AVAPIServiceSettings aVAPIServiceSettings;
-        private IApprenticeshipVacancyApi fakeApprenticeshipVacancyApi;
-        private AutoMapper.IMapper fakeMapper;
-        private AVMapping aVMapping;
+        private readonly ILogger<AVAPIService> fakeLogger;
+        private readonly AVAPIServiceSettings aVAPIServiceSettings;
+        private readonly IApprenticeshipVacancyApi fakeApprenticeshipVacancyApi;
+        private readonly AVMapping aVMapping;
 
         public AVAPIServiceTests()
         {
             fakeLogger = A.Fake<ILogger<AVAPIService>>();
             aVAPIServiceSettings = new AVAPIServiceSettings() { FAAMaxPagesToTryPerMapping = 100 };
             fakeApprenticeshipVacancyApi = A.Fake<IApprenticeshipVacancyApi>();
-            fakeMapper = A.Fake<AutoMapper.IMapper>();
-
             aVMapping = new AVMapping
             {
                 Standards = new string[] { "225" },
