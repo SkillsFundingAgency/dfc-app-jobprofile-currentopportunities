@@ -1,0 +1,240 @@
+{
+  "JobProfileId": "[AUTOMATICALLY GENERATED]",
+  "Title": "Automatically generated record",
+  "DynamicTitlePrefix": "As Defined",
+  "AlternativeTitle": "Slater, flat roofer",
+  "Overview": "Roofers re-slate and tile roofs, fit skylight windows and replace lead sheeting and cladding.",
+  "SocLevelTwo": "53",
+  "UrlName": "roofer",
+  "DigitalSkillsLevel": "to be able to carry out basic tasks on a computer or hand-held device",
+  "Restrictions": [
+    {
+      "Id": "e018c44d-5fa2-470a-8763-7659a668105f",
+      "Title": "Work at height",
+      "Info": "be able to cope with working at height"
+    }
+  ],
+  "OtherRequirements": "Other requirements",
+  "CareerPathAndProgression": "Career path and progression",
+  "CourseKeywords": "build",
+  "MinimumHours": 42.0,
+  "MaximumHours": 44.0,
+  "SalaryStarter": 13000.0,
+  "SalaryExperienced": 32000.0,
+  "WorkingPattern": [
+    {
+      "Id": "1876dc0d-4a9c-4d41-b51c-2f595937dd94",
+      "Title": "evenings",
+      "Url": "evenings",
+      "Description": "Evenings test"
+    }
+  ],
+  "WorkingPatternDetails": [
+    {
+      "Id": "43badd44-77c2-41aa-b027-7ebb6605c31b",
+      "Title": "away from home",
+      "Url": "away-from-home",
+      "Description": "away from home test"
+    }
+  ],
+  "WorkingHoursDetails": [
+    {
+      "Id": "37d94efc-af05-4e54-8400-fe4b909dfb42",
+      "Title": "a week",
+      "Url": "a-week",
+      "Description": "Ismail  test"
+    }
+  ],
+  "HiddenAlternativeTitle": [
+    {
+      "Id": "1e83e16e-4e45-4221-88a8-3c2be835562e",
+      "Title": "tiler",
+      "Url": "tiler",
+      "Description": ""
+    }
+  ],
+  "JobProfileSpecialism": [
+    {
+      "Id": "bf4ec35d-4283-440c-8605-8751fcd36091",
+      "Title": "basketballer",
+      "Url": "basketballer",
+      "Description": ""
+    }
+  ],
+  "IsImported": false,
+  "HowToBecomeData": {
+    "RouteEntries": [
+      {
+        "RouteName": 2,
+        "EntryRequirements": [
+          {
+            "Id": "efb6778a-088d-4476-a427-8b139d8b6aea",
+            "Title": "TestUnpublishUnivRequirement-1",
+            "Info": "TestUnpublishUnivRequirement-1"
+          }
+        ],
+        "MoreInformationLinks": [
+          {
+            "Id": "96e1dbdf-890b-4d89-994a-23e3277d2514",
+            "Title": "BMAT",
+            "Url": "http://www.admissionstestingservice.org/for-test-takers/bmat/about-bmat",
+            "Text": "BioMedical Admissions Test Ismail Test"
+          }
+        ],
+        "RouteSubjects": "University related subjects",
+        "FurtherRouteInformation": "University further route information",
+        "RouteRequirement": "You'll usually need:"
+      },
+      {
+        "RouteName": 1,
+        "EntryRequirements": [
+          {
+            "Id": "53f15a9c-b09c-4cb8-8e46-276674b38aef",
+            "Title": "Level 2 diploma entry requirements",
+            "Info": "2 or more GCSEs at grades 9 to 3 (A* to D) for a level 2 course"
+          }
+        ],
+        "MoreInformationLinks": [
+          {
+            "Id": "2a85c3fb-5795-453e-875b-ce91b523ca90",
+            "Title": "Show Equiv Entry Reqs",
+            "Url": "https://www.gov.uk/what-different-qualification-levels-mean/list-of-qualification-levels",
+            "Text": "equivalent entry requirements"
+          }
+        ],
+        "RouteSubjects": "You can take a college course like a Level 2 Diploma in Roofing Occupations or Level 2 Diploma in Roof Slating and Tiling.",
+        "FurtherRouteInformation": "College further route info",
+        "RouteRequirement": "You'll usually need:"
+      },
+      {
+        "RouteName": 0,
+        "EntryRequirements": [
+          {
+            "Id": "21a227aa-edbc-40f7-a3ef-ad75472aa2ba",
+            "Title": "intermediate apprenticeship entry reqs",
+            "Info": "some GCSEs, usually including English and maths, for an intermediate apprenticeship"
+          }
+        ],
+        "MoreInformationLinks": [
+          {
+            "Id": "defe3b1d-8734-4369-b2c2-15e0546e5750",
+            "Title": "Show Equiv Entry Reqs",
+            "Url": "https://www.gov.uk/what-different-qualification-levels-mean/list-of-qualification-levels",
+            "Text": "equivalent entry requirements"
+          }
+        ],
+        "RouteSubjects": "You can get into this job through an intermediate apprenticeship as a roofer.",
+        "FurtherRouteInformation": "Apprenticeship further route info",
+        "RouteRequirement": "You'll usually need:"
+      }
+    ],
+    "FurtherInformation": {
+      "CareerTips": "Career tips",
+      "ProfessionalAndIndustryBodies": "Professional and industry bodies",
+      "FurtherInformation": "Further information"
+    },
+    "FurtherRoutes": {
+      "Work": "You could start as a roofing labourer and do further training while you work to get a roofing qualification.",
+      "Volunteering": "Volunteering",
+      "DirectApplication": "Direct Application",
+      "OtherRoutes": "Other routes"
+    },
+    "IntroText": "This is introductory text",
+    "Registrations": [
+      {
+        "Id": "a6f2a179-2122-4f2d-9dfc-08c87a1facb4",
+        "Title": "CSCS",
+        "Info": "<p>you'll need a <a href=\"https://www.cscs.uk.com\">Construction Skills Certification Scheme</a> (CSCS) card or equivalent to train and work on a construction site</p>\n<p>&nbsp;</p>"
+      }
+    ]
+  },
+  "WhatYouWillDoData": {
+    "DailyTasks": "Daily tasks HTML",
+    "Locations": [
+      {
+        "Id": "83e69574-735a-4981-b8cf-756afb57ba59",
+        "Title": "Commercial Building",
+        "Description": "in a commercial building",
+        "Url": "/Commercial-Building",
+        "IsNegative": false
+      }
+    ],
+    "Uniforms": [
+      {
+        "Id": "0342e756-71eb-483d-a6f1-b716d966f7d0",
+        "Title": "Safety Clothing",
+        "Description": "safety clothing",
+        "Url": "/Safety-Clothing",
+        "IsNegative": false
+      }
+    ],
+    "Environments": [
+      {
+        "Id": "a779d756-b612-40f3-9969-18445944d5e0",
+        "Title": "Height",
+        "Description": "Environment description",
+        "Url": "/Height",
+        "IsNegative": false
+      }
+    ],
+    "Introduction": "WYD intro"
+  },
+  "SocCodeData": {
+    "Id": "763fd516-5859-4aca-b04b-80b988aefc63",
+    "SOCCode": "5313A",
+    "Description": "Roofer",
+    "ONetOccupationalCode": "47-2181.00",
+    "UrlName": "5313a",
+    "ApprenticeshipFramework": [
+      {
+        "Id": "18ae4732-5002-4833-8e9d-355e060b4a59",
+        "Title": "Construction Specialist",
+        "Url": "519",
+        "Description": ""
+      }
+    ],
+    "ApprenticeshipStandards": []
+  },
+  "RelatedCareersData": [
+    {
+      "Id": "d1964401-fab5-45ee-81cc-e21174f2ff92",
+      "Title": "Steeplejack",
+      "ProfileLink": "/steeplejack"
+    }
+  ],
+  "SocSkillsMatrixData": [
+    {
+      "Id": "7b248065-1351-436b-8652-691204474503",
+      "Title": "5313A-Building and Construction",
+      "Contextualised": "",
+      "ONetAttributeType": "Knowledge",
+      "Rank": 1.0,
+      "ONetRank": 4.94,
+      "RelatedSkill": [
+        {
+          "Id": "a021f464-b9fb-417f-a884-998044a25fd2",
+          "Title": "Building and Construction",
+          "ONetElementId": "2.C.3.d",
+          "Description": "knowledge of building and construction"
+        }
+      ],
+      "RelatedSOC": [
+        {
+          "Id": "763fd516-5859-4aca-b04b-80b988aefc63",
+          "SOCCode": "5313a"
+        }
+      ]
+    }
+  ],
+  "JobProfileCategories": [
+    {
+      "Id": "a6a4ec95-8452-408e-9bf8-6c0ba5208db4",
+      "Name": "construction-and-trades",
+      "Title": "Construction and trades"
+    }
+  ],
+  "LastModified": "2020-01-28T14:32:16.503Z",
+  "CanonicalName": "roofer",
+  "WidgetContentTitle": "Widget content title",
+  "IncludeInSitemap": false
+}
