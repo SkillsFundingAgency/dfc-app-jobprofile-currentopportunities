@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Model.ContentType
+namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Model.ContentType.JobProfile
 {
     public class JobProfileContentType
     {
@@ -57,7 +57,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Mod
 
         public List<RelatedCareersData> RelatedCareersData { get; set; }
 
-        public List<SocSkillsMatrixDataContentType> SocSkillsMatrixData { get; set; }
+        public List<SocSkillsMatrixData> SocSkillsMatrixData { get; set; }
 
         public List<JobProfileCategory> JobProfileCategories { get; set; }
 

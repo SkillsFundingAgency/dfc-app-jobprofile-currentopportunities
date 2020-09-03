@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Model.ContentType
+namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Model.ContentType.JobProfile
 {
     public class WorkingHoursDetail
     {
