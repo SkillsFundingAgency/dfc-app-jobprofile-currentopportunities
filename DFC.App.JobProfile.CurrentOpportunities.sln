@@ -67,7 +67,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.App.JobProfile.CurrentO
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{B27DAB67-4CE4-4183-9D59-5A6804918F05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests", "DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests\DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.csproj", "{18D73C1F-8BB3-4A33-AE79-9D7D158C5B7D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.App.JobProfile.CurrentOpportunities.API.IntegrationTests", "DFC.App.JobProfile.CurrentOpportunities.API.IntegrationTests\DFC.App.JobProfile.CurrentOpportunities.API.IntegrationTests.csproj", "{18D73C1F-8BB3-4A33-AE79-9D7D158C5B7D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
