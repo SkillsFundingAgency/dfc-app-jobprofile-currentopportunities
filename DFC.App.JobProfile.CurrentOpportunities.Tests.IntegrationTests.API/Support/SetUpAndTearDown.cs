@@ -1,6 +1,13 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Model.ContentType.JobProfile;
+using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Model.ServiceBusMessage;
+using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Model.Support;
+using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Support.CommonActions;
+using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Support.ServiceBus;
+using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Support.ServiceBus.ServiceBusFactory;
+using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -36,11 +43,32 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Sup
             await Task.Delay(TimeSpan.FromMinutes(this.AppSettings.DeploymentWaitInMinutes)).ConfigureAwait(true);
 
             // Generate a test job profile
-            
+            var socCode = this.CommonAction.RandomString(5);
+            var jobprofileSoc = new SocCodeData()
+            {
+                Id = Guid.NewGuid().ToString(),
+                SOCCode = socCode,
+                Description = "This is the initial automated SOC code",
+                ONetOccupationalCode = this.CommonAction.RandomString(10),
+                UrlName = socCode,
+                ApprenticeshipFramework = new List<Model.ContentType.JobProfile.ApprenticeshipFramework>() { new Model.ContentType.JobProfile.ApprenticeshipFramework() {
+                    Id = Guid.NewGuid().ToString(),
+                    Description = "This is the initial automated apprenticeship framework",
+                    Title = "This is the initial automated apprenticeship framework title",
+                    Url = new Uri($"https://{this.CommonAction.RandomString(10)}.com/"),
+                } },
+                ApprenticeshipStandards = new List<Model.ContentType.JobProfile.ApprenticeshipStandard>() { new Model.ContentType.JobProfile.ApprenticeshipStandard() {
+                    Id = Guid.NewGuid().ToString(),
+                    Description = "This is the initial automated apprenticeship standard",
+                    Title = "This is the initial automated apprenticeship standard title",
+                    Url = new Uri($"https://{this.CommonAction.RandomString(10)}.com/"),
+                } },
+            };
 
             this.JobProfile = this.CommonAction.GetResource<JobProfileContentType>("JobProfileTemplate");
             this.JobProfile.JobProfileId = Guid.NewGuid().ToString();
             this.JobProfile.CanonicalName = this.CommonAction.RandomString(10).ToLowerInvariant();
+            this.JobProfile.SocCodeData = jobprofileSoc;
 
             // Send job profile to the service bus
             jobProfileMessageBody = this.CommonAction.ConvertObjectToByteArray(this.JobProfile);
