@@ -7,6 +7,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Mod
     public class Courses
     {
         public string courseKeywords { get; set; }
+
         public List<Opportunity> opportunities { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Model.ContentType.JobProfile;
-using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Model.ServiceBusMessage;
 using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Model.Support;
 using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Support.CommonActions;
 using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Support.ServiceBus;
@@ -56,13 +55,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Sup
                     Description = "This is the initial automated apprenticeship framework",
                     Title = "This is the initial automated apprenticeship framework title",
                     Url = new Uri($"https://{this.CommonAction.RandomString(10)}.com/"),
-                } },
+                }, },
                 ApprenticeshipStandards = new List<Model.ContentType.JobProfile.ApprenticeshipStandard>() { new Model.ContentType.JobProfile.ApprenticeshipStandard() {
                     Id = Guid.NewGuid().ToString(),
                     Description = "This is the initial automated apprenticeship standard",
                     Title = "This is the initial automated apprenticeship standard title",
                     Url = new Uri($"https://{this.CommonAction.RandomString(10)}.com/"),
-                } },
+                }, },
             };
 
             this.JobProfile = this.CommonAction.GetResource<JobProfileContentType>("JobProfileTemplate");
