@@ -37,16 +37,16 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Tes
                     Description = "This is an automated apprenticeship framework",
                     Title = "This is an automated apprenticeship framework title",
                     Url = $"https://{this.CommonAction.RandomString(10)}.com/",
-                } },
+                }, },
                 ApprenticeshipStandards = new List<Model.ServiceBusMessage.ApprenticeshipStandard>() { new Model.ServiceBusMessage.ApprenticeshipStandard() {
                     Id = Guid.NewGuid().ToString(),
                     Description = "This is an automated apprenticeship standard",
                     Title = "This is an automated apprenticeship standard title",
                     Url = $"https://{this.CommonAction.RandomString(10)}.com/",
-                } },
+                }, },
                 JobProfileId = this.JobProfile.JobProfileId,
                 JobProfileTitle = this.JobProfile.Title,
-                Title = "This is an automated SOC code title"
+                Title = "This is an automated SOC code title",
             };
 
             var messageBody = this.CommonAction.ConvertObjectToByteArray(jobprofileSoc);
