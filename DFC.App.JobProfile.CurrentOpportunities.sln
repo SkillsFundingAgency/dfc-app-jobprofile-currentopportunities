@@ -67,7 +67,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.App.JobProfile.CurrentO
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{B27DAB67-4CE4-4183-9D59-5A6804918F05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.App.JobProfile.CurrentOpportunities.API.IntegrationTests", "DFC.App.JobProfile.CurrentOpportunities.API.IntegrationTests\DFC.App.JobProfile.CurrentOpportunities.API.IntegrationTests.csproj", "{18D73C1F-8BB3-4A33-AE79-9D7D158C5B7D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.App.JobProfile.CurrentOpportunities.API.IntegrationTests", "DFC.App.JobProfile.CurrentOpportunities.API.IntegrationTests\DFC.App.JobProfile.CurrentOpportunities.API.IntegrationTests.csproj", "{18D73C1F-8BB3-4A33-AE79-9D7D158C5B7D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestFrameworks", "TestFrameworks", "{F882202C-0E97-485F-ADA2-9A18780BBB24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DFC.App.JobProfile.CurrentOpportunities.Tests.APITest.UnitTests", "DFC.App.JobProfile.CurrentOpportunities.Tests.APITest.UnitTests\DFC.App.JobProfile.CurrentOpportunities.Tests.APITest.UnitTests.csproj", "{BC4C83C9-2CDA-418B-94CC-804A920A28E2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -135,6 +139,10 @@ Global
 		{18D73C1F-8BB3-4A33-AE79-9D7D158C5B7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{18D73C1F-8BB3-4A33-AE79-9D7D158C5B7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{18D73C1F-8BB3-4A33-AE79-9D7D158C5B7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC4C83C9-2CDA-418B-94CC-804A920A28E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC4C83C9-2CDA-418B-94CC-804A920A28E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC4C83C9-2CDA-418B-94CC-804A920A28E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC4C83C9-2CDA-418B-94CC-804A920A28E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -161,6 +169,8 @@ Global
 		{8C030748-5B9B-4E91-814F-14C4BBD895FF} = {C1CE6A6C-CA8E-4102-83BD-69C0206345C7}
 		{B27DAB67-4CE4-4183-9D59-5A6804918F05} = {6ED00C5B-CC14-4D58-B752-69008C143458}
 		{18D73C1F-8BB3-4A33-AE79-9D7D158C5B7D} = {B27DAB67-4CE4-4183-9D59-5A6804918F05}
+		{F882202C-0E97-485F-ADA2-9A18780BBB24} = {6D65C624-C071-44C3-8C55-DDF4F22E0C6B}
+		{BC4C83C9-2CDA-418B-94CC-804A920A28E2} = {F882202C-0E97-485F-ADA2-9A18780BBB24}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {147B3C69-E27D-471C-A294-B484874010CC}

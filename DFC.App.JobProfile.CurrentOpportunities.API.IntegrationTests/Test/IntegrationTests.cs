@@ -54,7 +54,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Tes
             await this.ServiceBus.SendMessage(message).ConfigureAwait(false);
             await Task.Delay(5000).ConfigureAwait(true);
 
-            var response = await this.currentOpportunitiesAPI.GetById<CurrentOpportunitiesAPIResponse>(this.JobProfile.JobProfileId).ConfigureAwait(true);
+            var response = await this.currentOpportunitiesAPI.GetById(this.JobProfile.JobProfileId).ConfigureAwait(true);
             Assert.AreEqual(jobprofileSoc.ApprenticeshipFramework[0].Id, response.Data.apprenticeships.frameworks[0].Id);
         }
 
@@ -78,7 +78,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Tes
             await this.ServiceBus.SendMessage(message).ConfigureAwait(false);
             await Task.Delay(5000).ConfigureAwait(true);
 
-            var response = await this.currentOpportunitiesAPI.GetById<CurrentOpportunitiesAPIResponse>(this.JobProfile.JobProfileId).ConfigureAwait(true);
+            var response = await this.currentOpportunitiesAPI.GetById(this.JobProfile.JobProfileId).ConfigureAwait(true);
             Assert.AreEqual(apprenticeshipStandard.Description, response.Data.apprenticeships.standards[0].description);
         }
 
@@ -102,7 +102,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Tes
             await this.ServiceBus.SendMessage(message).ConfigureAwait(false);
             await Task.Delay(5000).ConfigureAwait(true);
 
-            var response = await this.currentOpportunitiesAPI.GetById<CurrentOpportunitiesAPIResponse>(this.JobProfile.JobProfileId).ConfigureAwait(true);
+            var response = await this.currentOpportunitiesAPI.GetById(this.JobProfile.JobProfileId).ConfigureAwait(true);
             Assert.AreEqual(apprenticeshipFramework.Description, response.Data.apprenticeships.frameworks[0].Description);
         }
     }
