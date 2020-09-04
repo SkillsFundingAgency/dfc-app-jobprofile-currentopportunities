@@ -1,4 +1,5 @@
-﻿using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Model.Support;
+﻿using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Model.APIResponse;
+using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Model.Support;
 using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Support.API.RestFactory.Interface;
 using RestSharp;
 using System.Threading.Tasks;
@@ -18,8 +19,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Sup
             this.appSettings = appSettings;
         }
 
-        public async Task<IRestResponse<T>> GetById<T>(string id)
-            where T : class, new()
+        public async Task<IRestResponse<CurrentOpportunitiesAPIResponse>> GetById(string id)
         {
             if (string.IsNullOrEmpty(id))
             {
@@ -29,7 +29,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Sup
             var restClient = this.restClientFactory.Create(this.appSettings.APIConfig.EndpointBaseUrl);
             var restRequest = this.restRequestFactory.Create($"/segment/{id}/contents");
             restRequest.AddHeader("Accept", "application/json");
-            return await Task.Run(() => restClient.Execute<T>(restRequest)).ConfigureAwait(false);
+            return await Task.Run(() => restClient.Execute<CurrentOpportunitiesAPIResponse>(restRequest)).ConfigureAwait(false);
         }
     }
 }
