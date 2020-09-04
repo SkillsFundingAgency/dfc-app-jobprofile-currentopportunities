@@ -50,3 +50,15 @@ jobs:
       BuildConfiguration: $(BuildConfiguration)
       DotNetCoreVersion: 3.1.101
       PublishWebApp: true
+
+#Build integration tests
+- job: BuildIntegrationTests
+  displayName: Build integration tests
+  steps:
+  # Build DFC.App.CareerPath.Tests.API.IntegrationTests
+  - template: AzureDevOpsTemplates\Build\StepTemplates\dfc-dotnetcore-build-notests.yml@dfc-devops
+    parameters:
+      SolutionBaseName: $(SolutionBaseName).API.IntegrationTests
+      BuildPlatform: $(BuildPlatform)
+      BuildConfiguration: $(BuildConfiguration)
+      DotNetCoreVersion: 3.1.101
