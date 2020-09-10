@@ -69,7 +69,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.App.JobProfile.CurrentO
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestFrameworks", "TestFrameworks", "{F882202C-0E97-485F-ADA2-9A18780BBB24}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.App.JobProfile.CurrentOpportunities.Tests.APITest.UnitTests", "DFC.App.JobProfile.CurrentOpportunities.Tests.APITest.UnitTests\DFC.App.JobProfile.CurrentOpportunities.Tests.APITest.UnitTests.csproj", "{BC4C83C9-2CDA-418B-94CC-804A920A28E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DFC.App.JobProfile.CurrentOpportunities.TestFramework.UnitTests", "DFC.App.JobProfile.CurrentOpportunities.TestFramework.UnitTests\DFC.App.JobProfile.CurrentOpportunities.TestFramework.UnitTests.csproj", "{BC4C83C9-2CDA-418B-94CC-804A920A28E2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FunctionalTests", "FunctionalTests", "{00E5CB35-842C-42F3-B43B-5A488D430A2C}"
 EndProject
