@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.API.IntegrationTests\DFC.App.JobProfile.CurrentOpportunities.API.IntegrationTests.csproj" />
+    <ProjectReference Include="..\DFC.App.JobProfile.CurrentOpportunities.FunctionalTests\DFC.App.JobProfile.CurrentOpportunities.FunctionalTests.csproj" />
   </ItemGroup>
 
 </Project>

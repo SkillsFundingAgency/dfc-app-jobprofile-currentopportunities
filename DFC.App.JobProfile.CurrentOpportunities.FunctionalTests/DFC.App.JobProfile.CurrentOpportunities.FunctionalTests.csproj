@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <ProjectGuid>{18D73C1F-8BB3-4A33-AE79-9D7D158C5B7D}</ProjectGuid>
+    <ProjectGuid>18D73C1F-8BB3-4A33-AE79-9D7D158C5B7D</ProjectGuid>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -35,7 +35,7 @@
     <None Update="appsettings.dev.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="appsettings.template.json">
+    <None Update="appsettings-template.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="appsettings.json">
