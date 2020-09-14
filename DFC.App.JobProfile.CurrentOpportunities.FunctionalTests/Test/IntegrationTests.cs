@@ -1,4 +1,3 @@
-using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Model.APIResponse;
 using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Model.ServiceBusMessage;
 using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Support;
 using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Support.API;
@@ -7,6 +6,7 @@ using DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Support
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Test
@@ -52,9 +52,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Tes
             var messageBody = this.CommonAction.ConvertObjectToByteArray(jobprofileSoc);
             var message = new MessageFactory().Create(this.JobProfile.JobProfileId, messageBody, "Published", "JobProfileSoc");
             await this.ServiceBus.SendMessage(message).ConfigureAwait(false);
-            await Task.Delay(5000).ConfigureAwait(true);
-
+            await Task.Delay(10000).ConfigureAwait(true);
             var response = await this.currentOpportunitiesAPI.GetById(this.JobProfile.JobProfileId).ConfigureAwait(true);
+
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             Assert.AreEqual(jobprofileSoc.ApprenticeshipFramework[0].Id, response.Data.apprenticeships.frameworks[0].Id);
         }
 
@@ -76,9 +77,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Tes
             var messageBody = this.CommonAction.ConvertObjectToByteArray(apprenticeshipStandard);
             var message = new MessageFactory().Create(this.JobProfile.JobProfileId, messageBody, "Published", "apprenticeship-standards");
             await this.ServiceBus.SendMessage(message).ConfigureAwait(false);
-            await Task.Delay(5000).ConfigureAwait(true);
-
+            await Task.Delay(10000).ConfigureAwait(true);
             var response = await this.currentOpportunitiesAPI.GetById(this.JobProfile.JobProfileId).ConfigureAwait(true);
+
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             Assert.AreEqual(apprenticeshipStandard.Description, response.Data.apprenticeships.standards[0].description);
         }
 
@@ -100,9 +102,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Tests.IntegrationTests.API.Tes
             var messageBody = this.CommonAction.ConvertObjectToByteArray(apprenticeshipFramework);
             var message = new MessageFactory().Create(this.JobProfile.JobProfileId, messageBody, "Published", "apprenticeship-frameworks");
             await this.ServiceBus.SendMessage(message).ConfigureAwait(false);
-            await Task.Delay(5000).ConfigureAwait(true);
-
+            await Task.Delay(10000).ConfigureAwait(true);
             var response = await this.currentOpportunitiesAPI.GetById(this.JobProfile.JobProfileId).ConfigureAwait(true);
+
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             Assert.AreEqual(apprenticeshipFramework.Description, response.Data.apprenticeships.frameworks[0].Description);
         }
     }
