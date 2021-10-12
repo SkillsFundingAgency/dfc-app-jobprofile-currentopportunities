@@ -17,6 +17,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
         [Display(Name = "Start Date")]
         public DateTime StartDate { get; set; }
 
+        public bool FlexibleStartDate { get; set; }
+
         [Display(Name = "Location")]
         public LocationViewModel Location { get; set; }
     }

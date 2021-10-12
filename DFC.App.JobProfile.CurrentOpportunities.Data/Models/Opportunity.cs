@@ -14,6 +14,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 
         public string StartDate { get; set; }
 
+        public bool FlexibleStartDate { get; set; }
+
         public Location Location { get; set; }
 
         public Uri URL { get; set; }

@@ -1,0 +1,14 @@
+﻿@model BodyOpportunityViewModel
+
+@if (Model.StartDate == null && Model.FlexibleStartDate)
+{
+    <span id="start-date">Flexible</span>
+}
+else if (Model.StartDate != null)
+{
+    <span id="start-date">@Model.StartDate.ToString("dd MMMM yyyy")</span>
+}
+else
+{
+    <span id="start-date">Not known</span>
+}
