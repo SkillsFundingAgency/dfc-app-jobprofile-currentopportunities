@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 {
+    [ExcludeFromCodeCoverage]
     public class Opportunity
     {
         public string Title { get; set; }
