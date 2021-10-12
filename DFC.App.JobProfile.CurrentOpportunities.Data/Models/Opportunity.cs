@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 {
+    [ExcludeFromCodeCoverage]
     public class Opportunity
     {
         public string Title { get; set; }
@@ -13,6 +15,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
         public string Provider { get; set; }
 
         public string StartDate { get; set; }
+
+        public bool FlexibleStartDate { get; set; }
 
         public Location Location { get; set; }
 
