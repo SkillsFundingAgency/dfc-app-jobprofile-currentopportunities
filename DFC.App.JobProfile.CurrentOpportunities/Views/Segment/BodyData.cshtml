@@ -18,7 +18,10 @@
                         </h4>
                         <ul class="govuk-list">
                             <li><span class="govuk-body govuk-!-font-weight-bold">Wage: </span> @apprenticeVacancy.WageText <span class="govuk-body-s govuk-secondary-colour">@apprenticeVacancy.WageUnit</span></li>
-                            <li><span class="govuk-body govuk-!-font-weight-bold">Location:</span> @apprenticeVacancy.Location.Town @apprenticeVacancy.Location.PostCode</li>
+                            @{
+                                var location = apprenticeVacancy.Location == null || (string.IsNullOrWhiteSpace(apprenticeVacancy.Location.Town) && string.IsNullOrWhiteSpace(apprenticeVacancy.Location.PostCode)) ? "Not known" : $"{apprenticeVacancy.Location.Town} {apprenticeVacancy.Location.PostCode}";
+                            }
+                        <li><span class="govuk-body govuk-!-font-weight-bold">Location:</span> @location</li>
                         </ul>
                     </div>
                 </div>
@@ -53,8 +56,13 @@
                         </h4>
                         <ul class="govuk-list">
                             <li><span class="govuk-body govuk-!-font-weight-bold">Provider:</span> @course.Provider</li>
-                            <li><span class="govuk-body govuk-!-font-weight-bold">Start date:</span> @course.StartDate.ToString("dd MMMM yyyy")</li>
-                            <li><span class="govuk-body govuk-!-font-weight-bold">Location:</span> @course.Location.Town</li>
+                            <li>
+                                <partial name="_StartDate" model="course" />
+                            </li>
+                            @{
+                                var location = course.Location == null || string.IsNullOrWhiteSpace(course.Location.Town) ? "Not known" : course.Location.Town;
+                            }
+                            <li><span class="govuk-body govuk-!-font-weight-bold">Location:</span> @location</li>
                         </ul>
                     </div>
                 </div>

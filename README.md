@@ -84,7 +84,7 @@ CSS, JS, images and fonts used in this site can found in the following repositor
 ## Built With
 
 * Microsoft Visual Studio 2019
-* .Net Core 2.2
+* .Net Core 3.1
 
 ## References
 
