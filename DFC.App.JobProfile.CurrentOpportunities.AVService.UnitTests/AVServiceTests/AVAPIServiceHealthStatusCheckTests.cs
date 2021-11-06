@@ -59,7 +59,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
             Func<Task> serviceHealthStatus = async () => await aVAPIService.CheckHealthAsync(dummyHealthCheckContext).ConfigureAwait(false);
 
             //Asserts
-            serviceHealthStatus.Should().Throw<Exception>();
+            serviceHealthStatus.Should().ThrowAsync<Exception>();
         }
     }
 }

@@ -58,7 +58,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
 
             //Asserts
             Func<Task> f = async () => { await aVAPIService.GetAVSumaryPageAsync(null, 1).ConfigureAwait(false); };
-            f.Should().Throw<ArgumentNullException>();
+            f.Should().ThrowAsync<ArgumentNullException>();
         }
 
         [Fact]
@@ -95,7 +95,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
 
             //Asserts
             Func<Task> f = async () => { await aVAPIService.GetAVsForMultipleProvidersAsync(null).ConfigureAwait(false); };
-            f.Should().Throw<ArgumentNullException>();
+            f.Should().ThrowAsync<ArgumentNullException>();
         }
 
         [Fact]
