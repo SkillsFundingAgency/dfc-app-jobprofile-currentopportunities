@@ -14,7 +14,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
     <PackageReference Include="DFC.FindACourseClient" Version="2.5.4" />
-    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.16.2" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.11.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
