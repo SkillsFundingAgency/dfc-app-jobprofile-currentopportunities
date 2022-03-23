@@ -57,7 +57,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Startup
                 .AddScoped<IMessagePropertiesService, MessagePropertiesService>()
                 .AddDFCLogging(configuration["APPINSIGHTS_INSTRUMENTATIONKEY"])
                 .AddScoped<ICorrelationIdProvider, InMemoryCorrelationIdProvider>()
-                .AddSingleton(new HttpClient());
+                .AddHttpClient();
 
             var sp = builder.Services.BuildServiceProvider();
             var mapper = sp.GetService<IMapper>();
