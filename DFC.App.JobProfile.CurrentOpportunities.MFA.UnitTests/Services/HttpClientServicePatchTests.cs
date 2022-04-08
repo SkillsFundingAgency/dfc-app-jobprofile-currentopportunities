@@ -4,6 +4,7 @@ using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services;
 using DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.FakeHttpHandlers;
 using DFC.Logger.AppInsights.Contracts;
 using FakeItEasy;
+using Moq;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -15,6 +16,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services
     [Trait("Messaging Function", "HttpClientService Patch Tests")]
     public class HttpClientServicePatchTests
     {
+        private Mock<IHttpClientFactory> mockFactory;
         private readonly ILogService logService;
         private readonly ICorrelationIdProvider correlationIdProvider;
         private readonly CoreClientOptions coreClientOptions;
@@ -29,6 +31,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services
             };
         }
 
+        public Mock<IHttpClientFactory> CreateClientFactory(HttpClient httpClient)
+        {
+            mockFactory = new Mock<IHttpClientFactory>();
+            mockFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(httpClient);
+            return mockFactory;
+        }
+
         [Fact]
         public async Task PatchAsyncReturnsOkStatusCodeForExistingId()
         {
@@ -38,7 +47,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services
             var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
             var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
             var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = coreClientOptions.BaseAddress };
-            var httpClientService = new HttpClientService(coreClientOptions, httpClient, logService, correlationIdProvider);
+            var httpClientService = new HttpClientService(coreClientOptions, CreateClientFactory(httpClient).Object, logService, correlationIdProvider);
 
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
@@ -63,7 +72,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services
             var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
             var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
             var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = coreClientOptions.BaseAddress };
-            var httpClientService = new HttpClientService(coreClientOptions, httpClient, logService, correlationIdProvider);
+            var httpClientService = new HttpClientService(coreClientOptions, CreateClientFactory(httpClient).Object, logService, correlationIdProvider);
 
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
@@ -88,7 +97,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Services
             var fakeHttpRequestSender = A.Fake<IFakeHttpRequestSender>();
             var fakeHttpMessageHandler = new FakeHttpMessageHandler(fakeHttpRequestSender);
             var httpClient = new HttpClient(fakeHttpMessageHandler) { BaseAddress = coreClientOptions.BaseAddress };
-            var httpClientService = new HttpClientService(coreClientOptions, httpClient, logService, correlationIdProvider);
+            var httpClientService = new HttpClientService(coreClientOptions, CreateClientFactory(httpClient).Object, logService, correlationIdProvider);
 
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
