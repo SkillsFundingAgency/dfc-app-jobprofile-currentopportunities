@@ -38,7 +38,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
             //Act
-            var result = await apprenticeshipVacancyApi.GetAsync("fakeRequest", RequestType.Search).ConfigureAwait(false);
+            var result = await apprenticeshipVacancyApi.GetAsync("fakeRequest", RequestType.ListVacancies).ConfigureAwait(false);
 
             //Asserts
             A.CallTo(() => auditService.CreateAudit(A<object>.Ignored, A<object>.Ignored, A<Guid?>.Ignored)).MustHaveHappenedOnceExactly();
@@ -61,7 +61,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
             A.CallTo(() => fakeHttpRequestSender.Send(A<HttpRequestMessage>.Ignored)).Returns(httpResponse);
 
             // Act
-            await Assert.ThrowsAsync<HttpRequestException>(async () => await apprenticeshipVacancyApi.GetAsync("fakeRequest", RequestType.Search).ConfigureAwait(false)).ConfigureAwait(false);
+            await Assert.ThrowsAsync<HttpRequestException>(async () => await apprenticeshipVacancyApi.GetAsync("fakeRequest", RequestType.ListVacancies).ConfigureAwait(false)).ConfigureAwait(false);
             A.CallTo(() => auditService.CreateAudit(A<object>.Ignored, A<object>.Ignored, A<Guid?>.Ignored)).MustHaveHappenedOnceExactly();
 
             httpResponse.Dispose();

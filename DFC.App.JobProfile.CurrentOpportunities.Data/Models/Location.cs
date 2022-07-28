@@ -3,5 +3,7 @@
     public class Location
     {
         public string Town { get; set; }
+
+        public string PostCode { get; set; }
     }
 }

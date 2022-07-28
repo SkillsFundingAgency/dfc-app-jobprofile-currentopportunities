@@ -2,8 +2,8 @@
 {
     public class ApprenticeshipLocation
     {
-        public double Longitude { get; set; }
+        public double Lat { get; set; }
 
-        public double Latitude { get; set; }
+        public double Lon { get; set; }
     }
 }
