@@ -37,17 +37,16 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
             var pageNumber = 1;
             var pageSize = 5;
             var returnDiffrentProvidersOnPage = 1;
-            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.Search)).Returns(AVAPIDummyResponses.GetDummyApprenticeshipVacancySummaryResponse(pageNumber, 50, pageSize, pageSize, returnDiffrentProvidersOnPage));
+            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.ListVacancies)).Returns(AVAPIDummyResponses.GetDummyApprenticeshipVacancySummaryResponse(pageNumber, 50, pageSize, pageSize, returnDiffrentProvidersOnPage));
             var aVAPIService = new AVAPIService(fakeApprenticeshipVacancyApi, fakeLogger, aVAPIServiceSettings);
 
             //Act
             var pageSumary = await aVAPIService.GetAVSumaryPageAsync(aVMapping, 1).ConfigureAwait(false);
 
             //Asserts
-            pageSumary.CurrentPage.Should().Be(pageNumber);
-            pageSumary.Results.Count().Should().Be(pageSize);
+            pageSumary.Vacancies.Count().Should().Be(pageSize);
 
-            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.Search)).MustHaveHappened();
+            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.ListVacancies)).MustHaveHappened();
         }
 
         [Fact]
@@ -69,7 +68,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
             var pageSize = 5;
             var returnDiffrentProvidersOnPage = 2;
 
-            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.Search)).Returns(AVAPIDummyResponses.GetDummyApprenticeshipVacancySummaryResponse(pageNumber, 50, pageSize, pageSize, returnDiffrentProvidersOnPage)).Once().
+            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.ListVacancies)).Returns(AVAPIDummyResponses.GetDummyApprenticeshipVacancySummaryResponse(pageNumber, 50, pageSize, pageSize, returnDiffrentProvidersOnPage)).Once().
                 Then.Returns(AVAPIDummyResponses.GetDummyApprenticeshipVacancySummaryResponse(pageNumber + 1, 50, pageSize, pageSize, returnDiffrentProvidersOnPage));
 
             var aVAPIService = new AVAPIService(fakeApprenticeshipVacancyApi, fakeLogger, aVAPIServiceSettings);
@@ -81,10 +80,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
             //must have got more then 1 page to get multipe supplier
             aVSumaryList.Count().Should().BeGreaterThan(pageSize);
 
-            var numberProviders = aVSumaryList.Select(v => v.TrainingProviderName).Distinct().Count();
+            var numberProviders = aVSumaryList.Select(v => v.ProviderName).Distinct().Count();
             numberProviders.Should().BeGreaterThan(1);
 
-            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.Search)).MustHaveHappenedTwiceExactly();
+            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.ListVacancies)).MustHaveHappenedTwiceExactly();
         }
 
         [Fact]
@@ -102,7 +101,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
         public async Task GetApprenticeshipVacancyDetailsTestAsync()
         {
             //Arrange
-            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.Apprenticeships)).Returns(AVAPIDummyResponses.GetDummyApprenticeshipVacancyDetailsResponse());
+            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.VacancyByReference)).Returns(AVAPIDummyResponses.GetDummyApprenticeshipVacancyDetailsResponse());
 
             var aVAPIService = new AVAPIService(fakeApprenticeshipVacancyApi, fakeLogger, aVAPIServiceSettings);
 
@@ -113,7 +112,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
             vacancyDetails.Should().NotBeNull();
             vacancyDetails.VacancyReference.Should().Be(123);
 
-            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.Apprenticeships)).MustHaveHappened();
+            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.VacancyByReference)).MustHaveHappened();
         }
     }
 }

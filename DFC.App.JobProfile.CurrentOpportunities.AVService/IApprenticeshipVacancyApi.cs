@@ -4,8 +4,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
 {
     public enum RequestType
     {
-        Search,
-        Apprenticeships,
+        ListVacancies,
+        VacancyByReference,
     }
 
     public interface IApprenticeshipVacancyApi

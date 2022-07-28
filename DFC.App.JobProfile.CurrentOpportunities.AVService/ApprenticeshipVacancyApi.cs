@@ -24,6 +24,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
             this.httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", aVAPIServiceSettings.FAASubscriptionKey);
+            this.httpClient.DefaultRequestHeaders.Add("X-Version", "1");
             this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             this.httpClient.Timeout = TimeSpan.FromSeconds(aVAPIServiceSettings.RequestTimeOutSeconds);
             correlationId = Guid.NewGuid();
@@ -31,8 +32,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
 
         public async Task<string> GetAsync(string requestQueryString, RequestType requestType)
         {
-            var requestRoute = requestType == RequestType.Search ? $"{requestType.ToString()}?" : string.Empty;
-            var fullRequest = $"{aVAPIServiceSettings.FAAEndPoint}/{requestRoute}{requestQueryString}";
+            var queryStringOperator = "?";
+            if (requestType == RequestType.VacancyByReference)
+            {
+                queryStringOperator = "/";
+            }
+
+            var fullRequest = $"{aVAPIServiceSettings.FAAEndPoint}{queryStringOperator}{requestQueryString}";
+
             logger.LogInformation($"Getting API data for request :'{fullRequest}'");
 
             var response = await httpClient.GetAsync(new Uri(fullRequest)).ConfigureAwait(false);
