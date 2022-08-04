@@ -84,4 +84,5 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Functions
             A.CallTo(() => fakeRefreshService.RefreshCoursesAsync(A<Guid>.Ignored)).MustHaveHappened(AbortAfterErrorCount, Times.Exactly);
         }
     }
+
 }

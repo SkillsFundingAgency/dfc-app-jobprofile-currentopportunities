@@ -28,7 +28,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
 
         public async Task<ApprenticeshipVacancyDetails> GetApprenticeshipVacancyDetailsAsync(int vacancyRef)
         {
-            var responseResult = await apprenticeshipVacancyApi.GetAsync($"{vacancyRef}", RequestType.Apprenticeships).ConfigureAwait(true);
+            var responseResult = await apprenticeshipVacancyApi.GetAsync($"{vacancyRef}", RequestType.VacancyByReference).ConfigureAwait(true);
             logger.LogInformation($"Got details for vacancy ref : {vacancyRef}");
             return JsonConvert.DeserializeObject<ApprenticeshipVacancyDetails>(responseResult);
         }
@@ -51,13 +51,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
             {
                 var apprenticeshipVacancySummaryResponse = await GetAVSumaryPageAsync(mapping, ++pageNumber).ConfigureAwait(false);
 
-                logger.LogInformation($"Got {apprenticeshipVacancySummaryResponse.TotalReturned} vacancies of {apprenticeshipVacancySummaryResponse.TotalMatched} on page: {pageNumber} of {apprenticeshipVacancySummaryResponse.TotalPages}");
+                logger.LogInformation($"Got {apprenticeshipVacancySummaryResponse.TotalFiltered} vacancies of {apprenticeshipVacancySummaryResponse.Total} on page: {pageNumber} of {apprenticeshipVacancySummaryResponse.TotalPages}");
 
-                avSummary.AddRange(apprenticeshipVacancySummaryResponse.Results);
+                avSummary.AddRange(apprenticeshipVacancySummaryResponse.Vacancies);
 
                 //stop when there are no more pages or we have more then multiple supplier
                 if (apprenticeshipVacancySummaryResponse.TotalPages < pageNumber ||
-                     avSummary.Select(v => v.TrainingProviderName).Distinct().Count() > 1)
+                     avSummary.Select(v => v.ProviderName).Distinct().Count() > 1)
                 {
                     break;
                 }
@@ -91,7 +91,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
             queryString["pageNumber"] = $"{pageNumber}";
             queryString["sortBy"] = aVAPIServiceSettings.FAASortBy;
 
-            var responseResult = await apprenticeshipVacancyApi.GetAsync(queryString.ToString(), RequestType.Search).ConfigureAwait(false);
+            var responseResult = await apprenticeshipVacancyApi.GetAsync(queryString.ToString(), RequestType.ListVacancies).ConfigureAwait(false);
 
             return JsonConvert.DeserializeObject<ApprenticeshipVacancySummaryResponse>(responseResult);
         }
@@ -103,7 +103,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
 
             var apprenticeshipVacancySummaryResponse = await GetAVSumaryPageAsync(new AVMapping { Standards = aVAPIServiceSettings.StandardsForHealthCheck.Split(',') }, 1).ConfigureAwait(false);
 
-            if (apprenticeshipVacancySummaryResponse.Results.Any())
+            if (apprenticeshipVacancySummaryResponse.Vacancies.Any())
             {
                 return HealthCheckResult.Healthy(description);
             }

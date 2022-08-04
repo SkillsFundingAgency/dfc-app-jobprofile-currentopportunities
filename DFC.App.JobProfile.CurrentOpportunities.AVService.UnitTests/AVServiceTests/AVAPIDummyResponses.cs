@@ -10,10 +10,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
         {
             var r = new ApprenticeshipVacancySummaryResponse
             {
-                CurrentPage = currentPage,
-                TotalMatched = totalMatches,
+                Total = totalMatches,
                 TotalPages = totalMatches / pageSize,
-                TotalReturned = nunmberToReturn,
+                TotalFiltered = nunmberToReturn,
             };
 
             var recordsToReturn = new List<ApprenticeshipVacancySummary>();
@@ -24,11 +23,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
                 {
                     VacancyReference = ii,
                     Title = $"Title {ii}",
-                    TrainingProviderName = $"TrainingProviderName {((currentPage == diffrentProvidersPage) ? ii : currentPage)}",
+                    ProviderName = $"TrainingProviderName {((currentPage == diffrentProvidersPage) ? ii : currentPage)}",
                 });
             }
 
-            r.Results = recordsToReturn.ToArray();
+            r.Vacancies = recordsToReturn.ToArray();
 
             return JsonConvert.SerializeObject(r);
         }
