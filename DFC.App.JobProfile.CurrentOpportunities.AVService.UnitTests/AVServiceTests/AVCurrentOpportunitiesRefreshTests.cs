@@ -217,27 +217,27 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
         {
             for (int ii = 0; ii < numberToGet; ii++)
             {
-                yield return new ApprenticeshipVacancySummary() { TrainingProviderName = "Provider A", Title = "Displayed" };
+                yield return new ApprenticeshipVacancySummary() { ProviderName = "Provider A", Title = "Displayed" };
             }
         }
 
         private static IEnumerable<ApprenticeshipVacancySummary> GetTestVacanciesMultipeProvidersMoreThanTwo()
         {
-            yield return new ApprenticeshipVacancySummary() { TrainingProviderName = "Provider A", Title = "Displayed" };
-            yield return new ApprenticeshipVacancySummary() { TrainingProviderName = "Provider A", Title = "Not Displayed" };
-            yield return new ApprenticeshipVacancySummary() { TrainingProviderName = "Provider B", Title = "Displayed" };
+            yield return new ApprenticeshipVacancySummary() { ProviderName = "Provider A", Title = "Displayed" };
+            yield return new ApprenticeshipVacancySummary() { ProviderName = "Provider A", Title = "Not Displayed" };
+            yield return new ApprenticeshipVacancySummary() { ProviderName = "Provider B", Title = "Displayed" };
         }
 
         private static IEnumerable<ApprenticeshipVacancySummary> GetTestVacanciesOnlyOneAvailable()
         {
-            yield return new ApprenticeshipVacancySummary() { TrainingProviderName = "Provider A", Title = "Displayed" };
+            yield return new ApprenticeshipVacancySummary() { ProviderName = "Provider A", Title = "Displayed" };
         }
 
         private static IEnumerable<ApprenticeshipVacancySummary> GetTestVacanciesSingleProviderMoreThanTwo()
         {
-            yield return new ApprenticeshipVacancySummary() { TrainingProviderName = "Provider A", Title = "Displayed" };
-            yield return new ApprenticeshipVacancySummary() { TrainingProviderName = "Provider A", Title = "Displayed" };
-            yield return new ApprenticeshipVacancySummary() { TrainingProviderName = "Provider A", Title = "Not Displayed" };
+            yield return new ApprenticeshipVacancySummary() { ProviderName = "Provider A", Title = "Displayed" };
+            yield return new ApprenticeshipVacancySummary() { ProviderName = "Provider A", Title = "Displayed" };
+            yield return new ApprenticeshipVacancySummary() { ProviderName = "Provider A", Title = "Not Displayed" };
         }
 
         private void CheckResultIsAsExpected(IEnumerable<ApprenticeshipVacancySummary> projectedVacancies, int expectedCount)
