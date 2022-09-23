@@ -35,7 +35,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
             var pageNumber = 1;
             var pageSize = 5;
             var returnDiffrentProvidersOnPage = 1;
-            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.Search)).Returns(AVAPIDummyResponses.GetDummyApprenticeshipVacancySummaryResponse(pageNumber, pageSize, recordsToReturn, pageSize, returnDiffrentProvidersOnPage));
+            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.ListVacancies)).Returns(AVAPIDummyResponses.GetDummyApprenticeshipVacancySummaryResponse(pageNumber, pageSize, recordsToReturn, pageSize, returnDiffrentProvidersOnPage));
             aVAPIServiceSettings.StandardsForHealthCheck = A.Dummy<string>();
 
             var aVAPIService = new AVAPIService(fakeApprenticeshipVacancyApi, fakeLogger, aVAPIServiceSettings);
@@ -45,14 +45,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService.UnitTests
 
             //Asserts
             serviceHealthStatus.Status.Should().Be(expectedStatus);
-            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.Search)).MustHaveHappened();
+            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.ListVacancies)).MustHaveHappened();
         }
 
         [Fact]
         public void GetCurrentHealthStatusAsyncExceptionTestAsync()
         {
             //Arrange
-            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.Search)).Throws(new ApplicationException());
+            A.CallTo(() => fakeApprenticeshipVacancyApi.GetAsync(A<string>._, RequestType.ListVacancies)).Throws(new ApplicationException());
             var aVAPIService = new AVAPIService(fakeApprenticeshipVacancyApi, fakeLogger, aVAPIServiceSettings);
 
             //Act

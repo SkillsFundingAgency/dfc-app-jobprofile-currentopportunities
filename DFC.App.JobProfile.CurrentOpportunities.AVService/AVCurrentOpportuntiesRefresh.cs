@@ -87,14 +87,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
                 return projectedVacancies;
             }
 
-            var numberProvoidersFound = mappedVacancies.Select(v => v.TrainingProviderName).Distinct().Count();
+            var numberProvoidersFound = mappedVacancies.Select(v => v.ProviderName).Distinct().Count();
 
             var projection = Enumerable.Empty<ApprenticeshipVacancySummary>();
             if (numberProvoidersFound > 1)
             {
                 //have multipe providers
                 projection = mappedVacancies
-                    .GroupBy(v => v.TrainingProviderName)
+                    .GroupBy(v => v.ProviderName)
                     .Select(g => g.First())
                     .Take(2);
             }
