@@ -309,7 +309,7 @@
                             },
                             {
                                 "name": "Configuration__AVAPIService__FAASortBy",
-                                "value": "Age"
+                                "value": "AgeDesc"
                             },
                             {
                                 "name": "Configuration__AVAPIService__RequestTimeOutSeconds",
