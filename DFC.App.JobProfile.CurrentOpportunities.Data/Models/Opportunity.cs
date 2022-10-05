@@ -12,6 +12,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.Data.Models
 
         public string RunId { get; set; }
 
+        public string TLevelId { get; set; }
+
+        public string TLevelLocationId { get; set; }
+
         public string Provider { get; set; }
 
         public string StartDate { get; set; }
