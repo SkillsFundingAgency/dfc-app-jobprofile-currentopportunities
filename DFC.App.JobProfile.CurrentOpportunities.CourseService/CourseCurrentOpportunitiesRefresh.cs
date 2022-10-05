@@ -96,8 +96,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
                 {
                     var opportunity = mapper.Map<Opportunity>(course);
 
-                    var courseIdGuid = new Guid(course.CourseId);
-                    var tLevelIdGuid = new Guid(course.TLevelId);
+                    var courseIdGuid = new Guid(opportunity.CourseId);
+                    var tLevelIdGuid = new Guid(opportunity.TLevelId);
                     var urlBaseAddress = $"{courseSearchSettings.CourseSearchUrl}find-a-course/";
                     var urlQueryString = courseIdGuid == Guid.Empty && tLevelIdGuid != Guid.Empty
                         ? $"tdetails?tlevelId={opportunity.TLevelId}&tlevelLocationId={opportunity.TLevelLocationId}"
