@@ -73,27 +73,32 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AVService
                 throw new ArgumentNullException(nameof(mapping));
             }
 
-            logger.LogInformation($"Extracting AV summaries for Standards = {mapping.Frameworks} Frameworks = {mapping.Standards} page : {pageNumber}");
+            logger.LogInformation($"Extracting AV summaries for Standards = {mapping.Standards} page : {pageNumber}");
+            string queryString = GetQueryString(mapping, pageNumber);
 
-            var queryString = HttpUtility.ParseQueryString(string.Empty);
+            var responseResult = await apprenticeshipVacancyApi.GetAsync(queryString, RequestType.ListVacancies).ConfigureAwait(false);
+
+            return JsonConvert.DeserializeObject<ApprenticeshipVacancySummaryResponse>(responseResult);
+        }
+
+        private string GetQueryString(AVMapping mapping, int pageNumber)
+        {
+            var queryStringList = new List<string>();
 
             if (mapping.Standards != null)
             {
-                queryString["standardLarsCodes"] = string.Join(",", mapping.Standards.Where(s => !string.IsNullOrWhiteSpace(s)));
+                foreach (var standard in mapping.Standards)
+                {
+                    queryStringList.Add($"StandardLarsCode={standard}");
+                }
             }
 
-            if (mapping.Frameworks != null)
-            {
-                queryString["frameworkLarsCodes"] = string.Join(",", mapping.Frameworks.Where(s => !string.IsNullOrWhiteSpace(s)));
-            }
+            queryStringList.Add($"PageSize={aVAPIServiceSettings.FAAPageSize}");
+            queryStringList.Add($"PageNumber={pageNumber}");
+            queryStringList.Add($"Sort={aVAPIServiceSettings.FAASortBy}");
 
-            queryString["pageSize"] = $"{aVAPIServiceSettings.FAAPageSize}";
-            queryString["pageNumber"] = $"{pageNumber}";
-            queryString["sortBy"] = aVAPIServiceSettings.FAASortBy;
-
-            var responseResult = await apprenticeshipVacancyApi.GetAsync(queryString.ToString(), RequestType.ListVacancies).ConfigureAwait(false);
-
-            return JsonConvert.DeserializeObject<ApprenticeshipVacancySummaryResponse>(responseResult);
+            var queryString = string.Join("&", queryStringList);
+            return queryString;
         }
 
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
