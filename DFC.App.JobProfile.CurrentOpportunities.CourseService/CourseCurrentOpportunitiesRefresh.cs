@@ -98,11 +98,11 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
 
                     var courseIdGuid = new Guid(opportunity.CourseId);
                     var tLevelIdGuid = new Guid(opportunity.TLevelId);
-                    var urlBaseAddress = $"{courseSearchSettings.CourseSearchUrl}find-a-course/";
+                    var urlPath = $"/find-a-course/";
                     var urlQueryString = courseIdGuid == Guid.Empty && tLevelIdGuid != Guid.Empty
                         ? $"tdetails?tlevelId={opportunity.TLevelId}&tlevelLocationId={opportunity.TLevelLocationId}"
                         : $"course-details?CourseId={opportunity.CourseId}&r={opportunity.RunId}";
-                    opportunity.URL = new Uri($"{urlBaseAddress}{urlQueryString}");
+                    opportunity.Url = $"{urlPath}{urlQueryString}";
                     opportunities.Add(opportunity);
 
                     logger.LogInformation($"{nameof(RefreshCoursesAsync)} added details for {course.CourseId} to list");

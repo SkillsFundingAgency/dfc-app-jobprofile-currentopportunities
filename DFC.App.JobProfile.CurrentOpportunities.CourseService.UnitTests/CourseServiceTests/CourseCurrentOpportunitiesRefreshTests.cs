@@ -111,8 +111,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             var opportunity1 = opportunities.ToList().FirstOrDefault();
             var opportunity2 = opportunities.ToList().Skip(1).FirstOrDefault();
 
-            opportunity1.URL.ToString().Should().Contain($"{courseSearchSettings.CourseSearchUrl}find-a-course/course-details?CourseId={opportunity1.CourseId}&r={opportunity1.RunId}");
-            opportunity2.URL.ToString().Should().Contain($"{courseSearchSettings.CourseSearchUrl}find-a-course/course-details?CourseId={opportunity2.CourseId}&r={opportunity2.RunId}");
+            opportunity1.Url.Should().Contain($"/find-a-course/course-details?CourseId={opportunity1.CourseId}&r={opportunity1.RunId}");
+            opportunity2.Url.Should().Contain($"/find-a-course/course-details?CourseId={opportunity2.CourseId}&r={opportunity2.RunId}");
         }
 
         [Fact]
@@ -142,8 +142,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             var opportunity1 = opportunities.ToList().FirstOrDefault();
             var opportunity2 = opportunities.ToList().Skip(1).FirstOrDefault();
 
-            opportunity1.URL.ToString().Should().Contain($"{courseSearchSettings.CourseSearchUrl}find-a-course/tdetails?tlevelId={opportunity1.TLevelId}&tlevelLocationId={opportunity1.TLevelLocationId}");
-            opportunity2.URL.ToString().Should().Contain($"{courseSearchSettings.CourseSearchUrl}find-a-course/tdetails?tlevelId={opportunity2.TLevelId}&tlevelLocationId={opportunity2.TLevelLocationId}");
+            opportunity1.Url.Should().Contain($"/find-a-course/tdetails?tlevelId={opportunity1.TLevelId}&tlevelLocationId={opportunity1.TLevelLocationId}");
+            opportunity2.Url.Should().Contain($"/find-a-course/tdetails?tlevelId={opportunity2.TLevelId}&tlevelLocationId={opportunity2.TLevelLocationId}");
         }
 
         [Fact]
