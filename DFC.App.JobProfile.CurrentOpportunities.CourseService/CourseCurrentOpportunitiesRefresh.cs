@@ -95,8 +95,16 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService
                 foreach (var course in courseSearchResults)
                 {
                     var opportunity = mapper.Map<Opportunity>(course);
-                    opportunity.URL = new Uri($"{courseSearchSettings.CourseSearchUrl}/find-a-course/course-details?CourseId={opportunity.CourseId}&r={opportunity.RunId}");
+
+                    var courseIdGuid = new Guid(opportunity.CourseId);
+                    var tLevelIdGuid = new Guid(opportunity.TLevelId);
+                    var urlPath = $"/find-a-course/";
+                    var urlQueryString = courseIdGuid == Guid.Empty && tLevelIdGuid != Guid.Empty
+                        ? $"tdetails?tlevelId={opportunity.TLevelId}&tlevelLocationId={opportunity.TLevelLocationId}"
+                        : $"course-details?CourseId={opportunity.CourseId}&r={opportunity.RunId}";
+                    opportunity.Url = $"{urlPath}{urlQueryString}";
                     opportunities.Add(opportunity);
+
                     logger.LogInformation($"{nameof(RefreshCoursesAsync)} added details for {course.CourseId} to list");
                 }
             }
