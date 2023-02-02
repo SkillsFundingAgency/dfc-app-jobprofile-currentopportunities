@@ -93,7 +93,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             Func<Task> serviceHealthStatus = async () => await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).ConfigureAwait(false);
 
             //Asserts
-            serviceHealthStatus.Should().Throw<ApplicationException>();
+            serviceHealthStatus.Should().ThrowAsync<ApplicationException>();
 
             //Asserts
             A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
