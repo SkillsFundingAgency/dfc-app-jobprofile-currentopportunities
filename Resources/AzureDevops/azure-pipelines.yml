@@ -5,7 +5,7 @@ variables:
     BuildConfiguration: 'release'
 
 resources:
-  repositories:
+  Srepositories:
   - repository: self
   - repository: dfc-devops
     type: github
@@ -40,7 +40,6 @@ jobs:
       SolutionBaseName: $(SolutionBaseName)
       BuildPlatform: $(BuildPlatform)
       BuildConfiguration: $(BuildConfiguration)
-      DotNetCoreVersion: 3.1.101
       PublishWebApp: true
       TestSuffix: UnitTests
 
@@ -50,7 +49,6 @@ jobs:
       SolutionBaseName: $(SolutionBaseName).MessageFunctionApp
       BuildPlatform: $(BuildPlatform)
       BuildConfiguration: $(BuildConfiguration)
-      DotNetCoreVersion: 3.1.101
       PublishWebApp: true
 
 #Build integration tests
@@ -63,7 +61,6 @@ jobs:
       SolutionBaseName: $(SolutionBaseName).IntegrationTests
       BuildPlatform: $(BuildPlatform)
       BuildConfiguration: $(BuildConfiguration)
-      DotNetCoreVersion: 3.1.101
 
  #Build functional Tests
 - job: Buildfunctionaltests
@@ -75,4 +72,3 @@ jobs:
       SolutionBaseName: $(SolutionBaseName).FunctionalTests
       BuildPlatform: $(BuildPlatform)
       BuildConfiguration: $(BuildConfiguration)
-      DotNetCoreVersion: 3.1.101
