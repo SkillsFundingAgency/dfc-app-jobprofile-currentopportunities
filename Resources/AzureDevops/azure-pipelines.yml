@@ -5,7 +5,7 @@ variables:
     BuildConfiguration: 'release'
 
 resources:
-  Srepositories:
+  repositories:
   - repository: self
   - repository: dfc-devops
     type: github
