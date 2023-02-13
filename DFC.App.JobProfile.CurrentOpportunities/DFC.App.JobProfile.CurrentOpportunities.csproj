@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+	  <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
     <CodeAnalysisRuleSet>../DFC.Digital.CodeAnalysis.ruleset</CodeAnalysisRuleSet>
 	  <ProjectGuid>{BFCF8910-6AFD-421F-B385-A8EC58C382D3}</ProjectGuid>
