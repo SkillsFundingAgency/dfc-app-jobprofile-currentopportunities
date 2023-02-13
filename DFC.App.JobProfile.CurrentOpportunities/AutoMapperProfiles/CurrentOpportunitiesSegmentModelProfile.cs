@@ -12,10 +12,12 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles
         public CurrentOpportunitiesSegmentModelProfile()
         {
             CreateMap<CurrentOpportunitiesSegmentModel, DocumentViewModel>();
-            CreateMap<CurrentOpportunitiesSegmentDataModel, DocumentDataViewModel>();
+            CreateMap<CurrentOpportunitiesSegmentDataModel, DocumentDataViewModel>()
+                .ForMember(d => d.JobTitleWithPrefix, opt => opt.Ignore());
             CreateMap<Apprenticeships, DocumentApprenticeshipsViewModel>();
             CreateMap<Vacancy, DocumentVacancyViewModel>();
-            CreateMap<Courses, DocumentCoursesViewModel>();
+            CreateMap<Courses, DocumentCoursesViewModel>()
+                .ForMember(d => d.CourseSearchUrl, opt => opt.Ignore());
             CreateMap<Opportunity, DocumentOpportunityViewModel>();
 
             CreateMap<CurrentOpportunitiesSegmentModel, BodyViewModel>();
