@@ -43,7 +43,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         {
             //Asserts
             Func<Task> f = async () => { await CurrentOpportunitiesSegmentService.PatchJobProfileSocAsync(null, testGuid).ConfigureAwait(false); };
-            f.Should().Throw<ArgumentNullException>();
+            f.Should().ThrowAsync<ArgumentNullException>();
         }
 
         [Fact]
@@ -100,7 +100,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         {
             //Asserts
             Func<Task> f = async () => { await CurrentOpportunitiesSegmentService.PatchApprenticeshipFrameworksAsync(null, testGuid).ConfigureAwait(false); };
-            f.Should().Throw<ArgumentNullException>();
+            f.Should().ThrowAsync<ArgumentNullException>();
         }
 
         [Fact]
@@ -163,7 +163,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
         {
             //Asserts
             Func<Task> f = async () => { await CurrentOpportunitiesSegmentService.PatchApprenticeshipStandardsAsync(null, testGuid).ConfigureAwait(false); };
-            f.Should().Throw<ArgumentNullException>();
+            f.Should().ThrowAsync<ArgumentNullException>();
         }
 
         [Fact]

@@ -65,7 +65,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.SegmentService.UnitTests.Segme
             Func<Task> serviceHealthStatus = async () => await currentOpportunitiesSegmentService.CheckHealthAsync(dummyHealthCheckContext).ConfigureAwait(false);
 
             //Asserts
-            serviceHealthStatus.Should().Throw<Exception>();
+            serviceHealthStatus.Should().ThrowAsync<Exception>();
         }
     }
 }
