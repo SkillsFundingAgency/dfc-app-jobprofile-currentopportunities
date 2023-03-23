@@ -23,5 +23,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.ViewModels
 
         [Display(Name = "Location")]
         public LocationViewModel Location { get; set; }
+
+        public string Url { get; set; }
     }
 }

@@ -13,7 +13,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.AutoMapperProfiles
             CreateMap<Course, Opportunity>()
                 .ForMember(d => d.Provider, s => s.MapFrom(f => f.ProviderName))
                 .ForMember(d => d.PullDate, s => s.Ignore())
-                .ForMember(d => d.URL, s => s.Ignore())
+                .ForMember(d => d.Url, s => s.Ignore())
                 .ForPath(d => d.Location.Town, s => s.MapFrom(f => f.Location));
         }
     }
