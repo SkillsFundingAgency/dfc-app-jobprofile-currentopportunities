@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Xunit;
@@ -44,7 +45,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
 
             courseSearchSettings = new CourseSearchSettings()
             {
-                CourseSearchUrl = new Uri("htpp:\\test.com"),
+                CourseSearchUrl = new Uri("htpp://www.test.com/"),
             };
 
             currentOpportunitiesSegmentModel = new CurrentOpportunitiesSegmentModel
@@ -66,10 +67,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         [InlineData(2)]
         public async Task RefreshCoursesAsync(int numberVacanciesFound)
         {
-            //arrange
+            //Arrange
             A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
             A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, true)).Returns(GetTestCourses(numberVacanciesFound));
-            A.CallTo(() => fakeMapper.Map<Opportunity>(A<Course>.Ignored)).Returns(new Opportunity() { CourseId = "1" });
+            A.CallTo(() => fakeMapper.Map<Opportunity>(A<Course>.Ignored)).Returns(new Opportunity() { CourseId = Guid.NewGuid().ToString(), TLevelId = Guid.NewGuid().ToString() });
 
             var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings, fakejobProfileSegmentRefreshService);
 
@@ -80,6 +81,69 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             result.Should().Be(numberVacanciesFound);
             A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).MustHaveHappenedOnceExactly();
             A.CallTo(() => fakeRepository.UpsertAsync(A<CurrentOpportunitiesSegmentModel>.Ignored)).MustHaveHappenedOnceExactly();
+        }
+
+        [Fact]
+        public async Task RefreshCoursesAsyncUpsertsCoursesWithCourseDetailsUrlsWhenCoursesAreNotTLevel()
+        {
+            //Arrange
+            int numberVacanciesFound = 2;
+
+            A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, true)).Returns(GetTestCourses(numberVacanciesFound));
+            A.CallTo(() => fakeMapper.Map<Opportunity>(A<Course>.Ignored)).Returns(new Opportunity()
+            {
+                CourseId = Guid.NewGuid().ToString(),
+                RunId = Guid.NewGuid().ToString(),
+                TLevelId = Guid.Empty.ToString(),
+            });
+
+            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings, fakejobProfileSegmentRefreshService);
+
+            //Act
+            var result = await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).ConfigureAwait(false);
+
+            //Asserts
+            result.Should().Be(numberVacanciesFound);
+
+            var opportunities = currentOpportunitiesSegmentModel.Data.Courses.Opportunities;
+            opportunities.Should().NotBeNull();
+            var opportunity1 = opportunities.ToList().FirstOrDefault();
+            var opportunity2 = opportunities.ToList().Skip(1).FirstOrDefault();
+
+            opportunity1.Url.Should().Contain($"/find-a-course/course-details?CourseId={opportunity1.CourseId}&r={opportunity1.RunId}");
+            opportunity2.Url.Should().Contain($"/find-a-course/course-details?CourseId={opportunity2.CourseId}&r={opportunity2.RunId}");
+        }
+
+        [Fact]
+        public async Task RefreshCoursesAsyncUpsertsCoursesWithTLevelDetailsUrlsWhenCoursesAreTLevel()
+        {
+            //Arrange
+            int numberVacanciesFound = 2;
+            A.CallTo(() => fakeRepository.GetAsync(A<Expression<Func<CurrentOpportunitiesSegmentModel, bool>>>.Ignored)).Returns(currentOpportunitiesSegmentModel);
+            A.CallTo(() => fakeCourseSearchClient.GetCoursesAsync(A<string>.Ignored, true)).Returns(GetTestTLevelCourses(numberVacanciesFound));
+            A.CallTo(() => fakeMapper.Map<Opportunity>(A<Course>.Ignored)).Returns(new Opportunity()
+            {
+                CourseId = Guid.Empty.ToString(),
+                TLevelId = Guid.NewGuid().ToString(),
+                TLevelLocationId = Guid.NewGuid().ToString(),
+            });
+
+            var courseCurrentOpportunitiesRefresh = new CourseCurrentOpportunitiesRefresh(fakeLogger, fakeRepository, fakeCourseSearchClient, fakeMapper, courseSearchSettings, fakejobProfileSegmentRefreshService);
+
+            //Act
+            var result = await courseCurrentOpportunitiesRefresh.RefreshCoursesAsync(A.Dummy<Guid>()).ConfigureAwait(false);
+
+            //Asserts
+            result.Should().Be(numberVacanciesFound);
+
+            var opportunities = currentOpportunitiesSegmentModel.Data.Courses.Opportunities;
+            opportunities.Should().NotBeNull();
+            var opportunity1 = opportunities.ToList().FirstOrDefault();
+            var opportunity2 = opportunities.ToList().Skip(1).FirstOrDefault();
+
+            opportunity1.Url.Should().Contain($"/find-a-course/tdetails?tlevelId={opportunity1.TLevelId}&tlevelLocationId={opportunity1.TLevelLocationId}");
+            opportunity2.Url.Should().Contain($"/find-a-course/tdetails?tlevelId={opportunity2.TLevelId}&tlevelLocationId={opportunity2.TLevelLocationId}");
         }
 
         [Fact]
@@ -154,7 +218,30 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
         {
             for (var i = 0; i < numberToGet; i++)
             {
-                yield return new Course { ProviderName = "Provider A", Title = "Displayed" };
+                yield return new Course
+                {
+                    CourseId = Guid.NewGuid().ToString(),
+                    RunId = Guid.NewGuid().ToString(),
+                    TLevelId = Guid.Empty.ToString(),
+                    ProviderName = "Provider A",
+                    Title = "Displayed",
+                };
+            }
+        }
+
+        private static IEnumerable<Course> GetTestTLevelCourses(int numberToGet)
+        {
+            for (var i = 0; i < numberToGet; i++)
+            {
+                yield return new Course
+                {
+                    CourseId = Guid.Empty.ToString(),
+                    RunId = Guid.Empty.ToString(),
+                    TLevelId = Guid.NewGuid().ToString(),
+                    TLevelLocationId = Guid.NewGuid().ToString(),
+                    ProviderName = "Provider A",
+                    Title = "T Level Course",
+                };
             }
         }
     }
