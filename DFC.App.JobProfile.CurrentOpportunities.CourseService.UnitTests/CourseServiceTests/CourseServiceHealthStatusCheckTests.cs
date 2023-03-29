@@ -69,7 +69,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.CourseService.UnitTests
             Func<Task> serviceHealthStatus = async () => await courseCurrentOpportunitiesRefresh.CheckHealthAsync(dummyHealthCheckContext).ConfigureAwait(false);
 
             //Asserts
-            serviceHealthStatus.Should().Throw<Exception>();
+            serviceHealthStatus.Should().ThrowAsync<Exception>();
         }
 
         private static IEnumerable<Course> GetTestCourses(int numberToGet)
