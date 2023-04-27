@@ -70,6 +70,9 @@
         },
         "CPUPercentageThreshold": {
             "value": "0"
+        },
+        "appInsightsName": {
+            "value": "dfc-foo-shared-ai"
         }
     }
 }
