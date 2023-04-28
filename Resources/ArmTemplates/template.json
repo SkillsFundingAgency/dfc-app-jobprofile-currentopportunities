@@ -425,10 +425,10 @@
                         ]
                     }
                 }
-            },
-            "dependsOn": [
-                "[variables('webAppInsightsName')]"
-            ]
+            }
+            // "dependsOn": [
+            //     "[variables('webAppInsightsName')]"
+            // ]
         },
         // {
         //     "apiVersion": "2017-05-10",
@@ -561,10 +561,10 @@
                         ]
                     }
                 }
-            },
-            "dependsOn": [
-                "[variables('webAppInsightsName')]"
-            ]
+            }
+            // "dependsOn": [
+            //     "[variables('webAppInsightsName')]"
+            // ]
         },
         {
             "apiVersion": "2017-05-10",
