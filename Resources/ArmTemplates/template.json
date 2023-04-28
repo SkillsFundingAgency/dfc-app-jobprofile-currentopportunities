@@ -159,32 +159,32 @@
         "webAppName": "[concat(variables('ResourcePrefix'), '-as')]",
         "webAppInsightsName": "[parameters('appInsightsName')]",
         "functionAppName": "[concat(variables('ResourcePrefix'), '-fa')]",
-        "functionAppInsightsName": "[parameters('appInsightsName')]",
+       // "functionAppInsightsName": "[parameters('appInsightsName')]",
         "urlJobProfileCurrentOpportunities": "[toLower(concat('https://', variables('webAppName'), '.', parameters('appServiceDomain')))]",
         "cmsSubscriptionName": "job-profile-currentopportunities",
         "ActionGroupName": "[concat('dfc-', replace(tolower(parameters('Environment')), '-draft', ''), '-app-sharedresources-actgrp')]"
     },
     "resources": [
-    //     {
-    //         "apiVersion": "2017-05-10",
-    //         "name": "[variables('webAppInsightsName')]",
-    //         "type": "Microsoft.Resources/deployments",
-    //         "properties": {
-    //             "mode": "Incremental",
-    //             "templateLink": {
-    //                 "uri": "[concat(variables('buildingBlocksDfcBaseUrl'), 'application-insights.json')]",
-    //                 "contentVersion": "1.0.0.0"
-    //             },
-    //             "parameters": {
-    //                 "appInsightsName": {
-    //                     "value": "[variables('webAppInsightsName')]"
-    //                 },
-    //                 "attachedService": {
-    //                     "value": ""
-    //                 }
-    //             }
-    //         }
-    //     },
+        // {
+        //     "apiVersion": "2017-05-10",
+        //     "name": "[variables('webAppInsightsName')]",
+        //     "type": "Microsoft.Resources/deployments",
+        //     "properties": {
+        //         "mode": "Incremental",
+        //         "templateLink": {
+        //             "uri": "[concat(variables('buildingBlocksDfcBaseUrl'), 'application-insights.json')]",
+        //             "contentVersion": "1.0.0.0"
+        //         },
+        //         "parameters": {
+        //             "appInsightsName": {
+        //                 "value": "[variables('webAppInsightsName')]"
+        //             },
+        //             "attachedService": {
+        //                 "value": ""
+        //             }
+        //         }
+        //     }
+        // },
         {
             "apiVersion": "2017-05-10",
             "name": "[variables('appServicePlanName')]",
@@ -252,7 +252,7 @@
                             },
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference(variables('webAppInsightsName')).outputs.InstrumentationKey.value]"
+                                "value": "2276ec76-bb9c-4a0c-a407-3347cbe6c6b8"
                             },
                             {
                                 "name": "AzureWebJobsStorage",
@@ -421,10 +421,10 @@
                         ]
                     }
                 }
-            }
-            // "dependsOn": [
-            //     "[variables('webAppInsightsName')]"
-            // ]
+            },
+            "dependsOn": [
+                "[variables('webAppInsightsName')]"
+            ]
         },
         // {
         //     "apiVersion": "2017-05-10",
@@ -488,7 +488,7 @@
                             },
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference(variables('functionAppInsightsName')).outputs.InstrumentationKey.value]"
+                                "value": "[reference(variables('webAppInsightsName')).outputs.InstrumentationKey.value]"
                             },
                             {
                                 "name": "AzureWebJobsStorage",
@@ -557,10 +557,10 @@
                         ]
                     }
                 }
-            }
-            // "dependsOn": [
-            //     "[variables('functionAppInsightsName')]"
-            // ]
+            },
+            "dependsOn": [
+                "[variables('webAppInsightsName')]"
+            ]
         },
         {
             "apiVersion": "2017-05-10",
