@@ -5,6 +5,9 @@
         "appInsightsName": {
             "type": "string"
         },
+        "appInsightsInstrumentationKey": {
+            "type": "string"
+        }
         "appServiceDomain": {
             "type": "string"
         },
@@ -158,6 +161,7 @@
         "resourcePrefix": "[tolower(concat('dfc-', parameters('Environment'), '-app-jobprofcops'))]",
         "webAppName": "[concat(variables('ResourcePrefix'), '-as')]",
         "webAppInsightsName": "[parameters('appInsightsName')]",
+        "webAppInsightsInstrumentationKey": "[parameters('appInsightsInstrumentationKey')]",
         "functionAppName": "[concat(variables('ResourcePrefix'), '-fa')]",
        // "functionAppInsightsName": "[parameters('appInsightsName')]",
         "urlJobProfileCurrentOpportunities": "[toLower(concat('https://', variables('webAppName'), '.', parameters('appServiceDomain')))]",
@@ -252,7 +256,7 @@
                             },
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "2276ec76-bb9c-4a0c-a407-3347cbe6c6b8"
+                                "value": "[variables('webAppInsightsInstrumentationKey')]"
                             },
                             {
                                 "name": "AzureWebJobsStorage",
@@ -488,7 +492,7 @@
                             },
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "2276ec76-bb9c-4a0c-a407-3347cbe6c6b8"
+                                "value": "[variables('webAppInsightsInstrumentationKey')]"
                             },
                             {
                                 "name": "AzureWebJobsStorage",
