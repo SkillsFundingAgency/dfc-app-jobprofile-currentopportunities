@@ -1,10 +1,7 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
-        "appInsightsName": {
-            "type": "string"
-        },
+    "parameters": {       
         "appInsightsInstrumentationKey": {
             "type": "string"
         },
@@ -160,7 +157,7 @@
         "cosmosDbEndpoint": "[concat('https://', parameters('cosmosDbName'), '.documents.azure.com:443/')]",
         "resourcePrefix": "[tolower(concat('dfc-', parameters('Environment'), '-app-jobprofcops'))]",
         "webAppName": "[concat(variables('ResourcePrefix'), '-as')]",
-        "webAppInsightsName": "[parameters('appInsightsName')]",
+        //"webAppInsightsName": "[parameters('appInsightsName')]",
         "webAppInsightsInstrumentationKey": "[parameters('appInsightsInstrumentationKey')]",
         "functionAppName": "[concat(variables('ResourcePrefix'), '-fa')]",
        // "functionAppInsightsName": "[parameters('appInsightsName')]",
