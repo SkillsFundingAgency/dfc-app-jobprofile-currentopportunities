@@ -488,7 +488,7 @@
                             },
                             {
                                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                                "value": "[reference(variables('webAppInsightsName')).outputs.InstrumentationKey.value]"
+                                "value": "2276ec76-bb9c-4a0c-a407-3347cbe6c6b8"
                             },
                             {
                                 "name": "AzureWebJobsStorage",
