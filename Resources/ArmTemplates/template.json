@@ -7,7 +7,7 @@
         },
         "appInsightsInstrumentationKey": {
             "type": "string"
-        }
+        },
         "appServiceDomain": {
             "type": "string"
         },
