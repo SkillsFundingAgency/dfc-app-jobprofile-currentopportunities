@@ -15,7 +15,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
         [FunctionName("RefreshApprenticeships")]
         public static async System.Threading.Tasks.Task RunAsync(
             [TimerTrigger("%RefreshApprenticeshipsCron%")]TimerInfo myTimer,
-            ILogger log,
+            [Inject] ILogger log,
             [Inject] IRefreshService refreshService)
         {
             log.LogInformation($"{nameof(RefreshApprenticeships)}: Timer trigger function starting at: {DateTime.Now}, using TimerInfo: {myTimer.Schedule.ToString()}");
