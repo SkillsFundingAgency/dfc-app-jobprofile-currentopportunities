@@ -1,7 +1,6 @@
 using DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services;
-using DFC.Functions.DI.Standard.Attributes;
+using DFC.Logger.AppInsights.Contracts;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -9,15 +8,22 @@ using System.Web.Http;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
 {
-    public static class RefreshCourses
+    public class RefreshCourses
     {
-        [FunctionName("RefreshCourses")]
-        public static async System.Threading.Tasks.Task RunAsync(
-            [TimerTrigger("%RefreshCoursesCron%")]TimerInfo myTimer,
-            [Inject] ILogger log,
-            [Inject] IRefreshService refreshService)
+        private readonly ILogService log;
+        private readonly IRefreshService refreshService;
+
+        public RefreshCourses(ILogService log, IRefreshService refreshService)
         {
-            log.LogInformation($"{nameof(RefreshCourses)}: Timer trigger function starting at: {DateTime.Now}, using TimerInfo: {myTimer.Schedule.ToString()}");
+            this.log = log;
+            this.refreshService = refreshService;
+        }
+
+        [FunctionName("RefreshCourses")]
+        public async System.Threading.Tasks.Task RunAsync(
+            [TimerTrigger("%RefreshCoursesCron%")]TimerInfo myTimer)
+        {
+            log.LogError($"{nameof(RefreshCourses)}: Timer trigger function starting at: {DateTime.Now}, using TimerInfo: {myTimer.Schedule.ToString()}");
 
             var abortAfterErrorCount = 10;
             var errorCount = 0;

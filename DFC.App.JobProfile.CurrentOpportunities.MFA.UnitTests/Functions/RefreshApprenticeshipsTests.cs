@@ -9,6 +9,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
+using DFC.Logger.AppInsights.Contracts;
 using Xunit;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Functions
@@ -18,13 +19,13 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Functions
     {
         private const int AbortAfterErrorCount = 5;
         private readonly TimerInfo timer;
-        private readonly ILogger fakeLogger;
+        private readonly ILogService fakeLogger;
         private readonly IRefreshService fakeRefreshService;
 
         public RefreshApprenticeshipsTests()
         {
             timer = new TimerInfo(new ScheduleStub(), new ScheduleStatus());
-            fakeLogger = A.Fake<ILogger>();
+            fakeLogger = A.Fake<ILogService>();
             fakeRefreshService = A.Fake<IRefreshService>();
 
             Environment.SetEnvironmentVariable(nameof(AbortAfterErrorCount), $"{AbortAfterErrorCount}");
@@ -39,9 +40,9 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Functions
 
             A.CallTo(() => fakeRefreshService.GetListAsync()).Returns(expectedModels);
             A.CallTo(() => fakeRefreshService.RefreshApprenticeshipsAsync(A<Guid>.Ignored)).Returns(expectedStatusCode);
-
+            var sut = new RefreshApprenticeships(fakeLogger, fakeRefreshService);
             // Act
-            await RefreshApprenticeships.RunAsync(timer, fakeLogger, fakeRefreshService).ConfigureAwait(false);
+            await sut.RunAsync(timer).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeRefreshService.GetListAsync()).MustHaveHappenedOnceExactly();
@@ -57,9 +58,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Functions
 
             A.CallTo(() => fakeRefreshService.GetListAsync()).Returns(expectedModels);
             A.CallTo(() => fakeRefreshService.RefreshApprenticeshipsAsync(A<Guid>.Ignored)).Returns(expectedStatusCode);
+            var sut = new RefreshApprenticeships(fakeLogger, fakeRefreshService);
 
             // Act
-            await RefreshApprenticeships.RunAsync(timer, fakeLogger, fakeRefreshService).ConfigureAwait(false);
+            await sut.RunAsync(timer).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeRefreshService.GetListAsync()).MustHaveHappenedOnceExactly();
@@ -75,9 +77,10 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MFA.UnitTests.Functions
 
             A.CallTo(() => fakeRefreshService.GetListAsync()).Returns(expectedModels);
             A.CallTo(() => fakeRefreshService.RefreshApprenticeshipsAsync(A<Guid>.Ignored)).Returns(expectedStatusCode);
+            var sut = new RefreshApprenticeships(fakeLogger, fakeRefreshService);
 
             // Act
-            var ex = await Assert.ThrowsAsync<HttpResponseException>(() => RefreshApprenticeships.RunAsync(timer, fakeLogger, fakeRefreshService)).ConfigureAwait(false);
+            var ex = await Assert.ThrowsAsync<HttpResponseException>(() => sut.RunAsync(timer)).ConfigureAwait(false);
 
             // Assert
             A.CallTo(() => fakeRefreshService.GetListAsync()).MustHaveHappenedOnceExactly();

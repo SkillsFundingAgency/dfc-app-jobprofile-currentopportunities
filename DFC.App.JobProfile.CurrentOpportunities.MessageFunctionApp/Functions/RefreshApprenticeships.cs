@@ -7,16 +7,24 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using DFC.Logger.AppInsights.Contracts;
 
 namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
 {
-    public static class RefreshApprenticeships
+    public class RefreshApprenticeships
     {
+        private readonly ILogService log;
+        private readonly IRefreshService refreshService;
+
+        public RefreshApprenticeships(ILogService log, IRefreshService refreshService)
+        {
+            this.log = log;
+            this.refreshService = refreshService;
+        }
+
         [FunctionName("RefreshApprenticeships")]
-        public static async System.Threading.Tasks.Task RunAsync(
-            [TimerTrigger("%RefreshApprenticeshipsCron%")]TimerInfo myTimer,
-            [Inject] ILogger log,
-            [Inject] IRefreshService refreshService)
+        public async System.Threading.Tasks.Task RunAsync(
+            [TimerTrigger("%RefreshApprenticeshipsCron%")]TimerInfo myTimer)
         {
             log.LogInformation($"{nameof(RefreshApprenticeships)}: Timer trigger function starting at: {DateTime.Now}, using TimerInfo: {myTimer.Schedule.ToString()}");
 
