@@ -139,7 +139,8 @@ namespace DFC.App.JobProfile.CurrentOpportunities
                          {
                             new CurrentOpportunitiesSegmentModelProfile(),
                             new CoursesProfile(),
-                            new ApprenticeshipProfile()
+                            new ApprenticeshipProfile(),
+                            new FindACourseProfile(),
                          });
                  }).CreateMapper();
              });
