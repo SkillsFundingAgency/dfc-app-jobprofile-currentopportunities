@@ -51,6 +51,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Startup
                 .AddPolicyHandlerFromRegistry($"{nameof(RefreshClientOptions)}_{nameof(CorePolicyOptions.HttpCircuitBreaker)}");
 
             builder.Services
+                .AddLogging()
                 .AddScoped<IHttpClientService, HttpClientService>()
                 .AddScoped<IMessageProcessor, MessageProcessor>()
                 .AddScoped<IMappingService, MappingService>()
