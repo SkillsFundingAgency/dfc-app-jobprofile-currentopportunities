@@ -91,6 +91,9 @@
         },
         "CPUPercentageThreshold": {
             "value": "__CPUPercentageThreshold__"
+        },
+        "appInsightsInstrumentationKey": {
+            "value": "__appInsightsInstrumentationKey__"
         }
     }
 }
