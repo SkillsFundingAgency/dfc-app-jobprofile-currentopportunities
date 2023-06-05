@@ -2,6 +2,7 @@
 using DFC.App.JobProfile.CurrentOpportunities.Data.Enums;
 using DFC.App.JobProfile.CurrentOpportunities.Data.Models.PatchModels;
 using DFC.App.JobProfile.CurrentOpportunities.Data.ServiceBusModels.PatchModels;
+using DFC.Logger.AppInsights.Contracts;
 using Newtonsoft.Json;
 using System;
 using System.Net;
@@ -14,16 +15,19 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
         private readonly IMapper mapper;
         private readonly IHttpClientService httpClientService;
         private readonly IMappingService mappingService;
+        private readonly ILogService logService;
 
-        public MessageProcessor(IMapper mapper, IHttpClientService httpClientService, IMappingService mappingService)
+        public MessageProcessor(IMapper mapper, IHttpClientService httpClientService, IMappingService mappingService, ILogService logService)
         {
             this.mapper = mapper;
             this.httpClientService = httpClientService;
             this.mappingService = mappingService;
+            this.logService = logService;
         }
 
         public async Task<HttpStatusCode> ProcessAsync(string message, long sequenceNumber, MessageContentType messageContentType, MessageAction actionType)
         {
+            logService.LogInformation($"ProcessAsync message {message} sequenceNumber {sequenceNumber} messageContentType {messageContentType}  actionType {actionType}");
             switch (messageContentType)
             {
                 case MessageContentType.JobProfileSoc:
@@ -62,6 +66,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
         {
             var jobProfile = mappingService.MapToSegmentModel(message, sequenceNumber);
 
+            logService.LogInformation($"ProcessJobProfileMessageAsync message {message} actionType {actionType}");
             switch (actionType)
             {
                 case MessageAction.Draft:
