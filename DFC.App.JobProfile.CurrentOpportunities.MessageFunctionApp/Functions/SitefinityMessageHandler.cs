@@ -52,11 +52,14 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
 
             if (string.IsNullOrWhiteSpace(message))
             {
+                logService.LogInformation($"Message cannot be null or empty {nameof(sitefinityMessage)}");
+
                 throw new ArgumentException("Message cannot be null or empty.", nameof(sitefinityMessage));
             }
 
             if (!Enum.IsDefined(typeof(MessageAction), actionType?.ToString()))
             {
+                logService.LogInformation($"Invalid message action {nameof(actionType)}");
                 throw new ArgumentOutOfRangeException(nameof(actionType), $"Invalid message action '{actionType}' received, should be one of '{string.Join(",", Enum.GetNames(typeof(MessageAction)))}'");
             }
 
@@ -68,6 +71,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Functions
 
             if (!Enum.IsDefined(typeof(MessageContentType), contentType?.ToString()))
             {
+                logService.LogInformation($"Invalid message content type {contentType}");
                 throw new ArgumentOutOfRangeException(nameof(contentType), $"Invalid message content type '{contentType}' received, should be one of '{string.Join(",", Enum.GetNames(typeof(MessageContentType)))}'");
             }
 
