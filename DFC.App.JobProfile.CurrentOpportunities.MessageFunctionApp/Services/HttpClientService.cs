@@ -33,6 +33,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
             var url = new Uri($"{coreClientOptions?.BaseAddress}segment");
             ConfigureHttpClient();
 
+            logService.LogInformation($"PostAsync url {url} ");
             using (var content = new ObjectContent(typeof(CurrentOpportunitiesSegmentModel), overviewSegmentModel, new JsonMediaTypeFormatter(), MediaTypeNames.Application.Json))
             {
                 var response = await httpClient.PostAsync(url, content).ConfigureAwait(false);
@@ -52,6 +53,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
             var url = new Uri($"{coreClientOptions?.BaseAddress}segment");
             ConfigureHttpClient();
 
+            logService.LogInformation($"PutAsync url {url} "); 
             using (var content = new ObjectContent(typeof(CurrentOpportunitiesSegmentModel), overviewSegmentModel, new JsonMediaTypeFormatter(), MediaTypeNames.Application.Json))
             {
                 var response = await httpClient.PutAsync(url, content).ConfigureAwait(false);
@@ -72,7 +74,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
         {
             var url = new Uri($"{coreClientOptions.BaseAddress}segment/{patchModel?.JobProfileId}/{patchTypeEndpoint}");
             ConfigureHttpClient();
-
+            logService.LogInformation($"PatchAsync url {url}");
             using (var content = new ObjectContent<T>(patchModel, new JsonMediaTypeFormatter(), MediaTypeNames.Application.Json))
             {
                 var response = await httpClient.PatchAsync(url, content).ConfigureAwait(false);
@@ -92,6 +94,7 @@ namespace DFC.App.JobProfile.CurrentOpportunities.MessageFunctionApp.Services
         {
             var url = new Uri($"{coreClientOptions?.BaseAddress}segment/{id}");
             ConfigureHttpClient();
+            logService.LogInformation($"DeleteAsync id {id}");
 
             var response = await httpClient.DeleteAsync(url).ConfigureAwait(false);
 
